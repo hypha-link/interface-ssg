@@ -1,4 +1,4 @@
-This is the interface for Chime.
+This is the interface for Chime. Visit https://chime.jollybandit.com for a live demo.
 
 ## Getting Started
 
