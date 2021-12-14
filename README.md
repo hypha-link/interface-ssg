@@ -1,4 +1,6 @@
-This is the interface for Chime. Visit https://chime.jollybandit.com for a live demo.
+#Interface
+
+This is the interface for Chime. Visit https://chime.jollybandit.com for a live demo. Work in-progress.
 
 ## Getting Started
 

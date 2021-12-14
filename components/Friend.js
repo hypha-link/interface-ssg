@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { shortenIfAddress, useSendTransaction } from '@usedapp/core'
 import ContextMenu from './ContextMenu'
-import { utils } from '@usedapp/core';
+import { utils } from 'ethers'
 
 export const Friend = (props) => {
     const [anchorPoint, setAnchorPoint] = useState({x: 0, y: 0});

@@ -71,7 +71,7 @@ const ContextMenu = (props) => {
                     onClick={(e) => {
                     e.stopPropagation();
                     //This is not a error, silly typescript
-                    // props.[prop]();
+                    props[prop]();
                     setAnchorPoint({ x: 0, y: 0 });
                     props.localAnchorPoint({ x: 0, y: 0 });
                     }}
