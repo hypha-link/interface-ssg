@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-// import Icon from "react-crypto-icons";
+import Image from 'next/image';
 import {priceTwoDec, tokenAddr} from '../services/Chainlink_API';
-
-// const cIcons = require.context('crypto-icons-plus/src/16/', false, /\.png$/);
+import cryptoManifest from 'crypto-icons-plus/manifest.json';
 
 let priceTimer;
 
@@ -34,6 +33,11 @@ export const TokenFeed = (props) => {
 
     }, [liveFeed, props.tokenName])
 
+    //Get the full name of the token to reference the correct .png file in crypto=icons-plus
+    const tokenFullName = cryptoManifest.filter(obj => {
+      return obj.symbol === props.tokenName;
+    })[0].slug;
+
   return (
     <section id="token-feed" onClick={() => props.onClick()}>
     <div className={liveFeed ? "wave water" : "wave water static-feed"}></div>
@@ -43,7 +47,7 @@ export const TokenFeed = (props) => {
     <input className={props.hideLiveFeedCheckbox ? "hideLiveFeedCheckbox" : "showLiveFeedCheckbox"} type="checkbox" onChange={(e) => setLiveFeed(e.target.checked)}></input>
       <div>
         {/* Toggle Live Feed */}
-        {/* <Icon name={props.tokenName.toString().toLowerCase()} size={25} /> */}
+        <Image src={require(`../node_modules/crypto-icons-plus/src/128/${tokenFullName.toLowerCase()}.png`)} height="33%" width="33%" />
         <h1>{props.tokenName}</h1>
       </div>
       <p>{liveFeed ? liveTokenPrice : props.tokenPrice}</p>
