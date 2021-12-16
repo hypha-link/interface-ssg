@@ -9,7 +9,12 @@ module.exports = {
   ) {
     return {
       '/': { page: '/' },
-      '/app': { page: '/app' },
     }
+  },
+}
+
+module.exports = {
+  images: {
+    domains: ['robohash.org'],
   },
 }

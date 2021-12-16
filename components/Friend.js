@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Image from 'next/image'
 import { shortenIfAddress, useSendTransaction } from '@usedapp/core'
 import ContextMenu from './ContextMenu'
 import { utils } from 'ethers'
@@ -34,7 +35,7 @@ export const Friend = (props) => {
             }} 
             delete={() => props.deleteFriend(props.address)}
             />
-            <img src={"https://robohash.org/" + props.address + ".png?set=set5"} alt="Friend"></img>
+            <Image src={`https://robohash.org/${props.address}.png?set=set5`} alt="Friend" height={"100%"} width={"100%"} />
             <p>{shortenIfAddress(props.address)}</p>
         </div>
     )

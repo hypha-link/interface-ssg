@@ -1,4 +1,5 @@
 import React from 'react'
+import Image from 'next/image';
 import { shortenIfAddress } from '@usedapp/core'
 
 export const ConnectButton = (props) => {
@@ -7,7 +8,7 @@ export const ConnectButton = (props) => {
     <div>
       {isConnected ? (
         <button className="self-profile" onClick={() => props.disconnect()}>
-          <img src={"https://robohash.org/" + props.account + ".png?set=set5"} alt="Me" />
+          <Image src={`https://robohash.org/${props.account}.png?set=set5`} alt="Me" height={"100%"} width={"100%"} />
           <p>{shortenIfAddress(props.account)}</p>
         </button>
       ) : (

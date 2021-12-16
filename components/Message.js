@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Image from "next/image";
 import { TokenFeed } from "./TokenFeed";
 import ContextMenu from "./ContextMenu";
 import { useEthers } from "@usedapp/core";
@@ -17,7 +18,7 @@ export function Message(props) {
 
   if(message.includes("ipfs")){
     imgArr.push(
-      <img key={message} src={message} alt={message} width="100px" height="100px"></img>
+      <Image key={message} src={message} alt={message} width="100px" height="100px"></Image>
     )
   }
   else if(message.match(urlRegex) !== null) {
@@ -67,7 +68,7 @@ export function Message(props) {
       copy={() => {navigator.clipboard.writeText(props.postedData.message)}}
       delete={() => {props.deleteMessage(props.postedData)}}
       />
-      <img src={"https://robohash.org/" + props.postedData.sender + ".png?set=set5"} alt="User"></img>
+      <Image src={`https://robohash.org/${props.postedData.sender}.png?set=set5`} alt="User" height={"100%"} width={"100%"} />
       <div>
         <div>
           <p id="messageID">{props.postedData.sender}</p>
