@@ -26,7 +26,7 @@ import ChimeToken from "../chain-info/ChimeToken.json"
 const CHIME_ADDRESS = "0x5372f9Ba61d912bd5187281a593D16c0B5F83C44";
 const STREAMR_GERMANY = '0x31546eEA76F2B2b3C5cC06B1c93601dc35c9D916';
 
-export default function App() {
+function App({ data }) {
   const { account, activateBrowserWallet, deactivate } = useEthers();
   const etherBalance = useEtherBalance(account);
 
@@ -429,3 +429,9 @@ export default function App() {
     </>
   );
 }
+
+export async function getServerSideProps(){ 
+  return { props: {} }
+}
+
+export default App;

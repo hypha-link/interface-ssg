@@ -47,7 +47,7 @@ export const TokenFeed = (props) => {
     <input className={props.hideLiveFeedCheckbox ? "hideLiveFeedCheckbox" : "showLiveFeedCheckbox"} type="checkbox" onChange={(e) => setLiveFeed(e.target.checked)}></input>
       <div>
         {/* Toggle Live Feed */}
-        <Image src={require(`../public/crypto-icons-plus/128/${tokenFullName.toLowerCase()}.png`)} height="33%" width="33%" />
+        <Image src={require(`../public/crypto-icons-plus/128/${tokenFullName.toLowerCase()}.png`)} height="33%" width="33%" alt="cryptocurrency-icon" />
         <h1>{props.tokenName}</h1>
       </div>
       <p>{liveFeed ? liveTokenPrice : props.tokenPrice}</p>
