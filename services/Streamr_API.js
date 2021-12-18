@@ -17,9 +17,9 @@ export default async function getOrCreateMessageStream(_address){
     const ownerAddress = await streamr.getAddress();
     //Create a new message stream or select one that exists
     const stream = await streamr.getOrCreateStream({
-      id: ownerAddress.toLowerCase() + "/chime-messages/" + _address,
-      name: "Chime Messages",
-      description: "The messages that you have sent using Chime",
+      id: ownerAddress.toLowerCase() + "/hypha-messages/" + _address,
+      name: "Hypha Messages",
+      description: "The messages that you have sent using Hypha",
       config: {
         fields: [
           {

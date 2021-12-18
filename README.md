@@ -1,6 +1,6 @@
 #Interface
 
-This is the interface for Chime. Visit https://chime.jollybandit.com for a live demo. Work in-progress.
+This is the interface for Hypha. Visit https://hypha.link for a live demo. Work in-progress.
 
 ## Getting Started
 

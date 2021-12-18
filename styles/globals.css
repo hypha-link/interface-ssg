@@ -51,7 +51,7 @@ a {
   display: flex;
 }
 
-.chime-button{
+.hypha-button{
   background-color: var(--forest-green);
   color: var(--sky-white);
   border:none;
@@ -59,7 +59,7 @@ a {
   opacity: .6;
 }
 
-.chime-button:hover{
+.hypha-button:hover{
   opacity: 1;
   outline: groove 2px rgba(230,239,248,.2);
   border-radius: 0px;

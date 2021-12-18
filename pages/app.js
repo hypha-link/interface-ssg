@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import Logo from "../public/chime.png"
+import Logo from "../public/hypha-temp.png"
 import Head from "next/head";
 
 import { useEtherBalance, useEthers, useTokenBalance, useContractFunction, useContractCall } from "@usedapp/core";
@@ -21,9 +21,9 @@ import dids from "dids";
 import { IDX } from '@ceramicstudio/idx'
 
 import getOrCreateMessageStream, {streamr} from "../services/Streamr_API"
-import ChimeToken from "../chain-info/ChimeToken.json"
+import HyphaToken from "../chain-info/HyphaToken.json"
 
-const CHIME_ADDRESS = "0x5372f9Ba61d912bd5187281a593D16c0B5F83C44";
+const HYPHA_ADDRESS = "0xe81FAE6d25b3f4A2bB520354F0dddF35bF77b21E";
 const STREAMR_GERMANY = '0x31546eEA76F2B2b3C5cC06B1c93601dc35c9D916';
 
 function App({ data }) {
@@ -41,21 +41,21 @@ function App({ data }) {
 
   const [messageGuessing, setMessageGuessing] = useState(false);
 
-  //ChimeToken Contract
-  const abi = ChimeToken;
-  const chimeInterface = new utils.Interface(abi);
-  const contract = new Contract(CHIME_ADDRESS, chimeInterface)
+  //HyphaToken Contract
+  const abi = HyphaToken;
+  const hyphaInterface = new utils.Interface(abi);
+  const contract = new Contract(HYPHA_ADDRESS, hyphaInterface)
   const { send: sendRandomWinner } = useContractFunction(contract, 'randomWinner');
   const { send: sendRandomNumber } = useContractFunction(contract, 'getRandomNumber');
 
   const winner = useContractCall({
-    abi: chimeInterface,
-    address: CHIME_ADDRESS,
+    abi: hyphaInterface,
+    address: HYPHA_ADDRESS,
     method: "winner"
   })
 
   function addFriends(address) {
-    const storageKey = "chime-friends-" + address;
+    const storageKey = "hypha-friends-" + address;
     const friend = {
       address: address,
       streamID: "",
@@ -74,9 +74,9 @@ function App({ data }) {
     notifications.forEach(notification => {
       notification.close();
     });
-    const storageKey = "chime-friends-" + address;
+    const storageKey = "hypha-friends-" + address;
     setSelectedFriend(JSON.parse(window.localStorage.getItem(storageKey)));
-    streamr.getStream(account.toLowerCase() + "/chime-messages/" + address)
+    streamr.getStream(account.toLowerCase() + "/hypha-messages/" + address)
     //Owner stream exists
     .then(async (stream) => {
       console.log("Owner's stream exists " + stream.id);
@@ -84,7 +84,7 @@ function App({ data }) {
     })
     //Owner stream does not exist
     .catch(async () => {
-      await streamr.getStream(address.toLowerCase() + "/chime-messages/" + account)
+      await streamr.getStream(address.toLowerCase() + "/hypha-messages/" + account)
       //Friend stream exists
       .then(async (stream) => {
         console.log("Friend's stream exists " + stream.id);
@@ -118,11 +118,11 @@ function App({ data }) {
   }
 
   function deleteFriend(address){
-      const storageKey = "chime-friends-" + address;
+      const storageKey = "hypha-friends-" + address;
       window.localStorage.removeItem(storageKey);
       const friendArr = [];
       for(const key in window.localStorage){
-        if(key.includes("chime-friends")){
+        if(key.includes("hypha-friends")){
           friendArr.push(window.localStorage.getItem(key))
         }
       }
@@ -135,7 +135,7 @@ function App({ data }) {
         const friendArr = [];
         //Load friends from local storage
         for(const key in window.localStorage){
-          if(key.includes("chime-friends")){
+          if(key.includes("hypha-friends")){
             friendArr.push(JSON.parse(window.localStorage.getItem(key)));
           }
         }
@@ -190,7 +190,7 @@ function App({ data }) {
           {
             stream: selectedFriend.streamID,
           }, (data) => {
-            //Create a new notification if the new message was not sent by us & chime is not visible
+            //Create a new notification if the new message was not sent by us & interface is not visible
             if(data.sender !== account && document.visibilityState !== "visible"){
               const notification = new Notification(data.sender + " sent you a message!", {body: data.message, icon: "https://robohash.org/" + data.sender + ".png?set=set5"});
               setNotifications((oldArr) => [...oldArr, notification]);
@@ -217,7 +217,7 @@ function App({ data }) {
         date: messageDate
       })
       if(messageGuessing){
-        //Check ChimeToken for winner
+        //Check HyphaToken for winner
         if(winner){
           console.log("Need to reset random number")
           sendRandomNumber();
@@ -231,7 +231,7 @@ function App({ data }) {
       }
     }
     catch(err){
-      alert("Please connect your wallet before using Chime.");
+      alert("Please connect your wallet before using Hypha.");
       console.log(err);
     }
   };
@@ -276,18 +276,6 @@ function App({ data }) {
       streamr.getSubscriptions().forEach((sub) => sub.unsubscribe());
       streamr.disconnect()
     }
-    // if(disableMessageSharing){
-    //   console.log("Encrypting messages to owner's address");
-    // }
-    // console.log("Encrypt messages");
-    // if(burnData){
-    //   console.log("Sending messages to burn address");
-    // }
-    // else{
-    //   console.log("Storing on BigchainDB");
-    // }
-    // console.log("Delete local data");
-    // console.log("Stop Chime");
   };
 
   const formatEthBalance = () => {
@@ -298,29 +286,20 @@ function App({ data }) {
     }
   };
 
-  const userBalance = useTokenBalance(CHIME_ADDRESS, account);
-
-  /*Settings Vars*/
-  // const disableMessageSharing = true;
-  // const burnData = true;
-  // const messagingPrivateKey = "MPK";
-
-  // function sendQueueToBurnAddressOnDisconnect(ownerAddress, dataAddress) {}
-
-  // function sendDataToDeletionQueue(ownerAddress, dataAddress) {}
+  const userBalance = useTokenBalance(HYPHA_ADDRESS, account);
 
   return (
     <>
       <Head>
-        <title>Chime</title>
-        <meta name="description" content="Chime Messaging" />
+        <title>Hypha</title>
+        <meta name="description" content="Hypha Messaging" />
         <link rel="icon" href="../favicon.ico" />
       </Head>
 
       {/* Top Bar */}
 
       <section id="top-bar">
-        <Image src={Logo} alt="Chime Logo" width="100%" height="60px" objectFit="scale-down"></Image>
+        <Image src={Logo} alt="Hypha Logo" width="100%" height="60px" objectFit="scale-down"></Image>
         <div id="contact">
           <p>{selectedFriend.address}</p>
         </div>
@@ -328,7 +307,7 @@ function App({ data }) {
           <input type="text" placeholder="Search..."></input>
         </div>
         <div>
-          <button className="chime-button" onClick={() => console.log("Notifications")}>Notifications</button>
+          <button className="hypha-button" onClick={() => console.log("Notifications")}>Notifications</button>
         </div>
       </section>
 
@@ -345,8 +324,8 @@ function App({ data }) {
               }}
               cancel={() => setFriendModal(false)}
             />
-            <button className="chime-button" onClick={() => {setFriendModal(!friendModal)}}>Add Friends</button>
-            <button className="chime-button" onClick={() => setMessageGuessing(!messageGuessing)}>{messageGuessing ? 
+            <button className="hypha-button" onClick={() => {setFriendModal(!friendModal)}}>Add Friends</button>
+            <button className="hypha-button" onClick={() => setMessageGuessing(!messageGuessing)}>{messageGuessing ? 
             "Participating in Message Guessing" : 
             "Not Participating in Message Guessing"}
             </button>
@@ -395,7 +374,7 @@ function App({ data }) {
                 (formatEthBalance().substr(0, 6) + " Ethereum") : "Connect Wallet"}
                 <br></br>
                 {account !== undefined && userBalance !== undefined ? 
-                ((ethers.utils.formatUnits(userBalance, 18) + " Chime")) : ""}
+                ((ethers.utils.formatUnits(userBalance, 18) + " Hypha")) : ""}
               </p>
             </div>
           </section>
