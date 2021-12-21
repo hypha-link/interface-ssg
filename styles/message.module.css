@@ -1,0 +1,73 @@
+/*MESSAGE DISPLAY*/
+
+.message {
+  display: flex;
+  align-items: flex-start;
+  padding: 2.5%;
+  border-radius: 5px;
+}
+
+.message:hover {
+  background-color: rgba(22, 24, 12, 0.05);
+}
+
+.message p {
+  margin: 0;
+}
+
+.message > img {
+  border-radius: 314px;
+  max-height: 75px;
+  margin: 0 1em 0 0;
+}
+
+/*The div that holds message profile*/
+.message > div {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  position: relative;
+}
+
+.message div div {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 1em;
+  white-space: nowrap;
+}
+
+.message > div > img {
+  object-fit: contain;
+  width: 250px;
+  height: 250px;
+}
+
+#messageID {
+  margin: 0 1em 0 0;
+}
+
+#messageDate {
+  font-size: 0.7em;
+  font-style: italic;
+}
+
+#messageText {
+  word-break: break-word;
+}
+
+.message.own {
+  flex-direction: row-reverse;
+}
+
+.message.own > div {
+  align-items: flex-end;
+}
+
+.message.own > div > div {
+  flex-direction: row-reverse;
+}
+
+.message.own p {
+  margin-right: 2%;
+}

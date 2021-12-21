@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { shortenIfAddress, useSendTransaction } from '@usedapp/core'
 import ContextMenu from './ContextMenu'
 import { utils } from 'ethers'
+import styles from '../styles/friend.module.css'
 
 export const Friend = (props) => {
     const [anchorPoint, setAnchorPoint] = useState({x: 0, y: 0});
@@ -10,7 +11,7 @@ export const Friend = (props) => {
 
     return (
         <div 
-        className = {props.selected ? "friend-container selected-friend" : "friend-container"} 
+        className = {props.selected ? `${styles.friendContainer} ${styles.selectedFriend}` : styles.friendContainer} 
         onClick={() => {
             //If not selected, allow user to select friend
             !props.selected && props.clickFriend(props.address)

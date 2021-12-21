@@ -1,0 +1,87 @@
+/*SEND MESSAGE TEXT BAR*/
+
+#sendMessage {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--forest-green);
+  min-height: 50px;
+  margin: 1.5%;
+  padding: 0 1% 0 1%;
+  border-radius: 20px;
+}
+
+#sendMessage button,
+#addFileLabel {
+  font-size: 1.2em;
+  background-color: var(--transparent);
+  color: rgba(255, 255, 255, 0.5);
+  border: none;
+}
+
+#sendMessage #addFileLabel {
+  background-color: rgba(255, 255, 255, 0.5);
+  color: var(--forest-green);
+  border-radius: 314px;
+  padding: 0 0.4em 0 0.4em;
+}
+
+#sendMessage #addFileLabel:hover {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+#sendMessage #addFile {
+  display: none;
+}
+
+#sendMessage #chainlinkFeed {
+  font-size: 2em;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+#sendMessage #chainlinkFeed:hover {
+  font-size: 2em;
+  font-weight: 900;
+  color: var(--chainlink-blue);
+  text-shadow: 1px 0 var(--chainlink-blue);
+  letter-spacing: 1px;
+}
+
+#sendMessage #pickEmoji {
+  filter: grayscale();
+  transform: scale(1.2);
+}
+
+#sendMessage #pickEmoji:hover {
+  filter: none;
+  color: white;
+  transform: scale(1.4);
+}
+
+#sendMessage #messageSubmit:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+#sendMessage > p {
+  font-size: 20px;
+  color: var(--sky-white);
+  margin: 0 1% 0 1%;
+}
+
+#messageText {
+  color: var(--sky-white);
+  width: 75%;
+  height: 100%;
+  background-color: var(--transparent);
+  border: none;
+}
+
+#messageText::placeholder {
+  color: var(--mountain-gray);
+}
+
+#messageText:focus-visible {
+  border: none;
+  outline: none;
+}

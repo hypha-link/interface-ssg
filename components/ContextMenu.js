@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
+import styles from '../styles/context.module.css';
 
 const ContextMenu = (props) => {
   const [anchorPoint, setAnchorPoint] = useState(props.anchorPoint);
@@ -59,8 +60,8 @@ const ContextMenu = (props) => {
     return (
       <ul
         style={style()}
-        id="context-menu"
-        className="show-context-menu"
+        id={styles.contextMenu}
+        className={styles.showContextMenu}
         onClick={(e) => e.stopPropagation()}
       >
         {validProps.map((prop) => {
@@ -76,7 +77,7 @@ const ContextMenu = (props) => {
                     props.localAnchorPoint({ x: 0, y: 0 });
                     }}
                 >
-                    <p id="context-icon">{optionIcons.get(prop)}</p>
+                    <p>{optionIcons.get(prop)}</p>
                     <p>{prop}</p>
                 </button>
                 </li>

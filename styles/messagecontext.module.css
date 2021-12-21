@@ -1,0 +1,24 @@
+/*MESSAGE CONTEXT*/
+
+#messageContext {
+  background-color: var(--forest-green);
+  position: absolute;
+  min-height: 40%;
+  min-width: 53vw;
+  right: 15%;
+  z-index: 2;
+}
+
+#messageContext > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+#messageContext > div button {
+  flex: 1;
+}
+
+#messageContext > div button:hover {
+  color: var(--lake-blue);
+}

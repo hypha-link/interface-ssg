@@ -15,6 +15,6 @@ module.exports = {
 
 module.exports = {
   images: {
-    domains: ['robohash.org'],
+    domains: ['robohash.org', 'ipfs.io'],
   },
 }

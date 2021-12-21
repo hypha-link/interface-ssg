@@ -1,0 +1,172 @@
+#content {
+  display: flex;
+}
+
+/*TOPBAR*/
+
+#topBar {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 60px;
+  background-color: var(--forest-green);
+  color: white;
+}
+
+#topBar input {
+  background-color: var(--transparent);
+  color: black;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+#topBar input::placeholder {
+  color: white;
+}
+
+#topBar input:focus-visible {
+  border: none;
+  outline: none;
+}
+
+#topBar > * {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  flex-grow: 1;
+}
+
+/*SIDEBAR CONTAINER*/
+
+#sidebarContainer {
+  background: var(--transparent);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: calc(100vh - 60px);
+  flex: 1;
+}
+
+/*BROWSER SERVERS*/
+
+#browserServers {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 12vh;
+}
+
+#browserServers:hover {
+  background: rgba(0, 0, 0, 0.01);
+}
+
+#browserServers > button {
+  width: 75%;
+  margin: 2%;
+  padding: 2%;
+}
+
+/*MESSAGES*/
+
+#messagesContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background: var(--sky-white);
+  background: var(--transparent);
+  height: calc(100vh - 60px);
+  flex: 3;
+}
+
+#messagesContainer > div {
+  display: flex;
+  flex-direction: column-reverse;
+  height: 100%;
+  overflow-y: auto;
+  visibility: hidden;
+}
+
+#messagesContainer > div > div,
+#messagesContainer > div:hover,
+#messagesContainer > div:focus {
+  visibility: visible;
+}
+
+/*PROFILE*/
+
+#profile {
+  display: flex;
+  /*Set connect button to bottom right of container*/
+  align-items: flex-start;
+  justify-content: flex-end;
+  min-height: 20vh;
+}
+
+#profile:hover {
+  background: rgba(0, 0, 0, 0.01);
+}
+
+/*Both divs inside profile container*/
+#profile > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  flex: 1;
+  height: 100%;
+  width: 40%;
+}
+
+#profile #currentActivity a {
+  text-decoration: none;
+  color: black;
+}
+
+#profile #currentActivity a:hover {
+  color: var(--forest-green);
+}
+
+#profile #connectArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#profile #connectArea button {
+  height: 60px;
+  width: 140px;
+  border-radius: 314px;
+}
+
+/*FRIENDS*/
+
+#friendsList {
+  flex-grow: 1;
+  overflow-y: auto;
+  visibility: hidden;
+}
+
+#friendsList:hover {
+  background: rgba(0, 0, 0, 0.01);
+}
+
+#friendsList > div {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+#friendsList div,
+#friendsList:hover,
+#friendsList:focus {
+  visibility: visible;
+}
+
+/*Temporary*/
+
+#friendsList p {
+  text-align: center;
+}

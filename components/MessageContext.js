@@ -1,8 +1,9 @@
 import React from 'react'
+import styles from '../styles/messagecontext.module.css'
 
 export const MessageContext = (props) => {
     return (
-        <section className="overlay" id="msg-context" onBlur={(e) => props.onBlur(e)}>
+        <section className="overlay" id={styles.messageContext} onBlur={(e) => props.onBlur(e)}>
             <div>
                 <button onClick={() => props.value("😃")}>&#x1F603;</button>
                 <button onClick={() => props.value("👋")}>&#x1F44B;</button>

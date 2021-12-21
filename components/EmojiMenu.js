@@ -1,4 +1,6 @@
 import React from 'react'
+import styles from '../styles/emojimenu.module.css'
+
 const emojis = require('emojis-list')
 
 export const EmojiMenu = (props) => {
@@ -21,7 +23,7 @@ export const EmojiMenu = (props) => {
     emojiArr.push(emojis[2601]);
     emojiArr.push(emojis[2910]);
     return (
-        <section className="overlay" id="emoji-menu" onBlur={(e) => props.onBlur(e)}>
+        <section className="overlay" id={styles.emojiMenu} onBlur={(e) => props.onBlur(e)}>
             {emojiArr.map((emoji) => {
                 return(
                     <button key={emoji} onClick={() => props.value(emoji)}>{emoji}</button>

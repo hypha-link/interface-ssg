@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { TokenFeed } from './TokenFeed'
 import priceFeed, { tokenAddr, tokenAddrArr } from '../services/Chainlink_API'
 const { ethers } = require("ethers")
+import styles from '../styles/chainlinkfeeds.module.css'
 
 export const ChainlinkFeeds = (props) => {
     const [tokenFeed, setTokenFeed] = useState([]);
@@ -37,7 +38,7 @@ export const ChainlinkFeeds = (props) => {
     })
 
     return (
-        <section className={tokenFeed.length !== 0 ? "overlay" : "overlay loadingCLFeeds"} id="chainlink-feeds" onBlur={(e) => props.onBlur(e)}>
+        <section className={tokenFeed.length !== 0 ? "overlay" : `overlay ${styles.loadingCLFeeds}`} id={styles.chainlinkFeeds} onBlur={(e) => props.onBlur(e)}>
             {tokenFeed.length !== 0 ? tokenFeed :
                 <p>
                     Loading...

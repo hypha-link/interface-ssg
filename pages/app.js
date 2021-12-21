@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
-import Logo from "../public/hypha-temp.png"
 import Head from "next/head";
+import styles from '../styles/app.module.css'
 
 import { useEtherBalance, useEthers, useTokenBalance, useContractFunction, useContractCall } from "@usedapp/core";
 import { formatEther } from "@ethersproject/units";
@@ -298,9 +299,11 @@ function App({ data }) {
 
       {/* Top Bar */}
 
-      <section id="top-bar">
-        <Image src={Logo} alt="Hypha Logo" width="100%" height="60px" objectFit="scale-down"></Image>
-        <div id="contact">
+      <section id={styles.topBar}>
+        <Link href="/">
+          <Image src="/hypha-temp.png" alt="Hypha Logo" width="100%" height="60px" objectFit="scale-down"></Image>
+        </Link>
+        <div>
           <p>{selectedFriend.address}</p>
         </div>
         <div>
@@ -313,9 +316,9 @@ function App({ data }) {
 
       {/* Content Section */}
 
-      <section id="content">
-        <section id="sidebar-container">
-          <section id="browser-servers">
+      <section id={styles.content}>
+        <section id={styles.sidebarContainer}>
+          <section id={styles.browserServers}>
             <FriendModal
               show={friendModal}
               addFriend={(address) => {
@@ -331,7 +334,7 @@ function App({ data }) {
             </button>
           </section>
 
-          <section id="friends-list">
+          <section id={styles.friendsList}>
             <div>
               <p>Friends List</p>
               {friends.map((friend) => {
@@ -349,10 +352,10 @@ function App({ data }) {
             </div>
           </section>
 
-          <section id="profile">
-            <div id="connect-area">
+          <section id={styles.profile}>
+            <div id={styles.connectArea}>
               <div>
-                <div id="current-activity">
+                <div id={styles.currentActivity}>
                   <a
                     href="https://streamr.network/core"
                     target="_blank"
@@ -380,7 +383,7 @@ function App({ data }) {
           </section>
         </section>
 
-        <section id="messages-container">
+        <section id={styles.messagesContainer}>
           <div>
             <div>
               {messages.map((message) => {

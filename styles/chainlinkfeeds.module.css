@@ -1,0 +1,38 @@
+/*CHAINLINK FEEDS*/
+
+#chainlinkFeeds {
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  right: 10%;
+  min-height: 100px;
+  min-width: 100px;
+  border-radius: 50px;
+  z-index: 2;
+}
+
+#chainlinkFeeds.loadingCLFeeds {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 6px dotted var(--lake-blue);
+  border-radius: 314px;
+  animation: spin 3s linear infinite;
+}
+
+#chainlinkFeeds.loadingCLFeeds p {
+  animation: spin 3s linear reverse infinite, blink 5s linear infinite;
+  font-size: 1em;
+  color: var(--sky-white);
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}

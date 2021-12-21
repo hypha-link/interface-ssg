@@ -1,0 +1,27 @@
+.selfProfile {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  min-width: 100px;
+  height: 50px;
+  border-radius: 314px;
+  background-color: var(--lake-blue);
+  border: none;
+  padding: 0;
+}
+
+.selfProfile:hover {
+  background-color: rgba(22, 24, 12, 0.2);
+}
+
+.selfProfile img {
+  border-radius: 314px;
+  max-height: 50px;
+}
+
+.selfProfile p {
+  flex-grow: 1;
+  margin: 0 2% 0 2%;
+}

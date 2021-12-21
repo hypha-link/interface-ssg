@@ -1,4 +1,5 @@
 import React, {useState} from 'react'
+import styles from '../styles/friendmodal.module.css'
 
 export const FriendModal = (props) => {
     const [inputValue, setInputValue] = useState("");
@@ -12,7 +13,7 @@ export const FriendModal = (props) => {
 
     return (
         props.show ?
-        <div id="friend-modal">
+        <div id={styles.friendModal}>
             <p>Add a friend?</p>
             <input
             type="text"

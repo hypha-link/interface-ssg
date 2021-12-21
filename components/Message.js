@@ -3,6 +3,7 @@ import Image from "next/image";
 import { TokenFeed } from "./TokenFeed";
 import ContextMenu from "./ContextMenu";
 import { useEthers } from "@usedapp/core";
+import styles from '../styles/message.module.css';
 
 export function Message(props) {
   const { account } = useEthers();
@@ -18,7 +19,7 @@ export function Message(props) {
 
   if(message.includes("ipfs")){
     imgArr.push(
-      <Image key={message} src={message} alt={message} width="100px" height="100px"></Image>
+      <Image key={message} src={message} alt={message} width="200px" height="200px" objectFit="contain"></Image>
     )
   }
   else if(message.match(urlRegex) !== null) {
@@ -47,7 +48,7 @@ export function Message(props) {
   }
   else{
     regularMessage.push(
-      <p id="messageText" key={message}>
+      <p id={styles.messageText} key={message}>
         {message}
       </p>
     )
@@ -55,7 +56,7 @@ export function Message(props) {
 
   return (
     <div
-      className={props.postedData.sender === account ? "message own" : "message"}
+      className={props.postedData.sender === account ? `${styles.message} ${styles.own}` : styles.message}
       onClick={() => props.clickMessage(props.postedData)}
       onContextMenu={(e) => {
             setTimeout(() => setAnchorPoint({x: e.pageX, y: e.pageY}), 1);
@@ -68,11 +69,11 @@ export function Message(props) {
       copy={() => {navigator.clipboard.writeText(props.postedData.message)}}
       delete={() => {props.deleteMessage(props.postedData)}}
       />
-      <Image src={`https://robohash.org/${props.postedData.sender}.png?set=set5`} alt="User" height={"100%"} width={"100%"} />
+      <Image src={`https://robohash.org/${props.postedData.sender}.png?set=set5`} alt="User" height="100%" width="100%" objectFit="contain" />
       <div>
         <div>
-          <p id="messageID">{props.postedData.sender}</p>
-          <p id="messageDate">{props.postedData.date}</p>
+          <p id={styles.messageID}>{props.postedData.sender}</p>
+          <p id={styles.messageDate}>{props.postedData.date}</p>
         </div>
         {/* Message Content */}
         {imgArr}

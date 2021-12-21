@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { MessageContext } from "./MessageContext";
 import { ChainlinkFeeds } from "./ChainlinkFeeds";
 import { EmojiMenu } from "./EmojiMenu";
+import styles from '../styles/sendmessage.module.css'
 
 const IPFS = require('ipfs');
 
@@ -92,13 +93,13 @@ export const SendMessage = ( props ) => {
   }
 
   return (
-    <section id="send-message">
+    <section id={styles.sendMessage}>
       <div>
-        <label id="add-file-label" htmlFor="add-file">+</label>
-        <input id="add-file" type="file" onChange={onChange} disabled={props.disabled}></input>
+        <label id={styles.addFileLabel} htmlFor={styles.addFile}>+</label>
+        <input id={styles.addFile} type="file" onChange={onChange} disabled={props.disabled}></input>
       </div>
       <input
-        id="message-text"
+        id={styles.messageText}
         name="message"
         type="text"
         placeholder="Message"
@@ -108,21 +109,24 @@ export const SendMessage = ( props ) => {
         onInput={(e) => createMessageContext(e)}
         onKeyPress={(e) => keyHandler(e)}
         disabled={props.disabled}
-      ></input>
+      />
       {showContext}
-      <button id="chainlink-feed"
+      <button
+        id={styles.chainlinkFeed}
         onClick={(e) => createChainlinkFeeds(e)}
         disabled={props.disabled}
       >&#x2B21;</button>
       {showChainlinkFeeds}
-      <button id="pick-emoji"
+      <button
+        id={styles.pickEmoji}
         onClick={(e) => createEmojiMenu(e)}
         disabled={props.disabled}
       >&#x1F60A;</button>
       {showEmojiMenu}
-      <button id="message-submit" 
-      onClick={(e) => buttonHandler(e)}
-      disabled={props.disabled}
+      <button
+        id={styles.messageSubmit} 
+        onClick={(e) => buttonHandler(e)}
+        disabled={props.disabled}
       >Submit</button>
     </section>
   );

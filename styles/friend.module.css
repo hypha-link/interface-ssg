@@ -1,0 +1,24 @@
+.selectedFriend,
+.selectedFriend:hover {
+  background-color: rgba(22, 24, 12, 0.15) !important;
+}
+
+.friendContainer {
+  display: flex;
+  padding: 2.5%;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.friendContainer:hover {
+  background-color: rgba(22, 24, 12, 0.05);
+}
+
+.friendContainer img {
+  border-radius: 314px;
+  max-height: 50px;
+}
+
+.friendContainer p {
+  margin-left: 2%;
+}
