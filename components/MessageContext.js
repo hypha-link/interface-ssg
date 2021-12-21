@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from '../styles/messagecontext.module.css'
+import styles from '../styles/MessageContext.module.css'
 
 export const MessageContext = (props) => {
     return (

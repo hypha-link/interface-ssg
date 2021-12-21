@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
+import styles from '../styles/app.module.css'
 import Link from "next/link";
 import Image from "next/image";
 import Head from "next/head";
-import styles from '../styles/app.module.css'
 
 import { useEtherBalance, useEthers, useTokenBalance, useContractFunction, useContractCall } from "@usedapp/core";
 import { formatEther } from "@ethersproject/units";

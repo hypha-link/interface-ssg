@@ -1,7 +1,7 @@
 import React from 'react'
+import styles from '../styles/ConnectButton.module.css'
 import Image from 'next/image';
 import { shortenIfAddress } from '@usedapp/core'
-import styles from '../styles/connectbutton.module.css'
 
 export const ConnectButton = (props) => {
   const isConnected = props.account !== "" && props.account !== undefined;

@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from '../styles/emojimenu.module.css'
+import styles from '../styles/EmojiMenu.module.css'
 
 const emojis = require('emojis-list')
 

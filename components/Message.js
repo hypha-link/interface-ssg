@@ -1,9 +1,9 @@
 import React, { useState } from "react";
+import styles from '../styles/Message.module.css';
 import Image from "next/image";
 import { TokenFeed } from "./TokenFeed";
 import ContextMenu from "./ContextMenu";
 import { useEthers } from "@usedapp/core";
-import styles from '../styles/message.module.css';
 
 export function Message(props) {
   const { account } = useEthers();

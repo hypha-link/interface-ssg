@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
+import styles from '../styles/Friend.module.css'
 import Image from 'next/image'
 import { shortenIfAddress, useSendTransaction } from '@usedapp/core'
 import ContextMenu from './ContextMenu'
 import { utils } from 'ethers'
-import styles from '../styles/friend.module.css'
 
 export const Friend = (props) => {
     const [anchorPoint, setAnchorPoint] = useState({x: 0, y: 0});

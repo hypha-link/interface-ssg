@@ -1,4 +1,4 @@
-import '../styles/globals.css'
+import '../styles/global.css'
 import { ChainId, Config, DAppProvider} from '@usedapp/core'
 
 const config= {

@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import styles from '../styles/friendmodal.module.css'
+import styles from '../styles/FriendModal.module.css'
 
 export const FriendModal = (props) => {
     const [inputValue, setInputValue] = useState("");

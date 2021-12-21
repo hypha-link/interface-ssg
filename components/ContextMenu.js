@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import styles from '../styles/context.module.css';
+import styles from '../styles/Context.module.css';
 
 const ContextMenu = (props) => {
   const [anchorPoint, setAnchorPoint] = useState(props.anchorPoint);

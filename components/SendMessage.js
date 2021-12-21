@@ -1,8 +1,8 @@
 import React, { useState } from "react";
+import styles from '../styles/SendMessage.module.css'
 import { MessageContext } from "./MessageContext";
 import { ChainlinkFeeds } from "./ChainlinkFeeds";
 import { EmojiMenu } from "./EmojiMenu";
-import styles from '../styles/sendmessage.module.css'
 
 const IPFS = require('ipfs');
 
