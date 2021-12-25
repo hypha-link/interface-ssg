@@ -30,12 +30,16 @@
   outline: none;
 }
 
-#topBar > * {
+#topBar > *{
   display: flex;
   align-items: center;
   justify-content: flex-start;
   height: 100%;
-  flex-grow: 1;
+  flex: 1;
+}
+
+#topBar > div{
+  justify-content: center;
 }
 
 /*SIDEBAR CONTAINER*/

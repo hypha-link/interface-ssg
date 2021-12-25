@@ -19,7 +19,6 @@ import CeramicClient from '@ceramicnetwork/http-client'
 import ThreeIdResolver from '@ceramicnetwork/3id-did-resolver'
 import { EthereumAuthProvider, ThreeIdConnect } from '@3id/connect'
 import dids from "dids";
-import { IDX } from '@ceramicstudio/idx'
 
 import getOrCreateMessageStream, {streamr} from "../services/Streamr_API"
 import HyphaToken from "../chain-info/HyphaToken.json"
@@ -300,9 +299,13 @@ function App({ data }) {
       {/* Top Bar */}
 
       <section id={styles.topBar}>
-        <Link href="/">
-          <Image src="/hypha-temp.png" alt="Hypha Logo" width="100%" height="60px" objectFit="scale-down"></Image>
-        </Link>
+        <div>
+          <Link href="/">
+            <a className="logoContainer">
+              <Image src="/hypha-temp.png" alt="Hypha Logo" layout="fill" objectFit="contain" priority />
+            </a>
+          </Link>
+        </div>
         <div>
           <p>{selectedFriend.address}</p>
         </div>

@@ -53,6 +53,14 @@ a {
   text-decoration: none;
 }
 
+/* For logo in Nav */
+.logoContainer{
+  position: relative;
+  aspect-ratio: 170 / 60;
+  height: 60px;
+  width: auto;
+}
+
 .hypha-button{
   background-color: var(--forest-green);
   color: var(--sky-white);

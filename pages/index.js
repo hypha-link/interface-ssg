@@ -13,7 +13,9 @@ export default function Home() {
       </Head>
       <nav className={styles.nav}>
         <Link href="/">
-          <Image src='/hypha-temp.png' alt="Logo" width="200%" height="70px" objectFit='scale-down' />
+          <a className='logoContainer'>
+            <Image src='/hypha-temp.png' alt="Logo" layout='fill' objectFit='contain' priority />
+          </a>
         </Link>
         <ul>
           <li><a href='#learn'>Learn</a></li>
