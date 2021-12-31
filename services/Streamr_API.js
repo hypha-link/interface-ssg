@@ -1,18 +1,20 @@
 import StreamrClient from "streamr-client";
 
 const axios = require('axios').default;
-
 const { ethereum } = window;
+
+//Address of the Streamr storage node
+const STREAMR_GERMANY = '0x31546eEA76F2B2b3C5cC06B1c93601dc35c9D916';
 
 export const streamr = new StreamrClient({
   auth: {ethereum},
-  publishWithSignature: "never",
+  publishWithSignature: "always",
 })
 
 /**
  * @returns Message Stream
  */
-export default async function getOrCreateMessageStream(_address){
+export default async function getOrCreateMessageStream(_address, _addToStorage){
     //Get the address of the connected wallet
     const ownerAddress = await streamr.getAddress();
     //Create a new message stream or select one that exists
@@ -30,14 +32,27 @@ export default async function getOrCreateMessageStream(_address){
         ],
       },
       partitions: 1,
-      requireSignedData: false,
+      requireSignedData: true,
       requireEncryptedData: false,
       autoConfigure: true,
       storageDays: 1,
       inactivityThresholdHours: 48,
     });
+    //Grant permissions to selected friend
+    grantPermissions(stream, _address)
+    //Add storage
+    _addToStorage && await stream.addToStorageNode(STREAMR_GERMANY);
     return stream;
   };
+
+  const grantPermissions = async (_stream, _address) => {
+    await _stream.grantPermission("stream_get", _address);
+    await _stream.grantPermission("stream_publish", _address);
+    await _stream.grantPermission("stream_subscribe", _address);
+    await _stream.grantPermission("stream_delete", _address);
+    await _stream.grantPermission("stream_edit", _address);
+    // await _stream.grantPermission("stream_share", _address);
+  }
 
   /**
    * @returns Stream creation time since epoch (milliseconds)

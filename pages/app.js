@@ -24,7 +24,6 @@ import getOrCreateMessageStream, {streamr} from "../services/Streamr_API"
 import HyphaToken from "../chain-info/HyphaToken.json"
 
 const HYPHA_ADDRESS = "0xe81FAE6d25b3f4A2bB520354F0dddF35bF77b21E";
-const STREAMR_GERMANY = '0x31546eEA76F2B2b3C5cC06B1c93601dc35c9D916';
 
 function App({ data }) {
   const { account, activateBrowserWallet, deactivate } = useEthers();
@@ -54,6 +53,58 @@ function App({ data }) {
     method: "winner"
   })
 
+  //Connects ethereum wallet to Hypha
+  const connect = () => {
+    activateBrowserWallet();
+    console.log(
+      "The client attempted to connect"
+    );
+    streamr.connect()
+  };
+
+  //Disconnects wallet and removes all data from window
+  const disconnect = () => {
+    deactivate();
+    console.log(
+      "The client has been disconnected"
+    );
+    setMessages([]);
+    setFriends([]);
+    setLoaded(false);
+    notifications.forEach(notification => {
+      notification.close();
+    });
+    setSelectedFriend({address: "Select A Friend", streamID: ""});
+    if(streamr){
+      streamr.getSubscriptions().forEach((sub) => sub.unsubscribe());
+      streamr.disconnect()
+    }
+  };
+
+  useEffect(() => {
+    function loadFriends() {
+      try {
+        const friendArr = [];
+        //Load friends from local storage
+        for(const key in window.localStorage){
+          if(key.includes("hypha-friends")){
+            friendArr.push(JSON.parse(window.localStorage.getItem(key)));
+          }
+        }
+        if(friendArr.length > 0)
+        setFriends([...friendArr]);
+
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    //Load if the user wallet is connected
+    if(account){
+      loadFriends();
+    }
+  }, [account])
+
+  //Add a new friend to list
   function addFriends(address) {
     const storageKey = "hypha-friends-" + address;
     const friend = {
@@ -66,6 +117,20 @@ function App({ data }) {
     }
   }
 
+  //Delete a friend from list
+  function deleteFriend(address){
+    const storageKey = "hypha-friends-" + address;
+    window.localStorage.removeItem(storageKey);
+    const friendArr = [];
+    for(const key in window.localStorage){
+      if(key.includes("hypha-friends")){
+        friendArr.push(window.localStorage.getItem(key))
+      }
+    }
+    setFriends(friendArr);
+  }
+
+  //Selects a new stream to load when friend is clicked
   async function clickFriend(address){
     //Unsubscribe to last friend before selecting next friend (to prevent duplicate messages)
     selectedFriend.streamID !== "" && await streamr.unsubscribe(selectedFriend.streamID);
@@ -94,9 +159,7 @@ function App({ data }) {
       .catch(async () => {
         console.log("Neither stream exists - Creating a new one")
         //Create a message stream
-        const stream = await getOrCreateMessageStream(address);
-        grantPermissions(stream, address)
-        await stream.addToStorageNode(STREAMR_GERMANY);
+        const stream = await getOrCreateMessageStream(address, false);
         setSelectedFriend((oldObj) => ({...oldObj, streamID: stream.id}))
       })
     })
@@ -109,49 +172,7 @@ function App({ data }) {
     }
   }
 
-  const grantPermissions = async (_stream, _address) => {
-    await _stream.grantPermission("stream_get", _address);
-    await _stream.grantPermission("stream_publish", _address);
-    await _stream.grantPermission("stream_subscribe", _address);
-    await _stream.grantPermission("stream_delete", _address);
-    await _stream.grantPermission("stream_edit", _address);
-  }
-
-  function deleteFriend(address){
-      const storageKey = "hypha-friends-" + address;
-      window.localStorage.removeItem(storageKey);
-      const friendArr = [];
-      for(const key in window.localStorage){
-        if(key.includes("hypha-friends")){
-          friendArr.push(window.localStorage.getItem(key))
-        }
-      }
-      setFriends(friendArr);
-  }
-
-  useEffect(() => {
-    function loadFriends() {
-      try {
-        const friendArr = [];
-        //Load friends from local storage
-        for(const key in window.localStorage){
-          if(key.includes("hypha-friends")){
-            friendArr.push(JSON.parse(window.localStorage.getItem(key)));
-          }
-        }
-        if(friendArr.length > 0)
-        setFriends([...friendArr]);
-
-      } catch (err) {
-        console.log(err);
-      }
-    }
-    //Load if the user wallet is connected
-    if(account){
-      loadFriends();
-    }
-  }, [account])
-
+  //Load messages on startup & subscribe to stream
   useEffect(() => {
     async function loadMessages() {
       try {
@@ -189,7 +210,7 @@ function App({ data }) {
         streamr.subscribe(
           {
             stream: selectedFriend.streamID,
-          }, (data) => {
+          }, (data, metaData) => {
             //Create a new notification if the new message was not sent by us & interface is not visible
             if(data.sender !== account && document.visibilityState !== "visible"){
               const notification = new Notification(data.sender + " sent you a message!", {body: data.message, icon: "https://robohash.org/" + data.sender + ".png?set=set5"});
@@ -208,6 +229,7 @@ function App({ data }) {
     }
   }, [account, selectedFriend]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  //Publish a message to stream
   const addMessage = async (messageText, messageDate) => {
     try{
       const stream = await streamr.getStream(selectedFriend.streamID);
@@ -236,6 +258,11 @@ function App({ data }) {
     }
   };
 
+  //Delete a message
+  async function deleteMessage(msg){
+    console.log("Delete: " + msg.message)
+  }
+
   function clickMessage(msg){
     try {
       console.log(msg);
@@ -244,40 +271,12 @@ function App({ data }) {
     }
   }
 
-  async function deleteMessage(msg){
-    console.log("Delete: " + msg.message)
-  }
-
+  //Opens message context menu
   function openMessageContext(){
     console.log("Open Message Context");
   }
 
-  const connect = () => {
-    activateBrowserWallet();
-    console.log(
-      "The client attempted to connect"
-    );
-    streamr.connect()
-  };
-
-  const disconnect = () => {
-    deactivate();
-    console.log(
-      "The client has been disconnected"
-    );
-    setMessages([]);
-    setFriends([]);
-    setLoaded(false);
-    notifications.forEach(notification => {
-      notification.close();
-    });
-    setSelectedFriend({address: "Select A Friend", streamID: ""});
-    if(streamr){
-      streamr.getSubscriptions().forEach((sub) => sub.unsubscribe());
-      streamr.disconnect()
-    }
-  };
-
+  //Formats eth balance removing extra decimals
   const formatEthBalance = () => {
     try {
       return formatEther(etherBalance);
