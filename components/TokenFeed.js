@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styles from '../styles/TokenFeed.module.css'
 import Image from 'next/image';
 import {priceTwoDec, tokenAddr} from '../services/Chainlink_API';
-import cryptoManifest from '../public/crypto-icons-plus/manifest.json';
+import cryptoManifest from '../node_modules/crypto-icons-plus/manifest.min.json'
 
 let priceTimer;
 
@@ -48,7 +48,7 @@ export const TokenFeed = (props) => {
     <input className={props.hideLiveFeedCheckbox ? styles.hideLiveFeedCheckbox : ""} type="checkbox" onChange={(e) => setLiveFeed(e.target.checked)}></input>
       <div>
         {/* Toggle Live Feed */}
-        <Image src={require(`../public/crypto-icons-plus/128/${tokenFullName.toLowerCase()}.png`)} height="33%" width="33%" alt="cryptocurrency-icon" />
+        <Image src={require(`../node_modules/crypto-icons-plus-128/src/${tokenFullName.toLowerCase()}.png`)} height="33%" width="33%" alt="cryptocurrency-icon" />
         <h1>{props.tokenName}</h1>
       </div>
       <p>{liveFeed ? liveTokenPrice : props.tokenPrice}</p>
