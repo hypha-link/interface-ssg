@@ -15,15 +15,18 @@ import { Friend } from "../components/Friend";
 import { SendMessage } from "../components/SendMessage";
 import { FriendModal } from "../components/FriendModal";
 
-import CeramicClient from '@ceramicnetwork/http-client'
-import ThreeIdResolver from '@ceramicnetwork/3id-did-resolver'
-import { EthereumAuthProvider, ThreeIdConnect } from '@3id/connect'
-import dids from "dids";
+import CeramicClient from '@ceramicnetwork/http-client';
+import KeyDidResolver from 'key-did-resolver';
+import ThreeIdResolver from '@ceramicnetwork/3id-did-resolver';
+import { EthereumAuthProvider, ThreeIdConnect } from '@3id/connect';
+import { DID } from "dids";
+import { TileDocument } from  '@ceramicnetwork/stream-tile';
 
 import getOrCreateMessageStream, {streamr} from "../services/Streamr_API"
 import HyphaToken from "../chain-info/HyphaToken.json"
 
 const HYPHA_ADDRESS = "0xe81FAE6d25b3f4A2bB520354F0dddF35bF77b21E";
+const CERAMIC_URL = 'https://gateway-clay.ceramic.network';
 
 function App({ data }) {
   const { account, activateBrowserWallet, deactivate } = useEthers();
@@ -292,6 +295,43 @@ function App({ data }) {
 
   const userBalance = useTokenBalance(HYPHA_ADDRESS, account);
 
+  //Ceramic testing
+  async function testCeramic(){
+    const ceramic = new CeramicClient(CERAMIC_URL);
+
+    const resolver = {
+      ...KeyDidResolver.getResolver(),
+      ...ThreeIdResolver.getResolver(ceramic),
+    }
+
+    const did = new DID({ resolver });
+
+    ceramic.did = did;
+
+    const threeIdConnect = new ThreeIdConnect();
+    const authProvider = new EthereumAuthProvider(window.ethereum, account);
+    await threeIdConnect.connect(authProvider);
+    const provider = await threeIdConnect.getDidProvider();
+    ceramic.did.setProvider(provider);
+    await ceramic.did.authenticate();
+
+    const doc = await TileDocument.create(
+      ceramic,
+      {
+        friends: 'Test Friend',
+      },
+      {
+        tags: ['friends'],
+      },
+    );
+
+    console.log(doc.commitId);
+
+    const docload = await TileDocument.load(ceramic, doc.id);
+
+    console.log(docload);
+  }
+
   return (
     <>
       <Head>
@@ -317,7 +357,7 @@ function App({ data }) {
           <input type="text" placeholder="Search..."></input>
         </div>
         <div>
-          <button className="hypha-button" onClick={() => console.log("Notifications")}>Notifications</button>
+          <button className="hypha-button" onClick={async () => testCeramic()}>Notifications</button>
         </div>
       </section>
 
