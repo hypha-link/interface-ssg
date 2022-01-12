@@ -56,9 +56,8 @@ a {
 /* For logo in Nav */
 .logoContainer{
   position: relative;
-  aspect-ratio: 170 / 60;
   height: 60px;
-  width: auto;
+  width: 60px;
 }
 
 .hypha-button{

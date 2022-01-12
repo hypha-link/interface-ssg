@@ -14,7 +14,7 @@ export default function Home() {
       <nav className={styles.nav}>
         <Link href="/">
           <a className='logoContainer'>
-            <Image src='/hypha-temp.png' alt="Logo" layout='fill' objectFit='contain' priority />
+            <Image src='/hypha-01.png' alt="Logo" layout='fill' objectFit='contain' priority />
           </a>
         </Link>
         <ul>

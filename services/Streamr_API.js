@@ -36,7 +36,7 @@ export default async function getOrCreateMessageStream(_address, _addToStorage){
       requireEncryptedData: false,
       autoConfigure: true,
       storageDays: 1,
-      inactivityThresholdHours: 48,
+      inactivityThresholdHours: .5,
     });
     //Grant permissions to selected friend
     grantPermissions(stream, _address)

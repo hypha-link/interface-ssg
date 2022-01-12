@@ -301,7 +301,7 @@ function App({ data }) {
         <div>
           <Link href="/">
             <a className="logoContainer">
-              <Image src="/hypha-temp.png" alt="Hypha Logo" layout="fill" objectFit="contain" priority />
+              <Image src="/hypha-01.png" alt="Hypha Logo" layout="fill" objectFit="contain" priority />
             </a>
           </Link>
         </div>
