@@ -1,8 +1,8 @@
 /*TOKEN FEED*/
 #tokenFeed {
   position: relative;
-  background-color: var(--sky-white);
-  border: var(--forest-green) 5px outset;
+  background-color: var(--primary-color);
+  border: var(--ui-color) 5px outset;
   display: flex;
   flex-direction: column;
   width: 250px;
@@ -77,7 +77,7 @@
 }
 
 #tokenFeed:hover {
-  background-color: var(--lake-blue);
+  background-color: var(--secondary-color);
 }
 
 #tokenFeed > div {
@@ -149,10 +149,10 @@
   margin-left: 7%;
   width: 1.3em;
   height: 1.3em;
-  background-color: var(--sky-white);
+  background-color: var(--primary-color);
   border-radius: 50%;
   vertical-align: middle;
-  border: 2px dotted var(--forest-green);
+  border: 2px dotted var(--ui-color);
   appearance: none;
   -webkit-appearance: none;
   outline: none;
@@ -165,7 +165,7 @@
 }
 
 #tokenFeed input:checked {
-  background-color: var(--forest-green);
+  background-color: var(--ui-color);
   animation: blink 2s linear infinite;
 }
 

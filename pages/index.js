@@ -2,8 +2,11 @@ import styles from '../styles/index.module.css'
 import Head from 'next/head'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useState } from 'react'
 
-export default function Home() {
+export default function Index() {
+  const [hideMobileMenu, setHideMobileMenu] = useState(true);
+
   return (
     <>
       <Head>
@@ -13,19 +16,22 @@ export default function Home() {
       </Head>
       <nav className={styles.nav}>
         <Link href="/">
-          <a className='logoContainer'>
+          <a className={`${styles.logo} logoContainer`}>
             <Image src='/hypha-01.png' alt="Logo" layout='fill' objectFit='contain' priority />
           </a>
         </Link>
-        <ul>
-          <li><a href='#learn'>Learn</a></li>
-          <li><a href='#activity'>Network Activity</a></li>
-          <li><a href='#whitepaper'>Whitepaper</a></li>
-          <li><a href='#docs'>Docs</a></li>
-        </ul>
-        <Link href="/app">
-          <a  className={styles.enter}>Enter App</a>
-        </Link>
+        <div className={hideMobileMenu ? styles.hideMobileMenu : undefined}>
+          <ul>
+            <li><a href='#learn'>Learn</a></li>
+            <li><a href='#activity'>Network Activity</a></li>
+            <li><a href='#whitepaper'>Whitepaper</a></li>
+            <li><a href='#docs'>Docs</a></li>
+          </ul>
+          <Link href="/app">
+            <a className={styles.enter}>Enter App</a>
+          </Link>
+        </div>
+        <a className={styles.hamburger} onClick={() => setHideMobileMenu(!hideMobileMenu)}>☰</a>
       </nav>
       <main>
         <section className={styles.hero}>

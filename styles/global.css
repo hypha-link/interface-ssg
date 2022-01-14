@@ -1,11 +1,19 @@
 :root{
   --mountain-gray: rgba(77, 77, 82, 1);
-  --lake-blue: rgba(179, 225, 238, 1);
-  --sky-white: rgba(230, 239, 248, 1);
-  --forest-green: rgba(56, 61, 31, 1);
+  --primary-color: rgba(230, 239, 248, 1);
+  --secondary-color: rgba(179, 225, 238, 1);
+  --ui-color: rgba(42, 17, 7, 1);
   --gravel-black: rgba(22, 24, 12, 1);
   --chainlink-blue: rgba(55, 91, 210, 1);
   --transparent: rgba(0, 0, 0, 0);
+
+  /* Index */
+  --hero: rgba(82, 57, 47, 1);
+  --light-brown: rgba(72, 47, 37, 1);
+  --med-brown: rgba(62, 37, 27, 1);
+  --dark-brown: rgba(52, 27, 17, 1);
+  --vdark-brown: rgba(42, 17, 7, 1);
+  --text-color: rgba(255, 255, 255, 1);
 }
 
 /*SCROLLBAR*/
@@ -38,7 +46,7 @@ body {
 
 html{
   overflow-x: hidden;
-  background: radial-gradient(circle, var(--sky-white) 0%, var(--lake-blue) 150%);
+  background: radial-gradient(circle, var(--primary-color) 0%, var(--secondary-color) 150%);
   height:100vh;
 }
 
@@ -61,8 +69,8 @@ a {
 }
 
 .hypha-button{
-  background-color: var(--forest-green);
-  color: var(--sky-white);
+  background-color: var(--ui-color);
+  color: var(--primary-color);
   border:none;
   border-radius: 5px;
   opacity: .6;
@@ -77,11 +85,11 @@ a {
 /*OVERLAY BUTTONS*/
 
 .overlay{
-  background-color: var(--forest-green);
+  background-color: var(--ui-color);
   position: absolute;
   bottom:calc(2% + 50px);
 }
 
 .overlay button:hover{
-  color:var(--lake-blue) !important;
+  color:var(--secondary-color) !important;
 }

@@ -14,7 +14,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 6px dotted var(--lake-blue);
+  border: 6px dotted var(--secondary-color);
   border-radius: 314px;
   animation: spin 3s linear infinite;
 }
@@ -22,7 +22,7 @@
 #chainlinkFeeds.loadingCLFeeds p {
   animation: spin 3s linear reverse infinite, blink 5s linear infinite;
   font-size: 1em;
-  color: var(--sky-white);
+  color: var(--primary-color);
 }
 
 @keyframes blink {

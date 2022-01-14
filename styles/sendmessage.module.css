@@ -4,7 +4,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--forest-green);
+  background-color: var(--ui-color);
   min-height: 50px;
   margin: 1.5%;
   padding: 0 1% 0 1%;
@@ -21,7 +21,7 @@
 
 #sendMessage #addFileLabel {
   background-color: rgba(255, 255, 255, 0.5);
-  color: var(--forest-green);
+  color: var(--ui-color);
   border-radius: 314px;
   padding: 0 0.4em 0 0.4em;
 }
@@ -65,12 +65,12 @@
 
 #sendMessage > p {
   font-size: 20px;
-  color: var(--sky-white);
+  color: var(--primary-color);
   margin: 0 1% 0 1%;
 }
 
 #messageText {
-  color: var(--sky-white);
+  color: var(--primary-color);
   width: 75%;
   height: 100%;
   background-color: var(--transparent);

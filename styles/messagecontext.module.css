@@ -1,7 +1,7 @@
 /*MESSAGE CONTEXT*/
 
 #messageContext {
-  background-color: var(--forest-green);
+  background-color: var(--ui-color);
   position: absolute;
   min-height: 40%;
   min-width: 53vw;
@@ -20,5 +20,5 @@
 }
 
 #messageContext > div button:hover {
-  color: var(--lake-blue);
+  color: var(--secondary-color);
 }

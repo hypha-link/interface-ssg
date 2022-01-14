@@ -9,7 +9,7 @@
   justify-content: flex-start;
   align-items: center;
   height: 60px;
-  background-color: var(--forest-green);
+  background-color: var(--ui-color);
   color: white;
 }
 
@@ -40,6 +40,12 @@
 
 #topBar > div{
   justify-content: center;
+}
+
+#topBar > div:first-child{
+  justify-content: center;
+  max-width: 60px;
+  margin-left: 3%;
 }
 
 /*SIDEBAR CONTAINER*/
@@ -79,7 +85,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  background: var(--sky-white);
+  background: var(--primary-color);
   background: var(--transparent);
   height: calc(100vh - 60px);
   flex: 3;
@@ -130,7 +136,7 @@
 }
 
 #profile #currentActivity a:hover {
-  color: var(--forest-green);
+  color: var(--ui-color);
 }
 
 #profile #connectArea {
