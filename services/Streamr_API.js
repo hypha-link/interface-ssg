@@ -6,10 +6,22 @@ const { ethereum } = window;
 //Address of the Streamr storage node
 const STREAMR_GERMANY = '0x31546eEA76F2B2b3C5cC06B1c93601dc35c9D916';
 
-export const streamr = new StreamrClient({
-  auth: {ethereum},
-  publishWithSignature: "always",
-})
+//Create the Streamr client
+const streamrClient = () => {
+  let client = undefined;
+  try{
+    client = new StreamrClient({
+      auth: {ethereum},
+      publishWithSignature: "always",
+    })
+  }
+  catch{
+    console.log("User needs to be signed in with an Ethereum wallet to authenticate Streamr.");
+  }
+  return client;
+}
+
+export const streamr = streamrClient();
 
 /**
  * @returns Message Stream

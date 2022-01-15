@@ -55,11 +55,16 @@ function App({ data }) {
 
   //Connects ethereum wallet to Hypha
   const connect = () => {
-    activateBrowserWallet();
-    console.log(
-      "The client attempted to connect"
-    );
-    streamr.connect()
+    try{
+      activateBrowserWallet();
+      console.log(
+        "The client attempted to connect"
+      );
+      streamr.connect()
+    }
+    catch{
+      console.log("User needs an Ethereum wallet to connect to Hypha.");
+    }
   };
 
   //Disconnects wallet and removes all data from window
