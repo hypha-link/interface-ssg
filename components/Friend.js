@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import styles from '../styles/Friend.module.css'
+import styles from '../styles/friend.module.css'
 import Image from 'next/image'
 import { shortenIfAddress, useSendTransaction } from '@usedapp/core'
 import ContextMenu from './ContextMenu'

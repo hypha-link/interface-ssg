@@ -4,78 +4,69 @@ import Link from "next/link";
 import Image from "next/image";
 import Head from "next/head";
 
-import { useEtherBalance, useEthers, useTokenBalance, useContractFunction, useContractCall } from "@usedapp/core";
+import { useEtherBalance, useEthers } from "@usedapp/core";
 import { formatEther } from "@ethersproject/units";
-import { Contract } from "ethers";
-import { ethers, utils } from "ethers";
+import { ethers } from "ethers";
 
 import { ConnectButton } from "../components/ConnectButton";
 import { Message } from "../components/Message";
 import { Friend } from "../components/Friend";
 import { SendMessage } from "../components/SendMessage";
 import { FriendModal } from "../components/FriendModal";
+import { Settings } from "../components/Settings";
 
 import CeramicClient from '@ceramicnetwork/http-client';
 import KeyDidResolver from 'key-did-resolver';
 import ThreeIdResolver from '@ceramicnetwork/3id-did-resolver';
-import { EthereumAuthProvider, ThreeIdConnect } from '@3id/connect';
+import { ThreeIdConnect } from '@3id/connect';
 import { DID } from "dids";
 import { TileDocument } from  '@ceramicnetwork/stream-tile';
 
+import { EthereumAuthProvider, SelfID } from '@self.id/web';
 import getOrCreateMessageStream, {streamr} from "../services/Streamr_API"
-import HyphaToken from "../chain-info/HyphaToken.json"
-
-const HYPHA_ADDRESS = "0xe81FAE6d25b3f4A2bB520354F0dddF35bF77b21E";
-const CERAMIC_URL = 'https://gateway-clay.ceramic.network';
 
 function App({ data }) {
   const { account, activateBrowserWallet, deactivate } = useEthers();
   const etherBalance = useEtherBalance(account);
 
+  const [selfId, setSelfId] = useState();
+
   //Component Constructors
   const [messages, setMessages] = useState([]);
   const [friends, setFriends] = useState([])
   const [friendModal, setFriendModal] = useState(false);
+  const [settingsModal, setSettingsModal] = useState(false);
 
   const [selectedFriend, setSelectedFriend] = useState({address: "Select A Friend", streamID: ""});
   const [loaded, setLoaded] = useState(false);
   const [notifications, setNotifications] = useState([]);
 
-  const [messageGuessing, setMessageGuessing] = useState(false);
-
-  //HyphaToken Contract
-  const abi = HyphaToken;
-  const hyphaInterface = new utils.Interface(abi);
-  const contract = new Contract(HYPHA_ADDRESS, hyphaInterface)
-  const { send: sendRandomWinner } = useContractFunction(contract, 'randomWinner');
-  const { send: sendRandomNumber } = useContractFunction(contract, 'getRandomNumber');
-
-  const winner = useContractCall({
-    abi: hyphaInterface,
-    address: HYPHA_ADDRESS,
-    method: "winner"
-  })
+  useEffect( async () => {
+    if(account){
+      try{
+        await streamr.connect()
+        setSelfId(await SelfID.authenticate({
+          authProvider: new EthereumAuthProvider(window.ethereum, account),
+          ceramic: 'testnet-clay',
+          connectNetwork: 'testnet-clay',
+        }))
+      }
+      catch{
+        console.log("User needs an Ethereum wallet to connect to Hypha.");
+      }
+    }
+  }, [account])
 
   //Connects ethereum wallet to Hypha
-  const connect = () => {
-    try{
-      activateBrowserWallet();
-      console.log(
-        "The client attempted to connect"
-      );
-      streamr.connect()
-    }
-    catch{
-      console.log("User needs an Ethereum wallet to connect to Hypha.");
-    }
+  const connect = async () => {
+    activateBrowserWallet();
+    console.log("The client attempted to connect");
   };
 
   //Disconnects wallet and removes all data from window
-  const disconnect = () => {
+  const disconnect = async () => {
     deactivate();
-    console.log(
-      "The client has been disconnected"
-    );
+    console.log("The client has been disconnected");
     setMessages([]);
     setFriends([]);
     setLoaded(false);
@@ -84,8 +75,8 @@ function App({ data }) {
     });
     setSelectedFriend({address: "Select A Friend", streamID: ""});
     if(streamr){
-      streamr.getSubscriptions().forEach((sub) => sub.unsubscribe());
-      streamr.disconnect()
+      streamr.getSubscriptions().forEach(async (sub) => await sub.unsubscribe());
+      await streamr.disconnect()
     }
   };
 
@@ -246,19 +237,6 @@ function App({ data }) {
         message: messageText,
         date: messageDate
       })
-      if(messageGuessing){
-        //Check HyphaToken for winner
-        if(winner){
-          console.log("Need to reset random number")
-          sendRandomNumber();
-        }
-        //Select winner if number above random is guessed
-        else{
-          const guess = Math.floor(Math.random() * 100)
-          await sendRandomWinner(guess);
-          console.log("You guessed: " + guess);
-        }
-      }
     }
     catch(err){
       alert("Please connect your wallet before using Hypha.");
@@ -293,10 +271,9 @@ function App({ data }) {
     }
   };
 
-  const userBalance = useTokenBalance(HYPHA_ADDRESS, account);
-
   //Ceramic testing
   async function testCeramic(){
+    const CERAMIC_URL = 'https://gateway-clay.ceramic.network';
     const ceramic = new CeramicClient(CERAMIC_URL);
 
     const resolver = {
@@ -375,10 +352,6 @@ function App({ data }) {
               cancel={() => setFriendModal(false)}
             />
             <button className="hypha-button" onClick={() => {setFriendModal(!friendModal)}}>Add Friends</button>
-            <button className="hypha-button" onClick={() => setMessageGuessing(!messageGuessing)}>{messageGuessing ? 
-            "Participating in Message Guessing" : 
-            "Not Participating in Message Guessing"}
-            </button>
           </section>
 
           <section id={styles.friendsList}>
@@ -403,28 +376,26 @@ function App({ data }) {
             <div id={styles.connectArea}>
               <div>
                 <div id={styles.currentActivity}>
-                  <a
-                    href="https://streamr.network/core"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Access your data here!
-                  </a>
+                  <Settings
+                    profile={selfId}
+                    address={account}
+                    show={settingsModal}
+                    cancel={() => setSettingsModal(false)}
+                  />
+                  <button className="hypha-button" onClick={() => {setSettingsModal(!settingsModal)}}>Settings</button>
                 </div>
               </div>
             </div>
             <div>
               <ConnectButton
-                account={account}
+                profile={selfId}
+                address={account}
                 connect={connect}
                 disconnect={disconnect}
               />
               <p>
                 {account !== undefined ? 
-                (formatEthBalance().substr(0, 6) + " Ethereum") : "Connect Wallet"}
-                <br></br>
-                {account !== undefined && userBalance !== undefined ? 
-                ((ethers.utils.formatUnits(userBalance, 18) + " Hypha")) : ""}
+                (formatEthBalance().substring(0, 6) + " Ethereum") : "Connect Wallet"}
               </p>
             </div>
           </section>
