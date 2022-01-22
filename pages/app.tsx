@@ -1,3 +1,5 @@
+declare let window: any;
+
 import React, { useEffect, useState } from "react";
 import styles from '../styles/app.module.css'
 import Link from "next/link";
@@ -22,7 +24,7 @@ function App({ data }) {
   const { account, activateBrowserWallet, deactivate } = useEthers();
   const etherBalance = useEtherBalance(account);
 
-  const [selfId, setSelfId] = useState();
+  const [selfId, setSelfId] = useState<SelfID>();
 
   //Component Constructors
   const [messages, setMessages] = useState([]);
