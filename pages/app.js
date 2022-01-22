@@ -15,13 +15,6 @@ import { SendMessage } from "../components/SendMessage";
 import { FriendModal } from "../components/FriendModal";
 import { Settings } from "../components/Settings";
 
-import CeramicClient from '@ceramicnetwork/http-client';
-import KeyDidResolver from 'key-did-resolver';
-import ThreeIdResolver from '@ceramicnetwork/3id-did-resolver';
-import { ThreeIdConnect } from '@3id/connect';
-import { DID } from "dids";
-import { TileDocument } from  '@ceramicnetwork/stream-tile';
-
 import { EthereumAuthProvider, SelfID } from '@self.id/web';
 import getOrCreateMessageStream, {streamr} from "../services/Streamr_API"
 
@@ -41,20 +34,25 @@ function App({ data }) {
   const [loaded, setLoaded] = useState(false);
   const [notifications, setNotifications] = useState([]);
 
-  useEffect( async () => {
-    if(account){
-      try{
-        await streamr.connect()
-        setSelfId(await SelfID.authenticate({
-          authProvider: new EthereumAuthProvider(window.ethereum, account),
-          ceramic: 'testnet-clay',
-          connectNetwork: 'testnet-clay',
-        }))
-      }
-      catch{
-        console.log("User needs an Ethereum wallet to connect to Hypha.");
+  useEffect(() => {
+
+    const connect = async () => {
+      if(account){
+        try{
+          await streamr.connect()
+          setSelfId(await SelfID.authenticate({
+            authProvider: new EthereumAuthProvider(window.ethereum, account),
+            ceramic: 'testnet-clay',
+            connectNetwork: 'testnet-clay',
+          }))
+        }
+        catch{
+          console.log("User needs an Ethereum wallet to connect to Hypha.");
+        }
       }
     }
+
+    connect();
   }, [account])
 
   //Connects ethereum wallet to Hypha
@@ -258,7 +256,7 @@ function App({ data }) {
   }
 
   //Opens message context menu
-  function openMessageContext(){
+  function openMessageContext(msg){
     console.log("Open Message Context");
   }
 
@@ -273,27 +271,8 @@ function App({ data }) {
 
   //Ceramic testing
   async function testCeramic(){
-    const CERAMIC_URL = 'https://gateway-clay.ceramic.network';
-    const ceramic = new CeramicClient(CERAMIC_URL);
 
-    const resolver = {
-      ...KeyDidResolver.getResolver(),
-      ...ThreeIdResolver.getResolver(ceramic),
-    }
-
-    const did = new DID({ resolver });
-
-    ceramic.did = did;
-
-    const threeIdConnect = new ThreeIdConnect();
-    const authProvider = new EthereumAuthProvider(window.ethereum, account);
-    await threeIdConnect.connect(authProvider);
-    const provider = await threeIdConnect.getDidProvider();
-    ceramic.did.setProvider(provider);
-    await ceramic.did.authenticate();
-
-    const doc = await TileDocument.create(
-      ceramic,
+    const doc = await selfId.client.tileLoader.create(
       {
         friends: 'Test Friend',
       },
@@ -304,9 +283,9 @@ function App({ data }) {
 
     console.log(doc.commitId);
 
-    const docload = await TileDocument.load(ceramic, doc.id);
+    const docLoad = await selfId.client.tileLoader.load(doc.id);
 
-    console.log(docload);
+    console.log(docLoad.content);
   }
 
   return (
