@@ -4,75 +4,66 @@ import Link from "next/link";
 import Image from "next/image";
 import Head from "next/head";
 
-import { useEtherBalance, useEthers, useTokenBalance, useContractFunction, useContractCall } from "@usedapp/core";
+import { useEtherBalance, useEthers } from "@usedapp/core";
 import { formatEther } from "@ethersproject/units";
-import { Contract } from "ethers";
-import { ethers, utils } from "ethers";
+import { ethers } from "ethers";
 
 import { ConnectButton } from "../components/ConnectButton";
 import { Message } from "../components/Message";
 import { Friend } from "../components/Friend";
 import { SendMessage } from "../components/SendMessage";
 import { FriendModal } from "../components/FriendModal";
+import { Settings } from "../components/Settings";
 
-import CeramicClient from '@ceramicnetwork/http-client'
-import ThreeIdResolver from '@ceramicnetwork/3id-did-resolver'
-import { EthereumAuthProvider, ThreeIdConnect } from '@3id/connect'
-import dids from "dids";
-
+import { EthereumAuthProvider, SelfID } from '@self.id/web';
 import getOrCreateMessageStream, {streamr} from "../services/Streamr_API"
-import HyphaToken from "../chain-info/HyphaToken.json"
-
-const HYPHA_ADDRESS = "0xe81FAE6d25b3f4A2bB520354F0dddF35bF77b21E";
 
 function App({ data }) {
   const { account, activateBrowserWallet, deactivate } = useEthers();
   const etherBalance = useEtherBalance(account);
 
+  const [selfId, setSelfId] = useState<SelfID>();
+
   //Component Constructors
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<string[]>([]);
   const [friends, setFriends] = useState([])
   const [friendModal, setFriendModal] = useState(false);
+  const [settingsModal, setSettingsModal] = useState(false);
 
   const [selectedFriend, setSelectedFriend] = useState({address: "Select A Friend", streamID: ""});
   const [loaded, setLoaded] = useState(false);
   const [notifications, setNotifications] = useState([]);
 
-  const [messageGuessing, setMessageGuessing] = useState(false);
-
-  //HyphaToken Contract
-  const abi = HyphaToken;
-  const hyphaInterface = new utils.Interface(abi);
-  const contract = new Contract(HYPHA_ADDRESS, hyphaInterface)
-  const { send: sendRandomWinner } = useContractFunction(contract, 'randomWinner');
-  const { send: sendRandomNumber } = useContractFunction(contract, 'getRandomNumber');
-
-  const winner = useContractCall({
-    abi: hyphaInterface,
-    address: HYPHA_ADDRESS,
-    method: "winner"
-  })
+  useEffect(() => {
+    const connect = async () => {
+      if(account){
+        try{
+          await streamr.connect()
+          setSelfId(await SelfID.authenticate({
+            //@ts-ignore
+            authProvider: new EthereumAuthProvider(window.ethereum, account),
+            ceramic: 'testnet-clay',
+            connectNetwork: 'testnet-clay',
+          }))
+        }
+        catch{
+          console.log("User needs an Ethereum wallet to connect to Hypha.");
+        }
+      }
+    }
+    connect();
+  }, [account])
 
   //Connects ethereum wallet to Hypha
-  const connect = () => {
-    try{
-      activateBrowserWallet();
-      console.log(
-        "The client attempted to connect"
-      );
-      streamr.connect()
-    }
-    catch{
-      console.log("User needs an Ethereum wallet to connect to Hypha.");
-    }
+  const connect = async () => {
+    activateBrowserWallet();
+    console.log("The client attempted to connect");
   };
 
   //Disconnects wallet and removes all data from window
-  const disconnect = () => {
+  const disconnect = async () => {
     deactivate();
-    console.log(
-      "The client has been disconnected"
-    );
+    console.log("The client has been disconnected");
     setMessages([]);
     setFriends([]);
     setLoaded(false);
@@ -81,58 +72,82 @@ function App({ data }) {
     });
     setSelectedFriend({address: "Select A Friend", streamID: ""});
     if(streamr){
-      streamr.getSubscriptions().forEach((sub) => sub.unsubscribe());
-      streamr.disconnect()
+      streamr.getSubscriptions().forEach(async (sub) => await sub.unsubscribe());
+      await streamr.disconnect()
     }
   };
 
-  useEffect(() => {
-    function loadFriends() {
-      try {
-        const friendArr = [];
-        //Load friends from local storage
-        for(const key in window.localStorage){
-          if(key.includes("hypha-friends")){
-            friendArr.push(JSON.parse(window.localStorage.getItem(key)));
-          }
-        }
-        if(friendArr.length > 0)
-        setFriends([...friendArr]);
+  interface friends {
+    address: string,
+    streamID: string,
+  };
 
-      } catch (err) {
-        console.log(err);
+  const localStreamKey = "friends-streamId"; 
+
+  useEffect(() => {
+    async function loadFriends() {
+      //Check local storage for stream key
+      if(window.localStorage.getItem(localStreamKey) !== null && selfId){
+        console.log("load friends");
+        const stream = await selfId.client.tileLoader.load(window.localStorage.getItem(localStreamKey));
+        const streamFriends:friends[] = stream.content.friends;
+        console.log(streamFriends.length);
+
+        if(streamFriends.length > 0)
+        setFriends([...streamFriends]);
       }
     }
-    //Load if the user wallet is connected
-    if(account){
-      loadFriends();
-    }
-  }, [account])
+    if(selfId)
+    loadFriends()
+  }, [selfId])
 
-  //Add a new friend to list
-  function addFriends(address) {
-    const storageKey = "hypha-friends-" + address;
-    const friend = {
+  async function addFriends(address){
+    const newFriend = {
       address: address,
       streamID: "",
     }
-    if(window.localStorage.getItem(storageKey) === null && ethers.utils.isAddress(address)){
-      window.localStorage.setItem(storageKey, JSON.stringify(friend));
-      setFriends((oldArr) => [...oldArr, friend]);
+    //Check local storage for stream key
+    if(window.localStorage.getItem(localStreamKey) !== null){
+        const stream = await selfId.client.tileLoader.load(window.localStorage.getItem(localStreamKey));
+        const streamFriends:friends[] = stream.content.friends;
+        await stream.update({friends: [...streamFriends, newFriend]});
     }
+    //Create a new friends stream if there are no previously existing streams & pin it
+    else{
+      const stream = await selfId.client.tileLoader.create(
+        {
+          friends: [newFriend]
+        },
+        {
+          tags: ['friends'],
+        },
+        {
+          pin: true,
+        }
+      );
+      //Add a new local storage record of the stream ID
+      window.localStorage.setItem(localStreamKey, stream.id.toString());
+    }
+    setFriends((oldArr) => [...oldArr, newFriend])
   }
 
-  //Delete a friend from list
-  function deleteFriend(address){
-    const storageKey = "hypha-friends-" + address;
-    window.localStorage.removeItem(storageKey);
-    const friendArr = [];
-    for(const key in window.localStorage){
-      if(key.includes("hypha-friends")){
-        friendArr.push(window.localStorage.getItem(key))
+  async function deleteFriend(address){
+    //Check local storage for stream key
+    if(window.localStorage.getItem(localStreamKey) !== null){
+      const stream = await selfId.client.tileLoader.load(window.localStorage.getItem(localStreamKey));
+      const streamFriends:friends[] = stream.content.friends;
+      //Find index of friend that matches address
+      const friendIndex = streamFriends.findIndex((friends) => {
+        return friends.address === address;
+      })
+      //Remove friend if found
+      if(friendIndex > -1){
+        streamFriends.splice(friendIndex, 1);
+        await stream.update({friends: [...streamFriends]});
+        console.log(stream.content.friends);
+        setFriends(streamFriends);
       }
     }
-    setFriends(friendArr);
   }
 
   //Selects a new stream to load when friend is clicked
@@ -144,8 +159,12 @@ function App({ data }) {
     notifications.forEach(notification => {
       notification.close();
     });
-    const storageKey = "hypha-friends-" + address;
-    setSelectedFriend(JSON.parse(window.localStorage.getItem(storageKey)));
+    const stream = await selfId.client.tileLoader.load(window.localStorage.getItem(localStreamKey));
+    const streamFriends:friends[] = stream.content.friends;
+    const friendIndex = streamFriends.findIndex((friends) => {
+      return friends.address === address;
+    })
+    setSelectedFriend(streamFriends[friendIndex]);
     streamr.getStream(account.toLowerCase() + "/hypha-messages/" + address)
     //Owner stream exists
     .then(async (stream) => {
@@ -243,19 +262,6 @@ function App({ data }) {
         message: messageText,
         date: messageDate
       })
-      if(messageGuessing){
-        //Check HyphaToken for winner
-        if(winner){
-          console.log("Need to reset random number")
-          sendRandomNumber();
-        }
-        //Select winner if number above random is guessed
-        else{
-          const guess = Math.floor(Math.random() * 100)
-          await sendRandomWinner(guess);
-          console.log("You guessed: " + guess);
-        }
-      }
     }
     catch(err){
       alert("Please connect your wallet before using Hypha.");
@@ -277,7 +283,7 @@ function App({ data }) {
   }
 
   //Opens message context menu
-  function openMessageContext(){
+  function openMessageContext(msg){
     console.log("Open Message Context");
   }
 
@@ -290,7 +296,48 @@ function App({ data }) {
     }
   };
 
-  const userBalance = useTokenBalance(HYPHA_ADDRESS, account);
+  //Ceramic testing
+  const testCeramic = async () => {
+
+    //Create a new "friends stream"
+    const stream = await selfId.client.tileLoader.create(
+      {
+        friends: {
+          test1: 'test1 address',
+          test2: 'test2 address',
+          test3: 'test3 address',
+        },
+      },
+      {
+        tags: ['friends'],
+      },
+      {
+        pin: true,
+      }
+    );
+
+    //Test Pinning
+    const testPinning = async (streamId) => {
+      await selfId.client.ceramic.pin.add(streamId);
+      console.log(await selfId.client.ceramic.pin.ls());
+    }
+
+    const testUpdate = async (streamId) => {
+      // const streamUpdate = await selfId.client.tileLoader.load('kjzl6cwe1jw146bdy7uhcesi6lnuj83sen0t7slvxnfcx6h5fz01p94nu2haccd');
+      const streamUpdate = await selfId.client.tileLoader.load(streamId);
+      await streamUpdate.update({friends: {...streamUpdate.content.friends, test4: 'test4 address'}});
+      console.log(stream.content);
+    }
+
+    //General Info
+    console.log(`Stream id: ${stream.id.toString()}`);
+    console.log(`User DID: ${selfId.client.ceramic.did.id.toString()}`);
+    console.log(stream.content);
+
+    //Test Functions
+    testPinning(stream.id);
+    // testUpdate(stream.id);
+  }
 
   return (
     <>
@@ -317,7 +364,7 @@ function App({ data }) {
           <input type="text" placeholder="Search..."></input>
         </div>
         <div>
-          <button className="hypha-button" onClick={() => console.log("Notifications")}>Notifications</button>
+          <button className="hypha-button" onClick={async () => testCeramic()}>Notifications</button>
         </div>
       </section>
 
@@ -335,10 +382,6 @@ function App({ data }) {
               cancel={() => setFriendModal(false)}
             />
             <button className="hypha-button" onClick={() => {setFriendModal(!friendModal)}}>Add Friends</button>
-            <button className="hypha-button" onClick={() => setMessageGuessing(!messageGuessing)}>{messageGuessing ? 
-            "Participating in Message Guessing" : 
-            "Not Participating in Message Guessing"}
-            </button>
           </section>
 
           <section id={styles.friendsList}>
@@ -363,28 +406,26 @@ function App({ data }) {
             <div id={styles.connectArea}>
               <div>
                 <div id={styles.currentActivity}>
-                  <a
-                    href="https://streamr.network/core"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Access your data here!
-                  </a>
+                  <Settings
+                    profile={selfId}
+                    address={account}
+                    show={settingsModal}
+                    cancel={() => setSettingsModal(false)}
+                  />
+                  <button className="hypha-button" onClick={() => {setSettingsModal(!settingsModal)}}>Settings</button>
                 </div>
               </div>
             </div>
             <div>
               <ConnectButton
-                account={account}
+                profile={selfId}
+                address={account}
                 connect={connect}
                 disconnect={disconnect}
               />
               <p>
                 {account !== undefined ? 
-                (formatEthBalance().substr(0, 6) + " Ethereum") : "Connect Wallet"}
-                <br></br>
-                {account !== undefined && userBalance !== undefined ? 
-                ((ethers.utils.formatUnits(userBalance, 18) + " Hypha")) : ""}
+                (formatEthBalance().substring(0, 6) + " Ethereum") : "Connect Wallet"}
               </p>
             </div>
           </section>

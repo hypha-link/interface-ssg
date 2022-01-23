@@ -1,7 +1,6 @@
 import StreamrClient from "streamr-client";
 
 const axios = require('axios').default;
-const { ethereum } = window;
 
 //Address of the Streamr storage node
 const STREAMR_GERMANY = '0x31546eEA76F2B2b3C5cC06B1c93601dc35c9D916';
@@ -10,6 +9,7 @@ const STREAMR_GERMANY = '0x31546eEA76F2B2b3C5cC06B1c93601dc35c9D916';
 const streamrClient = () => {
   let client = undefined;
   try{
+    const { ethereum } = window;
     client = new StreamrClient({
       auth: {ethereum},
       publishWithSignature: "always",

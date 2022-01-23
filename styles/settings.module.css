@@ -1,0 +1,99 @@
+#settings{
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(100vw - 10%);
+    height: 100vh;
+    z-index: 11;
+    background-color: var(--primary-color);
+    padding: 5% 5% 0 5%;
+}
+
+#settings nav{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: .5;
+    font-size: 1.3em;
+}
+
+#settings nav ul{
+    padding-bottom: 3%;
+    padding-right: 10%;
+    border-bottom: solid black 2px;
+}
+
+#settings nav ul li a{
+    user-select: none;
+}
+
+#settings nav ul li:hover{
+    background-color: black;
+    cursor: pointer;
+}
+
+#settings nav ul li:hover > a{
+    color: white !important;
+}
+
+#settings section{
+    flex: 1;
+}
+
+/* Children */
+
+#profile label{
+    position: relative;
+    user-select: none;
+}
+
+#profile label:hover{
+    filter: grayscale();
+}
+
+#profile label:hover .imageOverlay{
+    opacity: 1;
+}
+
+#profile > div{
+    display: flex;
+    flex-direction: column;
+}
+
+#profile > div > *{
+    display: flex;
+}
+
+#profile img{
+    border-radius: 314px;
+}
+
+#profile .imageOverlay {
+    position: absolute;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    width: 100%;
+    transition: .5s ease;
+    opacity:0;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    user-select: none;
+}
+
+#profile label,
+#addFileLabel {
+    background-color: transparent;
+    width: fit-content;
+}
+
+#profile #addFile {
+    display: none;
+}
+
+.cancel{
+    position: absolute;
+    top: 5%;
+    right: 5%;
+}
