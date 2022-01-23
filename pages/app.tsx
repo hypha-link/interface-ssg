@@ -27,7 +27,7 @@ function App({ data }) {
   const [selfId, setSelfId] = useState<SelfID>();
 
   //Component Constructors
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<string[]>([]);
   const [friends, setFriends] = useState([])
   const [friendModal, setFriendModal] = useState(false);
   const [settingsModal, setSettingsModal] = useState(false);
@@ -272,22 +272,46 @@ function App({ data }) {
   };
 
   //Ceramic testing
-  async function testCeramic(){
+  const testCeramic = async () => {
 
-    const doc = await selfId.client.tileLoader.create(
+    //Create a new "friends stream"
+    const stream = await selfId.client.tileLoader.create(
       {
-        friends: 'Test Friend',
+        friends: {
+          test1: 'test1 address',
+          test2: 'test2 address',
+          test3: 'test3 address',
+        },
       },
       {
         tags: ['friends'],
       },
+      {
+        pin: true,
+      }
     );
 
-    console.log(doc.commitId);
+    //Test Pinning
+    const testPinning = async (streamId) => {
+      await selfId.client.ceramic.pin.add(streamId);
+      console.log(await selfId.client.ceramic.pin.ls());
+    }
 
-    const docLoad = await selfId.client.tileLoader.load(doc.id);
+    const testUpdate = async (streamId) => {
+      // const streamUpdate = await selfId.client.tileLoader.load('kjzl6cwe1jw146bdy7uhcesi6lnuj83sen0t7slvxnfcx6h5fz01p94nu2haccd');
+      const streamUpdate = await selfId.client.tileLoader.load(streamId);
+      await streamUpdate.update({friends: {...streamUpdate.content.friends, test4: 'test4 address'}});
+      console.log(stream.content);
+    }
 
-    console.log(docLoad.content);
+    //General Info
+    console.log(`Stream id: ${stream.id.toString()}`);
+    console.log(`User DID: ${selfId.client.ceramic.did.id.toString()}`);
+    console.log(stream.content);
+
+    //Test Functions
+    testPinning(stream.id);
+    // testUpdate(stream.id);
   }
 
   return (
