@@ -1,5 +1,3 @@
-declare let window: any;
-
 import React, { useEffect, useState } from "react";
 import styles from '../styles/app.module.css'
 import Link from "next/link";
@@ -37,12 +35,12 @@ function App({ data }) {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-
     const connect = async () => {
       if(account){
         try{
           await streamr.connect()
           setSelfId(await SelfID.authenticate({
+            //@ts-ignore
             authProvider: new EthereumAuthProvider(window.ethereum, account),
             ceramic: 'testnet-clay',
             connectNetwork: 'testnet-clay',
@@ -53,7 +51,6 @@ function App({ data }) {
         }
       }
     }
-
     connect();
   }, [account])
 
@@ -80,53 +77,77 @@ function App({ data }) {
     }
   };
 
-  useEffect(() => {
-    function loadFriends() {
-      try {
-        const friendArr = [];
-        //Load friends from local storage
-        for(const key in window.localStorage){
-          if(key.includes("hypha-friends")){
-            friendArr.push(JSON.parse(window.localStorage.getItem(key)));
-          }
-        }
-        if(friendArr.length > 0)
-        setFriends([...friendArr]);
+  interface friends {
+    address: string,
+    streamID: string,
+  };
 
-      } catch (err) {
-        console.log(err);
+  const localStreamKey = "friends-streamId"; 
+
+  useEffect(() => {
+    async function loadFriends() {
+      //Check local storage for stream key
+      if(window.localStorage.getItem(localStreamKey) !== null && selfId){
+        console.log("load friends");
+        const stream = await selfId.client.tileLoader.load(window.localStorage.getItem(localStreamKey));
+        const streamFriends:friends[] = stream.content.friends;
+        console.log(streamFriends.length);
+
+        if(streamFriends.length > 0)
+        setFriends([...streamFriends]);
       }
     }
-    //Load if the user wallet is connected
-    if(account){
-      loadFriends();
-    }
-  }, [account])
+    if(selfId)
+    loadFriends()
+  }, [selfId])
 
-  //Add a new friend to list
-  function addFriends(address) {
-    const storageKey = "hypha-friends-" + address;
-    const friend = {
+  async function addFriends(address){
+    const newFriend = {
       address: address,
       streamID: "",
     }
-    if(window.localStorage.getItem(storageKey) === null && ethers.utils.isAddress(address)){
-      window.localStorage.setItem(storageKey, JSON.stringify(friend));
-      setFriends((oldArr) => [...oldArr, friend]);
+    //Check local storage for stream key
+    if(window.localStorage.getItem(localStreamKey) !== null){
+        const stream = await selfId.client.tileLoader.load(window.localStorage.getItem(localStreamKey));
+        const streamFriends:friends[] = stream.content.friends;
+        await stream.update({friends: [...streamFriends, newFriend]});
     }
+    //Create a new friends stream if there are no previously existing streams & pin it
+    else{
+      const stream = await selfId.client.tileLoader.create(
+        {
+          friends: [newFriend]
+        },
+        {
+          tags: ['friends'],
+        },
+        {
+          pin: true,
+        }
+      );
+      //Add a new local storage record of the stream ID
+      window.localStorage.setItem(localStreamKey, stream.id.toString());
+    }
+    setFriends((oldArr) => [...oldArr, newFriend])
   }
 
-  //Delete a friend from list
-  function deleteFriend(address){
-    const storageKey = "hypha-friends-" + address;
-    window.localStorage.removeItem(storageKey);
-    const friendArr = [];
-    for(const key in window.localStorage){
-      if(key.includes("hypha-friends")){
-        friendArr.push(window.localStorage.getItem(key))
+  async function deleteFriend(address){
+    //Check local storage for stream key
+    if(window.localStorage.getItem(localStreamKey) !== null){
+      const stream = await selfId.client.tileLoader.load(window.localStorage.getItem(localStreamKey));
+      const streamFriends:friends[] = stream.content.friends;
+      //Find index of friend that matches address
+      const friendIndex = streamFriends.findIndex((friends) => {
+        return friends.address === address;
+      })
+      //Remove friend if found
+      if(friendIndex > -1){
+        streamFriends.splice(friendIndex, 1);
+        await stream.update({friends: [...streamFriends]});
+        console.log(stream.content.friends);
+        setFriends(streamFriends);
       }
     }
-    setFriends(friendArr);
   }
 
   //Selects a new stream to load when friend is clicked
@@ -138,8 +159,12 @@ function App({ data }) {
     notifications.forEach(notification => {
       notification.close();
     });
-    const storageKey = "hypha-friends-" + address;
-    setSelectedFriend(JSON.parse(window.localStorage.getItem(storageKey)));
+    const stream = await selfId.client.tileLoader.load(window.localStorage.getItem(localStreamKey));
+    const streamFriends:friends[] = stream.content.friends;
+    const friendIndex = streamFriends.findIndex((friends) => {
+      return friends.address === address;
+    })
+    setSelectedFriend(streamFriends[friendIndex]);
     streamr.getStream(account.toLowerCase() + "/hypha-messages/" + address)
     //Owner stream exists
     .then(async (stream) => {
