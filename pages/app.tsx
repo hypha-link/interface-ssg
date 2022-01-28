@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Head from "next/head";
 
-import { ChainId, useEtherBalance, useEthers } from "@usedapp/core";
+import { useEtherBalance, useEthers } from "@usedapp/core";
 import { formatEther } from "@ethersproject/units";
 
 import { ConnectButton } from "../components/ConnectButton";
@@ -21,7 +21,7 @@ import { BasicProfile } from "@datamodels/identity-profile-basic";
 import { Friends } from "../interfaces/Friends";
 
 function App({ data }) {
-  const { account, activateBrowserWallet, deactivate } = useEthers();
+  const { account, activateBrowserWallet, deactivate, chainId } = useEthers();
   const etherBalance = useEtherBalance(account);
 
   const [selfId, setSelfId] = useState<SelfID>();
@@ -95,7 +95,7 @@ function App({ data }) {
           //Add friend user profiles to object
           streamFriends.forEach(async (friend) => {
             try{
-              friend.profile = await selfId.client.get('basicProfile', `${friend.address}@eip155:${ChainId.Rinkeby}`);
+              friend.profile = await selfId.client.get('basicProfile', `${friend.address}@eip155:${chainId}`);
             }
             catch(e){
               console.log(`${friend.address} has no profile.`);
