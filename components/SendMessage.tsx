@@ -8,9 +8,9 @@ const IPFS = require('ipfs');
 
 export const SendMessage = ( props ) => {
   const [inputValue, setInputValue] = useState("");
-  const [showContext, setShowContext] = useState();
-  const [showEmojiMenu, setShowEmojiMenu] = useState();
-  const [showChainlinkFeeds, setShowChainlinkFeeds] = useState();
+  const [showContext, setShowContext] = useState<any>();
+  const [showEmojiMenu, setShowEmojiMenu] = useState<any>();
+  const [showChainlinkFeeds, setShowChainlinkFeeds] = useState<any>();
 
   const keyHandler = (e) => {
     if (e.key === "Enter" && inputValue.trim() !== "") {

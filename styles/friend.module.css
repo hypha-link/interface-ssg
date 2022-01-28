@@ -21,6 +21,7 @@
 
 .friendContainer p {
   margin-left: 2%;
+  user-select: none;
 }
 
 .friendContainer > a{

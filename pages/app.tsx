@@ -6,7 +6,6 @@ import Head from "next/head";
 
 import { ChainId, useEtherBalance, useEthers } from "@usedapp/core";
 import { formatEther } from "@ethersproject/units";
-import { ethers } from "ethers";
 
 import { ConnectButton } from "../components/ConnectButton";
 import { Message } from "../components/Message";
@@ -19,6 +18,7 @@ import { Group } from "../components/Group";
 import { EthereumAuthProvider, SelfID } from '@self.id/web';
 import getOrCreateMessageStream, {streamr} from "../services/Streamr_API"
 import { BasicProfile } from "@datamodels/identity-profile-basic";
+import { Friends } from "../interfaces/Friends";
 
 function App({ data }) {
   const { account, activateBrowserWallet, deactivate } = useEthers();
@@ -29,11 +29,11 @@ function App({ data }) {
 
   //Component Constructors
   const [messages, setMessages] = useState<string[]>([]);
-  const [friends, setFriends] = useState<friends[]>([])
+  const [friends, setFriends] = useState<Friends[]>([])
   const [friendModal, setFriendModal] = useState(false);
   const [settingsModal, setSettingsModal] = useState(false);
 
-  const [selectedFriend, setSelectedFriend] = useState<friends>({address: "Select A Friend", streamID: ""});
+  const [selectedFriend, setSelectedFriend] = useState<Friends>({address: "Select A Friend", streamID: ""});
   const [loaded, setLoaded] = useState(false);
   const [notifications, setNotifications] = useState([]);
 
@@ -82,12 +82,6 @@ function App({ data }) {
     }
   };
 
-  interface friends {
-    address: string,
-    streamID: string,
-    profile?: BasicProfile,
-  };
-
   const localStreamKey = "friends-streamId"; 
 
   useEffect(() => {
@@ -95,7 +89,7 @@ function App({ data }) {
       //Check local storage for stream key
       if(window.localStorage.getItem(localStreamKey) !== null && selfId){
         const stream = await selfId.client.tileLoader.load(window.localStorage.getItem(localStreamKey));
-        const streamFriends:friends[] = stream.content.friends;
+        const streamFriends:Friends[] = stream.content.friends;
 
         if(streamFriends.length > 0){
           //Add friend user profiles to object
@@ -122,7 +116,7 @@ function App({ data }) {
     //Check local storage for stream key
     if(window.localStorage.getItem(localStreamKey) !== null){
         const stream = await selfId.client.tileLoader.load(window.localStorage.getItem(localStreamKey));
-        const streamFriends:friends[] = stream.content.friends;
+        const streamFriends:Friends[] = stream.content.friends;
         await stream.update({friends: [...streamFriends, newFriend]});
     }
     //Create a new friends stream if there are no previously existing streams & pin it
@@ -148,7 +142,7 @@ function App({ data }) {
     //Check local storage for stream key
     if(window.localStorage.getItem(localStreamKey) !== null){
       const stream = await selfId.client.tileLoader.load(window.localStorage.getItem(localStreamKey));
-      const streamFriends:friends[] = stream.content.friends;
+      const streamFriends:Friends[] = stream.content.friends;
       //Find index of friend that matches address
       const friendIndex = streamFriends.findIndex((friends) => {
         return friends.address === address;
@@ -173,7 +167,7 @@ function App({ data }) {
       notification.close();
     });
     const stream = await selfId.client.tileLoader.load(window.localStorage.getItem(localStreamKey));
-    const streamFriends:friends[] = stream.content.friends;
+    const streamFriends:Friends[] = stream.content.friends;
     const friendIndex = streamFriends.findIndex((friends) => {
       return friends.address === address;
     })
@@ -410,10 +404,8 @@ function App({ data }) {
                 return (
                   <Friend
                     key={Math.random()}
-                    profile={friend.profile}
+                    friend={friend}
                     selected={selectedFriend.address === friend.address}
-                    address={friend.address}
-                    streamID={friend.streamID}
                     clickFriend={(address) => clickFriend(address)}
                     deleteFriend={(address) => deleteFriend(address)}
                   />

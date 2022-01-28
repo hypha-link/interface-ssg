@@ -9,6 +9,7 @@ const STREAMR_GERMANY = '0x31546eEA76F2B2b3C5cC06B1c93601dc35c9D916';
 const streamrClient = () => {
   let client = undefined;
   try{
+    //@ts-ignore
     const { ethereum } = window;
     client = new StreamrClient({
       auth: {ethereum},
@@ -26,7 +27,7 @@ export const streamr = streamrClient();
 /**
  * @returns Message Stream
  */
-export default async function getOrCreateMessageStream(_address, _addToStorage){
+export default async function getOrCreateMessageStream(_address, _addToStorage?){
     //Get the address of the connected wallet
     const ownerAddress = await streamr.getAddress();
     //Create a new message stream or select one that exists
@@ -97,7 +98,7 @@ export default async function getOrCreateMessageStream(_address, _addToStorage){
         "authorization": "Bearer ZbZI0GhKxE7Z3U1lZ5a6YhoI2MKb23SHBm35n4T7eyI5qs1BfX6Oe7YU07lSyGNr"
       },
       "params": {
-        "fromTimestamp": await getStreamCreation()
+        "fromTimestamp": await getStreamCreation(_address)
       }
     })
     return result.data;
