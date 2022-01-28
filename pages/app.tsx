@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Head from "next/head";
 
-import { useEtherBalance, useEthers } from "@usedapp/core";
+import { ChainId, useEtherBalance, useEthers } from "@usedapp/core";
 import { formatEther } from "@ethersproject/units";
 import { ethers } from "ethers";
 
@@ -14,23 +14,26 @@ import { Friend } from "../components/Friend";
 import { SendMessage } from "../components/SendMessage";
 import { FriendModal } from "../components/FriendModal";
 import { Settings } from "../components/Settings";
+import { Group } from "../components/Group";
 
 import { EthereumAuthProvider, SelfID } from '@self.id/web';
 import getOrCreateMessageStream, {streamr} from "../services/Streamr_API"
+import { BasicProfile } from "@datamodels/identity-profile-basic";
 
 function App({ data }) {
   const { account, activateBrowserWallet, deactivate } = useEthers();
   const etherBalance = useEtherBalance(account);
 
   const [selfId, setSelfId] = useState<SelfID>();
+  const [profile, setProfile] = useState<BasicProfile>();
 
   //Component Constructors
   const [messages, setMessages] = useState<string[]>([]);
-  const [friends, setFriends] = useState([])
+  const [friends, setFriends] = useState<friends[]>([])
   const [friendModal, setFriendModal] = useState(false);
   const [settingsModal, setSettingsModal] = useState(false);
 
-  const [selectedFriend, setSelectedFriend] = useState({address: "Select A Friend", streamID: ""});
+  const [selectedFriend, setSelectedFriend] = useState<friends>({address: "Select A Friend", streamID: ""});
   const [loaded, setLoaded] = useState(false);
   const [notifications, setNotifications] = useState([]);
 
@@ -39,12 +42,14 @@ function App({ data }) {
       if(account){
         try{
           await streamr.connect()
-          setSelfId(await SelfID.authenticate({
+          const selfIdClient = await SelfID.authenticate({
             //@ts-ignore
             authProvider: new EthereumAuthProvider(window.ethereum, account),
             ceramic: 'testnet-clay',
             connectNetwork: 'testnet-clay',
-          }))
+          })
+          setSelfId(selfIdClient);
+          setProfile(await selfIdClient.get('basicProfile'));
         }
         catch{
           console.log("User needs an Ethereum wallet to connect to Hypha.");
@@ -80,25 +85,33 @@ function App({ data }) {
   interface friends {
     address: string,
     streamID: string,
+    profile?: BasicProfile,
   };
 
   const localStreamKey = "friends-streamId"; 
 
   useEffect(() => {
-    async function loadFriends() {
+    async function loadFriends(){
       //Check local storage for stream key
       if(window.localStorage.getItem(localStreamKey) !== null && selfId){
-        console.log("load friends");
         const stream = await selfId.client.tileLoader.load(window.localStorage.getItem(localStreamKey));
         const streamFriends:friends[] = stream.content.friends;
-        console.log(streamFriends.length);
 
-        if(streamFriends.length > 0)
-        setFriends([...streamFriends]);
+        if(streamFriends.length > 0){
+          //Add friend user profiles to object
+          streamFriends.forEach(async (friend) => {
+            try{
+              friend.profile = await selfId.client.get('basicProfile', `${friend.address}@eip155:${ChainId.Rinkeby}`);
+            }
+            catch(e){
+              console.log(`${friend.address} has no profile.`);
+            }
+          })
+          setFriends([...streamFriends]);
+        }
       }
     }
-    if(selfId)
-    loadFriends()
+    loadFriends();
   }, [selfId])
 
   async function addFriends(address){
@@ -329,14 +342,20 @@ function App({ data }) {
       console.log(stream.content);
     }
 
+    const testGet = async () => {
+      const data = await selfId.client.get('basicProfile', `${account}@eip155:1`);
+      console.log(data);
+    }
+
     //General Info
     console.log(`Stream id: ${stream.id.toString()}`);
     console.log(`User DID: ${selfId.client.ceramic.did.id.toString()}`);
     console.log(stream.content);
 
     //Test Functions
-    testPinning(stream.id);
+    // testPinning(stream.id);
     // testUpdate(stream.id);
+    testGet();
   }
 
   return (
@@ -391,6 +410,7 @@ function App({ data }) {
                 return (
                   <Friend
                     key={Math.random()}
+                    profile={friend.profile}
                     selected={selectedFriend.address === friend.address}
                     address={friend.address}
                     streamID={friend.streamID}
@@ -399,6 +419,15 @@ function App({ data }) {
                   />
                 );
               })}
+              <Group
+                key={Math.random()}
+                profile={"test profile"}
+                selected={false}
+                name={"test group"}
+                streamID={"test stream"}
+                clickGroup={() => console.log("Group Clicked")}
+                deleteGroup={() => console.log("Delete Group")}
+              />
             </div>
           </section>
 
@@ -407,7 +436,7 @@ function App({ data }) {
               <div>
                 <div id={styles.currentActivity}>
                   <Settings
-                    profile={selfId}
+                    selfId={selfId}
                     address={account}
                     show={settingsModal}
                     cancel={() => setSettingsModal(false)}
@@ -418,7 +447,7 @@ function App({ data }) {
             </div>
             <div>
               <ConnectButton
-                profile={selfId}
+                profile={profile}
                 address={account}
                 connect={connect}
                 disconnect={disconnect}

@@ -3,25 +3,28 @@ import Image from 'next/image'
 import { shortenIfAddress } from '@usedapp/core'
 import styles from '../../styles/settings.module.css'
 import { Edit } from '../Edit'
+import { SelfID } from '@self.id/web'
+import { BasicProfile } from '@datamodels/identity-profile-basic'
 
 const IPFS = require('ipfs');
 
 export const Profile = (props) => {
-    const [profile, setProfile] = useState();
+    const [profile, setProfile] = useState<BasicProfile>();
+    const selfId: SelfID = props.selfId;
     const loadProfile = async () => {
-        setProfile(await props.profile.get('basicProfile'));
+        setProfile(await selfId.get('basicProfile'));
     }
     useEffect(() => {
-        if(props.profile)
-        loadProfile();
+        if(selfId)
+            loadProfile();
         //Cleanup
         return () => {
-            setProfile('');
+            setProfile(undefined);
         }
-    }, [props.profile])
+    }, [selfId])
 
     const changeImage = async (newImage) => {
-        await props.profile.merge('basicProfile', {
+        await selfId.merge('basicProfile', {
             image: {
                 original: {
                     src: newImage,
@@ -50,11 +53,11 @@ export const Profile = (props) => {
             <div>
                 <div>
                     <p>{profile && profile.hasOwnProperty('name') ? profile.name : shortenIfAddress(props.address)}</p>
-                    <Edit type='name' profile={props.profile} disabled={profile && profile.hasOwnProperty('name')}/>
+                    <Edit type='name' selfId={selfId} disabled={profile && profile.hasOwnProperty('name')}/>
                 </div>
                 <div>
                     <p>{profile && profile.hasOwnProperty('description') ? profile.description : ''}</p>
-                    <Edit type='description' profile={props.profile} disabled={profile && profile.hasOwnProperty('description')}/>
+                    <Edit type='description' selfId={selfId} disabled={profile && profile.hasOwnProperty('description')}/>
                 </div>
             </div>
             <div>

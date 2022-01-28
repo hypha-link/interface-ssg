@@ -4,17 +4,9 @@ import Image from 'next/image';
 import { shortenIfAddress } from '@usedapp/core'
 
 export const ConnectButton = (props) => {
-  const [profile, setProfile] = useState();
-
+  const { profile } = props;
   const isConnected = props.address !== "" && props.address !== undefined;
 
-  const loadProfile = async () => {
-    setProfile(await props.profile.get('basicProfile'));
-  }
-  useEffect(() => {
-    if(props.profile)
-    loadProfile();
-  }, [props.profile])
   return (
     <div>
       {isConnected ? (

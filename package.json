@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@datamodels/identity-profile-basic": "^0.1.2",
     "@ethersproject/units": "^5.5.0",
     "@self.id/core": "^0.2.0",
     "@self.id/web": "^0.2.0",

@@ -22,3 +22,7 @@
 .friendContainer p {
   margin-left: 2%;
 }
+
+.friendContainer > a{
+  cursor: pointer;
+}
