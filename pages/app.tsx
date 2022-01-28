@@ -93,14 +93,14 @@ function App({ data }) {
 
         if(streamFriends.length > 0){
           //Add friend user profiles to object
-          streamFriends.forEach(async (friend) => {
+          await Promise.all(streamFriends.map(async (friend) => {
             try{
               friend.profile = await selfId.client.get('basicProfile', `${friend.address}@eip155:${chainId}`);
             }
             catch(e){
               console.log(`${friend.address} has no profile.`);
             }
-          })
+          }));
           setFriends([...streamFriends]);
         }
       }
