@@ -29,6 +29,7 @@ export const Group = (props) => {
             />
             <Image src={`https://robohash.org/${props.address}.png?set=set4`} alt="Group" height={"100%"} width={"100%"} />
             <p>{shortenIfAddress(props.address)}</p>
+            <p>Members</p>
         </div>
     )
 }

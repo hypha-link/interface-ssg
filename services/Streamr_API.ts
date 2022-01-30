@@ -1,9 +1,4 @@
-import StreamrClient from "streamr-client";
-
-const axios = require('axios').default;
-
-//Address of the Streamr storage node
-const STREAMR_GERMANY = '0x31546eEA76F2B2b3C5cC06B1c93601dc35c9D916';
+import StreamrClient, { StorageNode, Stream } from "streamr-client";
 
 //Create the Streamr client
 const streamrClient = () => {
@@ -22,84 +17,183 @@ const streamrClient = () => {
   return client;
 }
 
-export const streamr = streamrClient();
+export const streamr: StreamrClient = streamrClient();
+
+export enum HyphaType{
+  Hypha = "hypha",
+  Hyphae = "hyphae",
+  Mycelium = "mycelium",
+}
 
 /**
  * @returns Message Stream
  */
-export default async function getOrCreateMessageStream(_address, _addToStorage?){
-    //Get the address of the connected wallet
-    const ownerAddress = await streamr.getAddress();
-    //Create a new message stream or select one that exists
-    const stream = await streamr.getOrCreateStream({
-      id: ownerAddress.toLowerCase() + "/hypha-messages/" + _address,
-      name: "Hypha Messages",
+export default async function getOrCreateMessageStream(_address: string, _type: HyphaType, _addToStorage?: boolean) {
+
+  //Get the address of the connected wallet
+  const ownerAddress = await streamr.getAddress();
+
+  const createHypha = async () => {
+    const streamProps =
+    {
+      id: `${ownerAddress}/hypha-messages/${_address}`,
       description: "The messages that you have sent using Hypha",
       config: {
-        fields: [
-          {
-            sender: "string",
-            message: "string",
-            date: "number",
-          },
-        ],
+        fields: [{name: "sender", type: "string"},{name: "message", type: "string"},{name: "date", type: "number"}],
       },
       partitions: 1,
       requireSignedData: true,
       requireEncryptedData: false,
-      autoConfigure: true,
       storageDays: 1,
       inactivityThresholdHours: .5,
-    });
+    }
+    //Create a new message stream or select one that exists
+    const stream = await streamr.getOrCreateStream(streamProps);
     //Grant permissions to selected friend
-    grantPermissions(stream, _address)
+    grantPermissions(stream, _address, PermissionType.Owner);
     //Add storage
-    _addToStorage && await stream.addToStorageNode(STREAMR_GERMANY);
+    _addToStorage && await stream.addToStorageNode(StorageNode.STREAMR_GERMANY);
     return stream;
-  };
-
-  const grantPermissions = async (_stream, _address) => {
-    await _stream.grantPermission("stream_get", _address);
-    await _stream.grantPermission("stream_publish", _address);
-    await _stream.grantPermission("stream_subscribe", _address);
-    await _stream.grantPermission("stream_delete", _address);
-    await _stream.grantPermission("stream_edit", _address);
-    // await _stream.grantPermission("stream_share", _address);
   }
 
-  /**
-   * @returns Stream creation time since epoch (milliseconds)
-   */
-  export const getStreamCreation = async (_address) => {
-    const stream = await getOrCreateMessageStream(_address);
-    return new Date(stream.dateCreated).getTime()
-  }
-
-  /**
-   * @returns Last message of stream
-   */
-  export const getStreamLast = async (_address) => {
-    const stream = await getOrCreateMessageStream(_address);
-    const lastMessage = await streamr.getStreamLast(stream.id);
-    return lastMessage[0].content;
-  }
-
-  /**
- * @deprecated Use streams to receive a resend callback instead
- * @returns All messages since stream creation
- */
-  export const getStreamData = async (_address) => {
-    const stream = await getOrCreateMessageStream(_address);
-    const result = await axios.request({
-      "method": "get",
-      "url": "https://streamr.network/api/v1/streams/" + encodeURIComponent(stream.id) + "/data/partitions/0/from",
-      "headers": {
-        "Content-Type": "application/json",
-        "authorization": "Bearer ZbZI0GhKxE7Z3U1lZ5a6YhoI2MKb23SHBm35n4T7eyI5qs1BfX6Oe7YU07lSyGNr"
+  const createHyphae = async () => {
+    const streamProps =
+    {
+      id: `${ownerAddress}/hyphae/${_address.substring(_address.length - 4, _address.length)}`,
+      description: "The group messages that you have sent using Hypha",
+      config: {
+        fields: [{name: "sender", type: "string"},{name: "message", type: "string"},{name: "date", type: "number"}],
       },
-      "params": {
-        "fromTimestamp": await getStreamCreation(_address)
-      }
-    })
-    return result.data;
+      partitions: 1,
+      requireSignedData: true,
+      requireEncryptedData: false,
+      storageDays: 1,
+      inactivityThresholdHours: .5,
+    }
+    //Create a new message stream or select one that exists
+    const stream = await streamr.getOrCreateStream(streamProps);
+    //Grant permissions to selected friend
+    grantPermissions(stream, _address, PermissionType.Owner);
+    //Add storage
+    _addToStorage && await stream.addToStorageNode(StorageNode.STREAMR_GERMANY);
+    return stream;
   }
+
+  const createMycelium = async () => {
+    const streamProps =
+    {
+      id: `${ownerAddress}/hyphae/${_address.substring(_address.length - 4, _address.length)}`,
+      description: "The group messages that you have sent using Hypha",
+      config: {
+        fields: [{name: "sender", type: "string"},{name: "message", type: "string"},{name: "date", type: "number"}],
+      },
+      partitions: 1,
+      requireSignedData: true,
+      requireEncryptedData: false,
+      storageDays: 1,
+      inactivityThresholdHours: .5,
+    }
+    //Create a new message stream or select one that exists
+    const stream = await streamr.getOrCreateStream(streamProps);
+    //Grant permissions to selected friend
+    grantPermissions(stream, _address, PermissionType.Owner);
+    //Add storage
+    _addToStorage && await stream.addToStorageNode(StorageNode.STREAMR_GERMANY);
+    return stream;
+  }
+
+  switch(_type){
+    case HyphaType.Hypha:
+      return createHypha();
+    case HyphaType.Hyphae:
+      return createHyphae();
+    case HyphaType.Mycelium:
+      return createMycelium();
+    default:
+      return createHypha();
+  }
+};
+
+export enum PermissionType{
+  Owner = "owner",
+  Editor = "editor",
+  Publisher = "publisher",
+  Subscriber = "subscriber",
+  User = "user",
+}
+
+export const grantPermissions = async (_stream: Stream, _address: string, permissions: PermissionType) => {
+  try{
+    switch(permissions){
+      case PermissionType.Owner:
+        //@ts-ignore
+        await _stream.grantPermission("stream_get", _address);
+        //@ts-ignore
+        await _stream.grantPermission("stream_publish", _address);
+        //@ts-ignore
+        await _stream.grantPermission("stream_subscribe", _address);
+        //@ts-ignore
+        await _stream.grantPermission("stream_delete", _address);
+        //@ts-ignore
+        await _stream.grantPermission("stream_edit", _address);
+        //@ts-ignore
+        await _stream.grantPermission("stream_share", _address);
+        break;
+      case PermissionType.Editor:
+        //@ts-ignore
+        await _stream.grantPermission("stream_get", _address);
+        //@ts-ignore
+        await _stream.grantPermission("stream_publish", _address);
+        //@ts-ignore
+        await _stream.grantPermission("stream_subscribe", _address);
+        //@ts-ignore
+        await _stream.grantPermission("stream_edit", _address);
+        break;
+      case PermissionType.Publisher:
+        //@ts-ignore
+        await _stream.grantPermission("stream_get", _address);
+        //@ts-ignore
+        await _stream.grantPermission("stream_publish", _address);
+        break;
+      case PermissionType.Subscriber:
+        //@ts-ignore
+        await _stream.grantPermission("stream_get", _address);
+        //@ts-ignore
+        await _stream.grantPermission("stream_subscribe", _address);
+        break;
+      case PermissionType.User:
+        //@ts-ignore
+        await _stream.grantPermission("stream_get", _address);
+        //@ts-ignore
+        await _stream.grantPermission("stream_publish", _address);
+        //@ts-ignore
+        await _stream.grantPermission("stream_subscribe", _address);
+        break;
+      default:
+        //@ts-ignore
+        await _stream.grantPermission("stream_get", _address);
+        //@ts-ignore
+        await _stream.grantPermission("stream_publish", _address);
+        //@ts-ignore
+        await _stream.grantPermission("stream_subscribe", _address);
+        //@ts-ignore
+        await _stream.grantPermission("stream_delete", _address);
+        //@ts-ignore
+        await _stream.grantPermission("stream_edit", _address);
+        //@ts-ignore
+        await _stream.grantPermission("stream_share", _address);
+    }
+  }
+  catch(e){
+    console.log(e);
+  }
+}
+
+export const revokeUserPermissions = async (_stream: Stream, _address: string) => {
+  const streamPermissions = await _stream.getPermissions();
+  streamPermissions.map(async(permission) => {
+    if(permission.user === _address.toLowerCase()){
+      await _stream.revokePermission(permission.id);
+    }
+  })
+}

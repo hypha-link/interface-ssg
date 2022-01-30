@@ -33,6 +33,7 @@ export const Friend = (props) => {
             //If not selected, allow user to select friend
             select={() => !selected && props.clickFriend(friend.address)}
             view={() => console.log(friend.profile ? friend.profile : "User has no friend.profile.")}
+            invite={() => props.inviteFriend(friend.address)}
             send={() => {
                 sendTransaction({ to: friend.address, value: utils.parseEther(".1")});
             }} 

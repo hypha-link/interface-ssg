@@ -53,6 +53,7 @@ const ContextMenu = (props) => {
   const optionIcons = new Map();
   optionIcons.set("select", "➢");
   optionIcons.set("view", "⌗")
+  optionIcons.set("invite", "⁂")
   optionIcons.set("send", "🡽");
   optionIcons.set("copy", "❐");
   optionIcons.set("delete", "X");

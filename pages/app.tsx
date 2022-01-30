@@ -14,11 +14,15 @@ import { SendMessage } from "../components/SendMessage";
 import { FriendModal } from "../components/FriendModal";
 import { Settings } from "../components/Settings";
 import { Group } from "../components/Group";
+import { Tooltip } from "../components/utilities/Tooltip";
 
 import { EthereumAuthProvider, SelfID } from '@self.id/web';
-import getOrCreateMessageStream, {streamr} from "../services/Streamr_API"
+import getOrCreateMessageStream, { streamr, grantPermissions, PermissionType, HyphaType } from "../services/Streamr_API"
 import { BasicProfile } from "@datamodels/identity-profile-basic";
 import { Friends } from "../interfaces/Friends";
+import { Stream } from "streamr-client";
+import { MessageData } from "../interfaces/MessageData";
+import { GetStaticProps } from "next";
 
 function App({ data }) {
   const { account, activateBrowserWallet, deactivate, chainId } = useEthers();
@@ -28,14 +32,18 @@ function App({ data }) {
   const [profile, setProfile] = useState<BasicProfile>();
 
   //Component Constructors
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<MessageData[]>([]);
   const [friends, setFriends] = useState<Friends[]>([])
   const [friendModal, setFriendModal] = useState(false);
   const [settingsModal, setSettingsModal] = useState(false);
 
   const [selectedFriend, setSelectedFriend] = useState<Friends>({address: "Select A Friend", streamID: ""});
   const [loaded, setLoaded] = useState(false);
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [searchKey, setSearchKey] = useState<string>('');
+
+  const localStreamKey = "friends-streamId";
+  const localGroupStreamKey = "groups-streamId";
 
   useEffect(() => {
     const connect = async () => {
@@ -82,8 +90,6 @@ function App({ data }) {
     }
   };
 
-  const localStreamKey = "friends-streamId"; 
-
   useEffect(() => {
     async function loadFriends(){
       //Check local storage for stream key
@@ -108,9 +114,9 @@ function App({ data }) {
     loadFriends();
   }, [selfId])
 
-  async function addFriends(address){
+  async function addFriends(_address: string){
     const newFriend = {
-      address: address,
+      address: _address,
       streamID: "",
     }
     //Check local storage for stream key
@@ -138,14 +144,14 @@ function App({ data }) {
     setFriends((oldArr) => [...oldArr, newFriend])
   }
 
-  async function deleteFriend(address){
+  async function deleteFriend(_address: string){
     //Check local storage for stream key
     if(window.localStorage.getItem(localStreamKey) !== null){
       const stream = await selfId.client.tileLoader.load(window.localStorage.getItem(localStreamKey));
       const streamFriends:Friends[] = stream.content.friends;
       //Find index of friend that matches address
       const friendIndex = streamFriends.findIndex((friends) => {
-        return friends.address === address;
+        return friends.address === _address;
       })
       //Remove friend if found
       if(friendIndex > -1){
@@ -158,7 +164,7 @@ function App({ data }) {
   }
 
   //Selects a new stream to load when friend is clicked
-  async function clickFriend(address){
+  async function clickFriend(_address: string){
     //Unsubscribe to last friend before selecting next friend (to prevent duplicate messages)
     selectedFriend.streamID !== "" && await streamr.unsubscribe(selectedFriend.streamID);
     setMessages([]);
@@ -166,32 +172,24 @@ function App({ data }) {
     notifications.forEach(notification => {
       notification.close();
     });
-    const stream = await selfId.client.tileLoader.load(window.localStorage.getItem(localStreamKey));
-    const streamFriends:Friends[] = stream.content.friends;
-    const friendIndex = streamFriends.findIndex((friends) => {
-      return friends.address === address;
-    })
-    setSelectedFriend(streamFriends[friendIndex]);
-    streamr.getStream(account.toLowerCase() + "/hypha-messages/" + address)
+    setSelectedFriend(friends.find(friend => friend.address === _address));
+    streamr.getStream(account.toLowerCase() + "/hypha-messages/" + _address)
     //Owner stream exists
     .then(async (stream) => {
-      console.log("Owner's stream exists " + stream.id);
-      setSelectedFriend((oldObj) => ({...oldObj, streamID: stream.id}))
+      setSelectedFriend(oldObj => ({...oldObj, streamID: stream.id}))
     })
     //Owner stream does not exist
     .catch(async () => {
-      await streamr.getStream(address.toLowerCase() + "/hypha-messages/" + account)
+      await streamr.getStream(_address.toLowerCase() + "/hypha-messages/" + account)
       //Friend stream exists
       .then(async (stream) => {
-        console.log("Friend's stream exists " + stream.id);
-        setSelectedFriend((oldObj) => ({...oldObj, streamID: stream.id}))
+        setSelectedFriend(oldObj => ({...oldObj, streamID: stream.id}))
       })
       //Friend stream doesn't exist
       .catch(async () => {
-        console.log("Neither stream exists - Creating a new one")
         //Create a message stream
-        const stream = await getOrCreateMessageStream(address, false);
-        setSelectedFriend((oldObj) => ({...oldObj, streamID: stream.id}))
+        const stream = await getOrCreateMessageStream(_address, HyphaType.Hypha, false);
+        setSelectedFriend(oldObj => ({...oldObj, streamID: stream.id}))
       })
     })
     //Check if user has browser notifications toggled on
@@ -203,12 +201,43 @@ function App({ data }) {
     }
   }
 
+  const inviteFriend = async (_address: string) => {
+    //Check if group already exists
+    streamr.getStream(`${account}/hyphae/${_address.substring(_address.length - 4, _address.length)}`)
+    //Group exists
+    .then(async (stream: Stream) => {
+      console.log("Add address to streamr & give access control.");
+      try{
+        const streamPermissions = await stream.getPermissions();
+        console.log(streamPermissions);
+        if(streamPermissions.find(permission => permission.user === _address.toLowerCase())){
+          console.log("User has permissions already.");
+        }
+        else{
+          console.log("User has no permissions yet");
+          await grantPermissions(stream, _address, PermissionType.Owner);
+        }
+      }
+      catch(e){
+        console.log("Failed to invite user.");
+        console.log(e);
+      }
+    })
+    //Group doesn't exist yet
+    .catch(async () => {
+      console.log("The group does not exist.");
+      const stream = await getOrCreateMessageStream(_address, HyphaType.Hyphae, false);
+      console.log(stream);
+      // streamr.subscribe(selectedFriend.streamID);
+    })
+  }
+
   //Load messages on startup & subscribe to stream
   useEffect(() => {
     async function loadMessages() {
       try {
         let timeoutID;
-        const dataArr = [];
+        const dataArr: MessageData[] = [];
         const stream = await streamr.getStream(selectedFriend.streamID);
         const storageNodes = await stream.getStorageNodes();
         //Load the last 50 messages from previous session if messages are being stored
@@ -241,7 +270,7 @@ function App({ data }) {
         streamr.subscribe(
           {
             stream: selectedFriend.streamID,
-          }, (data, metaData) => {
+          }, (data: MessageData, metaData) => {
             //Create a new notification if the new message was not sent by us & interface is not visible
             if(data.sender !== account && document.visibilityState !== "visible"){
               const notification = new Notification(data.sender + " sent you a message!", {body: data.message, icon: "https://robohash.org/" + data.sender + ".png?set=set5"});
@@ -261,13 +290,13 @@ function App({ data }) {
   }, [account, selectedFriend]) // eslint-disable-line react-hooks/exhaustive-deps
 
   //Publish a message to stream
-  const addMessage = async (messageText, messageDate) => {
+  const addMessage = async (_messageText: string, _messageDate: Date) => {
     try{
       const stream = await streamr.getStream(selectedFriend.streamID);
       await stream.publish({
         sender: account,
-        message: messageText,
-        date: messageDate
+        message: _messageText,
+        date: _messageDate
       })
     }
     catch(err){
@@ -277,20 +306,20 @@ function App({ data }) {
   };
 
   //Delete a message
-  async function deleteMessage(msg){
-    console.log("Delete: " + msg.message)
+  async function deleteMessage(_message: MessageData){
+    console.log("Delete: " + _message.message)
   }
 
-  function clickMessage(msg){
+  function clickMessage(_message: MessageData){
     try {
-      console.log(msg);
+      console.log(_message);
     } catch (e) {
       console.error(e)
     }
   }
 
   //Opens message context menu
-  function openMessageContext(msg){
+  function openMessageContext(_message: MessageData){
     console.log("Open Message Context");
   }
 
@@ -347,9 +376,9 @@ function App({ data }) {
     console.log(stream.content);
 
     //Test Functions
-    // testPinning(stream.id);
+    testPinning(stream.id);
     // testUpdate(stream.id);
-    testGet();
+    // testGet();
   }
 
   return (
@@ -371,10 +400,14 @@ function App({ data }) {
           </Link>
         </div>
         <div>
-          <p>{selectedFriend.address}</p>
+          <p>{selectedFriend.profile ? selectedFriend.profile.name : selectedFriend.address}</p>
         </div>
         <div>
-          <input type="text" placeholder="Search..."></input>
+          <input
+          type="text"
+          placeholder="Search..."
+          onChange={(e) => setSearchKey(e.target.value)}
+          />
         </div>
         <div>
           <button className="hypha-button" onClick={async () => testCeramic()}>Notifications</button>
@@ -388,7 +421,7 @@ function App({ data }) {
           <section id={styles.browserServers}>
             <FriendModal
               show={friendModal}
-              addFriend={(address) => {
+              addFriend={(address: string) => {
                 setFriendModal(false);
                 addFriends(address);
               }}
@@ -402,13 +435,16 @@ function App({ data }) {
               <p>Friends List</p>
               {friends.map((friend) => {
                 return (
-                  <Friend
-                    key={Math.random()}
-                    friend={friend}
-                    selected={selectedFriend.address === friend.address}
-                    clickFriend={(address) => clickFriend(address)}
-                    deleteFriend={(address) => deleteFriend(address)}
-                  />
+                  <Tooltip key={Math.random()} content={friend.address}>
+                    <Friend
+                      key={Math.random()}
+                      friend={friend}
+                      selected={selectedFriend.address === friend.address}
+                      inviteFriend={(address: string) => inviteFriend(address)}
+                      clickFriend={(address: string) => clickFriend(address)}
+                      deleteFriend={(address: string) => deleteFriend(address)}
+                    />
+                  </Tooltip>
                 );
               })}
               <Group
@@ -438,12 +474,14 @@ function App({ data }) {
               </div>
             </div>
             <div>
-              <ConnectButton
-                profile={profile}
-                address={account}
-                connect={connect}
-                disconnect={disconnect}
-              />
+              <Tooltip content={account}>
+                <ConnectButton
+                  profile={profile}
+                  address={account}
+                  connect={connect}
+                  disconnect={disconnect}
+                />
+              </Tooltip>
               <p>
                 {account !== undefined ? 
                 (formatEthBalance().substring(0, 6) + " Ethereum") : "Connect Wallet"}
@@ -455,15 +493,16 @@ function App({ data }) {
         <section id={styles.messagesContainer}>
           <div>
             <div>
-              {messages.map((message) => {
+              {messages.filter(message => message.message.includes(searchKey)).map((message: MessageData) => {
                 return (
                   <Message
                     key={Math.random()}
+                    profile={message.sender === account ? profile : friends.find(friend => friend.address === message.sender).profile}
                     postedData={message}
                     userAddress={account}
-                    clickMessage={(msg) => clickMessage(msg)}
-                    deleteMessage={(msg) => deleteMessage(msg)}
-                    openMessageContext={(msg) => openMessageContext(msg)}
+                    clickMessage={(message: MessageData) => clickMessage(message)}
+                    deleteMessage={(message: MessageData) => deleteMessage(message)}
+                    openMessageContext={(message: MessageData) => openMessageContext(message)}
                   />
                 );
               })}
@@ -471,7 +510,7 @@ function App({ data }) {
           </div>
           <SendMessage
             disabled={!loaded}
-            sendMessage={(messageText, messageDate) =>
+            sendMessage={(messageText: string, messageDate: Date) =>
               addMessage(messageText, messageDate)
             }
           />
@@ -481,7 +520,7 @@ function App({ data }) {
   );
 }
 
-export async function getServerSideProps(){ 
+export const getServerSideProps: GetStaticProps = async () => { 
   return { props: {} }
 }
 

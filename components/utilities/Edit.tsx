@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import styles from "../styles/edit.module.css"
+import styles from "../../styles/edit.module.css"
 import { SelfID } from '@self.id/web'
 
 export const Edit = (props) => {

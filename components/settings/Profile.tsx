@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { shortenIfAddress } from '@usedapp/core'
 import styles from '../../styles/settings.module.css'
-import { Edit } from '../Edit'
+import { Edit } from '../utilities/Edit'
 import { SelfID } from '@self.id/web'
 import { BasicProfile } from '@datamodels/identity-profile-basic'
 
