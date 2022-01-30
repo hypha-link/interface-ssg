@@ -39,7 +39,7 @@ const { content, direction, delay }:
       {/* Wrapping */}
       {props.children}
       {active && (
-        <div className={`${styles.tooltip} ${direction || Direction.bottom}`}>
+        <div className={`${styles.tooltip} ${styles[direction] || styles[Direction.top]}`}>
           {/* Content */}
           {content}
         </div>
