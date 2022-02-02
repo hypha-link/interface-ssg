@@ -17,12 +17,12 @@ import { Group } from "../components/Group";
 import { Tooltip } from "../components/utilities/Tooltip";
 
 import { EthereumAuthProvider, SelfID } from '@self.id/web';
-import getOrCreateMessageStream, { streamr, grantPermissions, PermissionType, HyphaType } from "../services/Streamr_API"
+import getOrCreateMessageStream, { streamr, grantPermissions, PermissionType, HyphaType, streamrUnsigned } from "../services/Streamr_API"
 import { BasicProfile } from "@datamodels/identity-profile-basic";
-import { Friends } from "../interfaces/Friends";
+import { Friends, MessageData, Metadata } from "../interfaces/Types";
 import { Stream } from "streamr-client";
-import { MessageData } from "../interfaces/MessageData";
 import { GetStaticProps } from "next";
+import useMetadata from "../hooks/useMetadata";
 
 function App({ data }) {
   const { account, activateBrowserWallet, deactivate, chainId } = useEthers();
@@ -37,19 +37,21 @@ function App({ data }) {
   const [friendModal, setFriendModal] = useState(false);
   const [settingsModal, setSettingsModal] = useState(false);
 
-  const [selectedFriend, setSelectedFriend] = useState<Friends>({address: "Select A Friend", streamID: ""});
+  const [selectedFriend, setSelectedFriend] = useState<Friends>({address: "", streamID: ""});
   const [loaded, setLoaded] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [searchKey, setSearchKey] = useState<string>('');
 
+  const [metadata, setMetadata] = useMetadata(selectedFriend.streamID);
+
   const localStreamKey = "friends-streamId";
-  const localGroupStreamKey = "groups-streamId";
 
   useEffect(() => {
     const connect = async () => {
       if(account){
         try{
           await streamr.connect()
+          await streamrUnsigned.connect();
           const selfIdClient = await SelfID.authenticate({
             //@ts-ignore
             authProvider: new EthereumAuthProvider(window.ethereum, account),
@@ -83,10 +85,18 @@ function App({ data }) {
     notifications.forEach(notification => {
       notification.close();
     });
-    setSelectedFriend({address: "Select A Friend", streamID: ""});
+    setSelectedFriend({address: "", streamID: ""});
+    setSearchKey('');
+    setMetadata(undefined);
+    setProfile(undefined);
+    setSelfId(undefined);
     if(streamr){
       streamr.getSubscriptions().forEach(async (sub) => await sub.unsubscribe());
       await streamr.disconnect()
+    }
+    if(streamrUnsigned){
+      streamrUnsigned.getSubscriptions().forEach(async (sub) => await sub.unsubscribe());
+      await streamrUnsigned.disconnect()
     }
   };
 
@@ -108,6 +118,7 @@ function App({ data }) {
             }
           }));
           setFriends([...streamFriends]);
+          setMetadata(oldMetadata => ({...oldMetadata, online: true}));
         }
       }
     }
@@ -260,12 +271,8 @@ function App({ data }) {
               }, 100);
             }
           )
-          setLoaded(true);
         }
-        //Messages are not stored, but we will still load
-        else{
-          setLoaded(true);
-        }
+        setLoaded(true);
         //Subscribe to stream after messages were resent
         streamr.subscribe(
           {
@@ -273,7 +280,7 @@ function App({ data }) {
           }, (data: MessageData, metaData) => {
             //Create a new notification if the new message was not sent by us & interface is not visible
             if(data.sender !== account && document.visibilityState !== "visible"){
-              const notification = new Notification(data.sender + " sent you a message!", {body: data.message, icon: "https://robohash.org/" + data.sender + ".png?set=set5"});
+              const notification = new Notification(selectedFriend.profile ? selectedFriend.profile.name : data.sender + " sent you a message!", {body: data.message, icon: selectedFriend.profile && selectedFriend.profile.hasOwnProperty('image') ? `https://ipfs.io/ipfs/${selectedFriend.profile.image.alternatives[0].src.substring(7, selectedFriend.profile.image.alternatives[0].src.length)}` : `https://robohash.org/${data.sender}.png?set=set5`});
               setNotifications((oldArr) => [...oldArr, notification]);
             }
             setMessages((oldArr) => [...oldArr, data]);
@@ -287,7 +294,7 @@ function App({ data }) {
     if(account && messages.length === 0  && selectedFriend.streamID !== ""){
       loadMessages();
     }
-  }, [account, selectedFriend]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, selectedFriend])
 
   //Publish a message to stream
   const addMessage = async (_messageText: string, _messageDate: Date) => {
@@ -400,7 +407,7 @@ function App({ data }) {
           </Link>
         </div>
         <div>
-          <p>{selectedFriend.profile ? selectedFriend.profile.name : selectedFriend.address}</p>
+          <p>{selectedFriend.profile ? selectedFriend.profile.name : "Select A Friend"}</p>
         </div>
         <div>
           <input
@@ -427,7 +434,7 @@ function App({ data }) {
               }}
               cancel={() => setFriendModal(false)}
             />
-            <button className="hypha-button" onClick={() => {setFriendModal(!friendModal)}}>Add Friends</button>
+            <button className="hypha-button" onClick={() => {setFriendModal(!friendModal)}} disabled={selfId === undefined}>Add Friends</button>
           </section>
 
           <section id={styles.friendsList}>
@@ -440,6 +447,7 @@ function App({ data }) {
                       key={Math.random()}
                       friend={friend}
                       selected={selectedFriend.address === friend.address}
+                      metadata={metadata}
                       inviteFriend={(address: string) => inviteFriend(address)}
                       clickFriend={(address: string) => clickFriend(address)}
                       deleteFriend={(address: string) => deleteFriend(address)}
@@ -509,10 +517,9 @@ function App({ data }) {
             </div>
           </div>
           <SendMessage
-            disabled={!loaded}
-            sendMessage={(messageText: string, messageDate: Date) =>
-              addMessage(messageText, messageDate)
-            }
+            disable={!loaded}
+            typing={(typing: boolean) => setMetadata(oldMetadata => ({...oldMetadata, typing: typing}))}
+            sendMessage={(messageText: string, messageDate: Date) => addMessage(messageText, messageDate)}
           />
         </section>
       </section>

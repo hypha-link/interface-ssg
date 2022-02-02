@@ -65,7 +65,7 @@ export const Profile = (props) => {
                     <Image src={profile && profile.hasOwnProperty('image') ? `https://ipfs.io/ipfs/${profile.image.alternatives[0].src.substring(7, profile.image.alternatives[0].src.length)}` : `https://robohash.org/${props.address}.png?set=set5`} alt="Profile Image" height={"100%"} width={"100%"}/>
                     <div className={styles.imageOverlay}>Change</div>
                 </label>
-                <input id={styles.addFile} type="file" onChange={() => window.open("https://clay.self.id/me/profile/edit")}></input>
+                <input id={styles.addFile} type="file" onChange={() => window.open("https://clay.self.id/me/profile/edit")} disabled={selfId === undefined}></input>
             </div>
         </div>
     )

@@ -3,7 +3,7 @@
 #contextMenu {
   display: none;
   flex-direction: column;
-  position: absolute;
+  position: fixed;
   list-style: none;
   background-color: var(--mountain-gray);
   border-radius: 0.2em;

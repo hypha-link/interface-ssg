@@ -19,7 +19,27 @@ const streamrClient = () => {
 
 export const streamr: StreamrClient = streamrClient();
 
+//Create an unsigned Streamr client
+const streamrUnsignedClient = () => {
+  let client = undefined;
+  try{
+    //@ts-ignore
+    const { ethereum } = window;
+    client = new StreamrClient({
+      auth: {ethereum},
+      publishWithSignature: "never",
+    })
+  }
+  catch{
+    console.log("User needs to be signed in with an Ethereum wallet to authenticate Streamr.");
+  }
+  return client;
+}
+
+export const streamrUnsigned: StreamrClient = streamrUnsignedClient();
+
 export enum HyphaType{
+  Metadata = "metadata",
   Hypha = "hypha",
   Hyphae = "hyphae",
   Mycelium = "mycelium",
@@ -33,11 +53,34 @@ export default async function getOrCreateMessageStream(_address: string, _type: 
   //Get the address of the connected wallet
   const ownerAddress = await streamr.getAddress();
 
+  const createMetadata = async () => {
+    const streamProps =
+    {
+      id: `${ownerAddress}/hypha-metadata/${_address}`,
+      description: "Metadata",
+      config: {
+        fields: [],
+      },
+      partitions: 1,
+      requireSignedData: false,
+      requireEncryptedData: false,
+      storageDays: 1,
+      inactivityThresholdHours: .5,
+    }
+    //Create a new message stream or select one that exists
+    const stream = await streamrUnsigned.getOrCreateStream(streamProps);
+    //Grant permissions to selected friend
+    grantPermissions(stream, _address, PermissionType.Owner);
+    //Add storage
+    _addToStorage && await stream.addToStorageNode(StorageNode.STREAMR_GERMANY);
+    return stream;
+  }
+
   const createHypha = async () => {
     const streamProps =
     {
-      id: `${ownerAddress}/hypha-messages/${_address}`,
-      description: "The messages that you have sent using Hypha",
+      id: `${ownerAddress}/hypha/${_address}`,
+      description: "Hypha (Direct messages)",
       config: {
         fields: [{name: "sender", type: "string"},{name: "message", type: "string"},{name: "date", type: "number"}],
       },
@@ -60,7 +103,7 @@ export default async function getOrCreateMessageStream(_address: string, _type: 
     const streamProps =
     {
       id: `${ownerAddress}/hyphae/${_address.substring(_address.length - 4, _address.length)}`,
-      description: "The group messages that you have sent using Hypha",
+      description: "Hyphae (Group messages)",
       config: {
         fields: [{name: "sender", type: "string"},{name: "message", type: "string"},{name: "date", type: "number"}],
       },
@@ -82,8 +125,8 @@ export default async function getOrCreateMessageStream(_address: string, _type: 
   const createMycelium = async () => {
     const streamProps =
     {
-      id: `${ownerAddress}/hyphae/${_address.substring(_address.length - 4, _address.length)}`,
-      description: "The group messages that you have sent using Hypha",
+      id: `${ownerAddress}/mycelium/${_address}`,
+      description: "Mycelium (Server messages)",
       config: {
         fields: [{name: "sender", type: "string"},{name: "message", type: "string"},{name: "date", type: "number"}],
       },
@@ -103,6 +146,8 @@ export default async function getOrCreateMessageStream(_address: string, _type: 
   }
 
   switch(_type){
+    case HyphaType.Metadata:
+      return createMetadata();
     case HyphaType.Hypha:
       return createHypha();
     case HyphaType.Hyphae:

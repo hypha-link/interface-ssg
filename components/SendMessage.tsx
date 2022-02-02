@@ -7,6 +7,10 @@ import { EmojiMenu } from "./EmojiMenu";
 const IPFS = require('ipfs');
 
 export const SendMessage = ( props ) => {
+  const { disable, } :
+  {
+    disable: boolean,
+  } = props;
   const [inputValue, setInputValue] = useState("");
   const [showContext, setShowContext] = useState<any>();
   const [showEmojiMenu, setShowEmojiMenu] = useState<any>();
@@ -18,6 +22,7 @@ export const SendMessage = ( props ) => {
       //createMessage();
       props.sendMessage(inputValue, new Date().toString());
       setInputValue("");
+      props.typing(false);
     }
   };
 
@@ -27,8 +32,14 @@ export const SendMessage = ( props ) => {
       //createMessage();
       props.sendMessage(inputValue, new Date().toString());
       setInputValue("");
+      props.typing(false);
     }
   };
+
+  const inputChangeHandler = (e) => {
+    setInputValue(e.target.value);
+    props.typing(e.target.value !== "");
+  }
 
   function createChainlinkFeeds(e){
     if(e._reactName === 'onClick' && showChainlinkFeeds === undefined){
@@ -96,7 +107,7 @@ export const SendMessage = ( props ) => {
     <section id={styles.sendMessage}>
       <div>
         <label id={styles.addFileLabel} htmlFor={styles.addFile}>+</label>
-        <input id={styles.addFile} type="file" onChange={onChange} disabled={props.disabled}></input>
+        <input id={styles.addFile} type="file" onChange={onChange} disabled={disable}></input>
       </div>
       <input
         id={styles.messageText}
@@ -105,28 +116,28 @@ export const SendMessage = ( props ) => {
         placeholder="Message"
         autoComplete="off"
         value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
+        onChange={(e) => inputChangeHandler(e)}
         onInput={(e) => createMessageContext(e)}
         onKeyPress={(e) => keyHandler(e)}
-        disabled={props.disabled}
+        disabled={disable}
       />
       {showContext}
       <button
         id={styles.chainlinkFeed}
         onClick={(e) => createChainlinkFeeds(e)}
-        disabled={props.disabled}
+        disabled={disable}
       >&#x2B21;</button>
       {showChainlinkFeeds}
       <button
         id={styles.pickEmoji}
         onClick={(e) => createEmojiMenu(e)}
-        disabled={props.disabled}
+        disabled={disable}
       >&#x1F60A;</button>
       {showEmojiMenu}
       <button
         id={styles.messageSubmit} 
         onClick={(e) => buttonHandler(e)}
-        disabled={props.disabled}
+        disabled={disable}
       >Submit</button>
     </section>
   );

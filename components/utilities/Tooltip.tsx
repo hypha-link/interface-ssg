@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../../styles/tooltip.module.css"
 
 export enum Direction{
@@ -15,32 +15,35 @@ const { content, direction, delay }:
     direction: Direction,
     delay: number,
 } = props;
-  let timeout;
-  const [active, setActive] = useState(false);
+//Tracks mouse entering/leaving container
+const [active, setActive] = useState(false);
+//Whether we display the tooltip
+const [display, setDisplay] = useState(false);
 
-  const showTip = () => {
-    timeout = setTimeout(() => {
-      setActive(true);
-    }, delay || 600);
-  };
-
-  const hideTip = () => {
-    clearInterval(timeout);
-    setActive(false);
-  };
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout>;
+    if(active){
+      timeout = setTimeout(() => {
+        setDisplay(true);
+      }, delay || 1200);
+    }
+    return () => {
+      clearInterval(timeout);
+      setDisplay(false);
+    }
+  }, [active])
 
   return (
     <div
       className={styles.tooltipWrapper}
       // When to show the tooltip
-      onMouseEnter={showTip}
-      onMouseLeave={hideTip}
+      onMouseEnter={() => setActive(true)}
+      onMouseLeave={() => setActive(false)}
     >
       {/* Wrapping */}
       {props.children}
-      {active && (
+      {display && (
         <div className={`${styles.tooltip} ${styles[direction] || styles[Direction.top]}`}>
-          {/* Content */}
           {content}
         </div>
       )}

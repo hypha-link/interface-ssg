@@ -51,7 +51,7 @@ export const Edit = (props) => {
 
     return (
         <div className={styles.edit}>
-            <a className={editing ? styles.hidden : ''} onClick={() => setEditing(!editing)}>Edit</a>
+            <a className={editing ? styles.hidden : ''} onClick={() => selfId && setEditing(!editing)}>Edit</a>
             <div className={!editing ? styles.hidden : ''}>
                 <input
                 name="edit"
