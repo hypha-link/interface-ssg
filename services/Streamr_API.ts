@@ -65,7 +65,7 @@ export default async function getOrCreateMessageStream(_address: string, _type: 
       requireSignedData: false,
       requireEncryptedData: false,
       storageDays: 1,
-      inactivityThresholdHours: .5,
+      inactivityThresholdHours: 1,
     }
     //Create a new message stream or select one that exists
     const stream = await streamrUnsigned.getOrCreateStream(streamProps);
@@ -88,7 +88,7 @@ export default async function getOrCreateMessageStream(_address: string, _type: 
       requireSignedData: true,
       requireEncryptedData: false,
       storageDays: 1,
-      inactivityThresholdHours: .5,
+      inactivityThresholdHours: 1,
     }
     //Create a new message stream or select one that exists
     const stream = await streamr.getOrCreateStream(streamProps);
@@ -111,7 +111,7 @@ export default async function getOrCreateMessageStream(_address: string, _type: 
       requireSignedData: true,
       requireEncryptedData: false,
       storageDays: 1,
-      inactivityThresholdHours: .5,
+      inactivityThresholdHours: 1,
     }
     //Create a new message stream or select one that exists
     const stream = await streamr.getOrCreateStream(streamProps);
@@ -134,7 +134,7 @@ export default async function getOrCreateMessageStream(_address: string, _type: 
       requireSignedData: true,
       requireEncryptedData: false,
       storageDays: 1,
-      inactivityThresholdHours: .5,
+      inactivityThresholdHours: 1,
     }
     //Create a new message stream or select one that exists
     const stream = await streamr.getOrCreateStream(streamProps);
@@ -237,7 +237,7 @@ export const grantPermissions = async (_stream: Stream, _address: string, permis
 export const revokeUserPermissions = async (_stream: Stream, _address: string) => {
   const streamPermissions = await _stream.getPermissions();
   streamPermissions.map(async(permission) => {
-    if(permission.user === _address.toLowerCase()){
+    if(permission.user === _address){
       await _stream.revokePermission(permission.id);
     }
   })

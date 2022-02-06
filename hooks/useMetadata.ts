@@ -1,6 +1,6 @@
 import { useEthers } from '@usedapp/core';
 import { useEffect, useState } from 'react';
-import { Friends, Metadata } from '../interfaces/Types';
+import { Friends, Metadata } from '../components/utilities/Types';
 import getOrCreateMessageStream, { HyphaType, streamrUnsigned } from '../services/Streamr_API';
 
 export default function useMetadata(_streamID: string){
@@ -14,7 +14,7 @@ export default function useMetadata(_streamID: string){
     let friendAddress = '';
     //Set the friend address to whichever part of the ID isn't the auth account address
     if(account)
-    friendAddress = firstAddress !== account.toLowerCase() ? firstAddress : secondAddress;
+    friendAddress = firstAddress !== account ? firstAddress : secondAddress;
 
     //Receive metadata from partner
     useEffect(() => {
@@ -24,7 +24,7 @@ export default function useMetadata(_streamID: string){
                     console.log("Subscribing to metadata");
                     await streamrUnsigned.subscribe({ stream: stream.id },
                         (data) => {
-                            if(data.address !== account.toLowerCase()){
+                            if(data.address !== account){
                             setReceiveMetadata({ typing: data.typing, online: data.online });
                             } 
                         });
@@ -35,7 +35,7 @@ export default function useMetadata(_streamID: string){
             const stream = await getOrCreateMessageStream(friendAddress, HyphaType.Metadata);
             await streamrUnsigned.subscribe({ stream: stream.id },
               (data) => {
-                if(data.address !== account.toLowerCase()){
+                if(data.address !== account){
                   setReceiveMetadata({ typing: data.typing, online: data.online });
                   console.log(data);
                 } 
@@ -52,7 +52,7 @@ export default function useMetadata(_streamID: string){
         const publishMetadata = async () => {
             const stream = await streamrUnsigned.getStream(`${firstAddress}/hypha-metadata/${secondAddress}`);
             await stream.publish({
-            address: account.toLowerCase(),
+            address: account,
             typing: sendMetadata.typing,
             online: sendMetadata.online,
             })

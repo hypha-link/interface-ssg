@@ -2,8 +2,8 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-  height: 60px;
-  background-color: var(--vdark-brown);
+  height: var(--nav-height);
+  background-color: white;
 }
 
 .nav > * {
@@ -39,8 +39,9 @@
 }
 
 .nav > div > ul li a {
-  font-size: 1.2em;
-  color: var(--text-color);
+  font-size: 1.1em;
+  font-weight: bold;
+  color: var(--olive-green);
   padding: 3%;
 }
 
@@ -48,89 +49,112 @@
   transform: scale(1.1);
 }
 
-.logo{
-  margin-left: 3%;
-}
-
 /* Enter App Buttons */
 .enter {
   font-weight: 900;
-  color: var(--text-color);
+  color: var(--olive-green);
   font-size: 1em;
   padding: 1%;
-  border: white 1px solid;
+  border: var(--olive-green) 2px solid;
   transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
   margin-right: 3%;
 }
 
 .enter:hover {
-  color: black;
-  background-color: white;
+  color: var(--yellow-lime);
+  background-color: var(--olive-green);
 }
 
 .hamburger{
   display: none;
 }
 
-.hero {
+.hero{
+  display: flex;
+  height: calc(100vh - 60px);
+  width: 100vw;
+  background-color: var(--yellow-lime);
+  color: var(--olive-green);
+}
+
+.hero > *{
+  display: flex;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+  padding: 0 3% 0 3%;
+}
+
+.hero .desc{
+  flex-direction: column;
+  background-image: url(/hypha-pattern.svg);
+  background-attachment: fixed;
+  background-blend-mode: overlay;
+}
+
+.hero .desc > h2{
+  font-size: 3rem;
+}
+
+.hero .desc > p{
+  margin-top: 3%;
+  font-size: 1.5rem;
+}
+
+.features {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: calc(100vh - 60px);
-  width: 100vw;
-  background-color: var(--hero);
-  color: var(--text-color);
-  font-size: 3em;
+  background-color: white;
+  min-height: fit-content;
+  color: var(--olive-green);
 }
 
-.hero > h1 {
-  margin: 0;
-  padding: 0;
+.features > h1{
+  font-size: 2em;
+  margin-top: 3%;
 }
 
-.hero > a {
-  font-size: 0.75em;
+.features > ul{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  justify-items: center;
+  gap: 5%;
+  width: 75%;
+  min-height: 60vh;
+  margin: 3%;
+}
+
+.features > ul > li{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+  font-size: 1.3em;
+  font-weight: bold;
+  margin: 5%;
+}
+
+.features > ul > li > div{
+  background-color: #C4C4C4;
+  min-height: 150px;
+  height: 100%;
+  min-width: 250px;
+  margin-bottom: 10%;
 }
 
 .about {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--med-brown);
+  background-color: var(--yellow-lime);
   min-height: 20vh;
 }
 
 .about p {
-  color: var(--text-color);
+  color: black;
   margin: 0;
-}
-
-.features {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--dark-brown);
-  min-height: 20vh;
-}
-
-.features p {
-  color: var(--text-color);
-  margin: 0;
-}
-
-.features > div{
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  width: 100%;
-}
-
-.features > div > div{
-  display: flex;
-  justify-content: center;
-  padding: 5%;
-  background-color: var(--vdark-brown);
-  max-width: 100%;
 }
 
 .footer {
@@ -138,7 +162,7 @@
   justify-content: space-around;
   align-items: center;
   min-height: 10vh;
-  background-color: var(--light-brown);
+  background-color: white;
 }
 
 .footer > ul{
@@ -148,7 +172,7 @@
 }
 
 .footer > ul li{
-  color: var(--text-color);
+  color: var(--olive-green);
   margin: 0 5% 0 5%;
 }
 
@@ -162,18 +186,21 @@
     display: block;
     margin-left: auto;
     margin-right: 3%;
-    color: white;
+    color: var(--olive-green);
+    font-size: 1.5em;
+    cursor: default;
+    user-select: none;
   }
 
   .nav > div {
     display: flex;
     flex-direction: column;
     position: absolute;
-    top: 60px;
+    top: var(--nav-height);
     left: 0;
     height: fit-content;
     width: 100vw;
-    background-color: var(--dark-brown);
+    background-color: white;
   }
 
   .nav > div > ul {
@@ -183,8 +210,38 @@
 
   .nav > div > a{
     font-size: 1.2em;
-    color: var(--text-color);
+    color: black;
     margin: 1% auto 3% auto;
     width: fit-content;
+  }
+
+  .hero .desc h2{
+    font-size: 2rem;
+  }
+
+  .hero .desc p{
+    font-size: 1rem;
+  }
+
+  .hero .threejs{
+    display: none;
+  }
+
+  .features > h1{
+    font-size: 1.5em;
+  }
+
+  .features > ul > li{
+    font-size: 1.1em;
+  }
+
+  .features > ul{
+    display: flex;
+    flex-direction: column;
+    gap: unset;
+  }
+
+  .footer > ul:nth-child(2){
+    display: none;
   }
 }

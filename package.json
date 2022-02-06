@@ -11,8 +11,10 @@
   "dependencies": {
     "@datamodels/identity-profile-basic": "^0.1.2",
     "@ethersproject/units": "^5.5.0",
+    "@fontsource/montserrat-alternates": "^4.5.1",
     "@self.id/core": "^0.2.0",
     "@self.id/web": "^0.2.0",
+    "@svgr/webpack": "^6.2.1",
     "@usedapp/core": "^0.5.6",
     "axios": "^0.24.0",
     "crypto-icons-plus": "^1.0.0",

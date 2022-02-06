@@ -1,6 +1,6 @@
 import { SelfID } from '@self.id/web';
 import { useEffect, useState } from 'react';
-import { Friends } from '../interfaces/Types';
+import { Friends } from '../components/utilities/Types';
 
 export default function useFriendStorage(selfId: SelfID) {
     const [friends, setFriends] = useState<Friends[]>();

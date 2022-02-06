@@ -2,10 +2,14 @@
   --mountain-gray: rgba(77, 77, 82, 1);
   --primary-color: rgba(230, 239, 248, 1);
   --secondary-color: rgba(179, 225, 238, 1);
-  --ui-color: rgba(42, 17, 7, 1);
+  --ui-color: var(--vdark-brown);
   --gravel-black: rgba(22, 24, 12, 1);
   --chainlink-blue: rgba(55, 91, 210, 1);
   --transparent: rgba(0, 0, 0, 0);
+
+  /*New Hypha Colors*/
+  --olive-green: rgba(91, 95, 50, 1);
+  --yellow-lime: rgba(214, 222, 35, 1); 
 
   /* Index */
   --hero: rgba(82, 57, 47, 1);
@@ -20,6 +24,10 @@
   --tooltip-background-color: var(--ui-color);
   --tooltip-margin: 30px;
   --tooltip-arrow-size: 6px;
+
+  /*Nav*/
+  --nav-height: 90px;
+  --logo-size: 60px;
 }
 
 /*SCROLLBAR*/
@@ -45,15 +53,23 @@
 }
 
 html,
-body {
+body{
   padding: 0;
   margin: 0;
 }
 
 html{
   overflow-x: hidden;
-  background: radial-gradient(circle, var(--primary-color) 0%, var(--secondary-color) 150%);
   height:100vh;
+  font-family: "Montserrat Alternates";
+}
+
+h1{
+  margin: 0;
+}
+
+h2{
+  margin: 0;
 }
 
 ul{
@@ -62,16 +78,35 @@ ul{
   margin: 0;
 }
 
-a {
+a{
   color: inherit;
   text-decoration: none;
+}
+
+p{
+  margin: 0;
 }
 
 /* For logo in Nav */
 .logoContainer{
   position: relative;
-  height: 60px;
-  width: 60px;
+  display: flex;
+  align-items: center;
+  max-height: var(--logo-size);
+  margin-top: 1vh;
+  margin-bottom: 1vh;
+  color: var(--olive-green);
+  user-select: none;
+  margin-left: 3%;
+}
+
+.logoContainer svg{
+  max-height: var(--logo-size);
+  max-width: var(--logo-size);
+}
+
+.logoContainer h1{
+  margin-left: 5%;
 }
 
 .hypha-button{
