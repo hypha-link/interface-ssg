@@ -1,7 +1,6 @@
 import React from 'react'
 import styles from '../styles/emojimenu.module.css'
-
-const emojis = require('emojis-list')
+import emojis from 'emojis-list';
 
 export const EmojiMenu = (props) => {
     const emojiArr = [];

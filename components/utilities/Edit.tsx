@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
-import styles from "../styles/edit.module.css"
+import styles from "../../styles/edit.module.css"
+import { SelfID } from '@self.id/web'
 
 export const Edit = (props) => {
     const [editing, setEditing] = useState(false);
     const [inputValue, setInputValue] = useState("");
+
+    const selfId: SelfID = props.selfId;
 
     const keyHandler = (e) => {
         if (e.key === "Enter" && inputValue.trim() !== "") {
@@ -34,21 +37,21 @@ export const Edit = (props) => {
 
     const changeName = async (newName) => {
         console.log("Set Profile Name");
-        await props.profile.merge('basicProfile', {
+        await selfId.merge('basicProfile', {
             name: newName
         });
     }
 
     const changeDescription = async (newDescription) => {
         console.log("Set Profile Description");
-        await props.profile.merge('basicProfile', {
+        await selfId.merge('basicProfile', {
             description: newDescription
         });
     }
 
     return (
         <div className={styles.edit}>
-            <a className={editing ? styles.hidden : ''} onClick={() => setEditing(!editing)}>Edit</a>
+            <a className={editing ? styles.hidden : ''} onClick={() => selfId && setEditing(!editing)}>Edit</a>
             <div className={!editing ? styles.hidden : ''}>
                 <input
                 name="edit"

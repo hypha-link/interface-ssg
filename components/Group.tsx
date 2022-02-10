@@ -1,20 +1,18 @@
 import React, { useState } from 'react'
 import styles from '../styles/friend.module.css'
 import Image from 'next/image'
-import { shortenIfAddress, useSendTransaction } from '@usedapp/core'
+import { shortenIfAddress } from '@usedapp/core'
 import ContextMenu from './ContextMenu'
-import { utils } from 'ethers'
 
-export const Friend = (props) => {
+export const Group = (props) => {
     const [anchorPoint, setAnchorPoint] = useState({x: 0, y: 0});
-    const { sendTransaction, state } = useSendTransaction();
 
     return (
         <div 
         className = {props.selected ? `${styles.friendContainer} ${styles.selectedFriend}` : styles.friendContainer} 
         onClick={() => {
             //If not selected, allow user to select friend
-            !props.selected && props.clickFriend(props.address)
+            !props.selected && props.clickGroup(props.address)
         }} 
         onContextMenu={(e) => {
             setTimeout(() => setAnchorPoint({x: e.pageX, y: e.pageY}), 1);
@@ -24,20 +22,14 @@ export const Friend = (props) => {
             <ContextMenu 
             anchorPoint={{x: anchorPoint.x, y: anchorPoint.y}} 
             localAnchorPoint={(ap) => setAnchorPoint(ap)}
-            //If not selected, allow user to select friend
-            select={() => !props.selected && props.clickFriend(props.address)} 
-            send={() => {
-                if(state === 'None'){
-                    console.log(state);
-                }
-                else{
-                    sendTransaction({ to: props.address, value: utils.parseEther(".1")});
-                }
-            }} 
-            delete={() => props.deleteFriend(props.address)}
+            //If not selected, allow user to select group
+            select={() => !props.selected && props.clickGroup(props.address)}
+            view={() => console.log("View Profile")}
+            delete={() => props.deleteGroup(props.address)}
             />
-            <Image src={`https://robohash.org/${props.address}.png?set=set5`} alt="Friend" height={"100%"} width={"100%"} />
+            <Image src={`https://robohash.org/${props.address}.png?set=set4`} alt="Group" height={"100%"} width={"100%"} />
             <p>{shortenIfAddress(props.address)}</p>
+            <p>Members</p>
         </div>
     )
 }

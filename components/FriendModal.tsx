@@ -5,7 +5,6 @@ export const FriendModal = (props) => {
     const [inputValue, setInputValue] = useState("");
 
     const keyHandler = (e) => {
-        console.log(e)
         if (e.key === "Enter" && inputValue.trim() !== "") {
             props.addFriend(inputValue);
         }

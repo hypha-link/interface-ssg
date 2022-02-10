@@ -40,7 +40,7 @@ export const TokenFeed = (props) => {
     })[0].slug;
 
   return (
-    <section id={styles.tokenFeed} onClick={() => props.onClick()}>
+    <section id={styles.tokenFeed} onClick={(e) => {props.onClick(); e.stopPropagation()}}>
     <div className={liveFeed ? `${styles.wave} ${styles.water}` : `${styles.wave} ${styles.water} ${styles.staticFeed}`}></div>
     <div className={liveFeed ? `${styles.wave} ${styles.water}` : `${styles.wave} ${styles.water} ${styles.staticFeed}`}></div>
     <div className={liveFeed ? `${styles.wave} ${styles.water}` : `${styles.wave} ${styles.water} ${styles.staticFeed}`}></div>

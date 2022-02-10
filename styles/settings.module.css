@@ -6,7 +6,7 @@
     width: calc(100vw - 10%);
     height: 100vh;
     z-index: 11;
-    background-color: var(--primary-color);
+    background-color: var(--appBGColor);
     padding: 5% 5% 0 5%;
 }
 
@@ -21,7 +21,7 @@
 #settings nav ul{
     padding-bottom: 3%;
     padding-right: 10%;
-    border-bottom: solid black 2px;
+    border-bottom: solid var(--uiColor) 2px;
 }
 
 #settings nav ul li a{
@@ -29,12 +29,12 @@
 }
 
 #settings nav ul li:hover{
-    background-color: black;
+    background-color: var(--inputHoverBGColor);
     cursor: pointer;
 }
 
 #settings nav ul li:hover > a{
-    color: white !important;
+    color: var(--inputHoverColor) !important;
 }
 
 #settings section{
@@ -72,7 +72,7 @@
 #profile .imageOverlay {
     position: absolute;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.75);
+    background: rgba(var(--uiHoverColorPure), 0.75);
     width: 100%;
     transition: .5s ease;
     opacity:0;

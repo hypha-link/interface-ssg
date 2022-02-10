@@ -1,8 +1,9 @@
 /*TOKEN FEED*/
 #tokenFeed {
   position: relative;
-  background-color: var(--primary-color);
-  border: var(--ui-color) 5px outset;
+  background-color: var(--inputBGColor);
+  color: var(--inputColor);
+  border: var(--inputColor) 5px outset;
   display: flex;
   flex-direction: column;
   width: 250px;
@@ -14,7 +15,7 @@
 
 #tokenFeed .staticFeed {
   display: none;
-  background-color: var(--transparent);
+  background-color: transparent;
 }
 
 #tokenFeed .wave {
@@ -77,7 +78,9 @@
 }
 
 #tokenFeed:hover {
-  background-color: var(--secondary-color);
+  background-color: var(--inputHoverBGColor);
+  color: var(--inputHoverColor);
+  border: var(--inputHoverColor) 5px outset;
 }
 
 #tokenFeed > div {
@@ -106,7 +109,6 @@
   flex: 1;
   margin: 2% auto 2% auto;
   font-size: 1.3em;
-  color: black;
   transform: translateY(-25%);
   width: 50%;
 }
@@ -130,12 +132,11 @@
   align-items: flex-end;
   width: 100%;
   margin: 0 15% 0 1%;
-  color: black;
 }
 
 #tokenFeed #creditDiv #credit {
   font-size: 0.75em;
-  color: var(--chainlink-blue);
+  color: var(--chainlink);
 }
 
 #tokenFeed #creditDiv :not(#credit) {
@@ -149,10 +150,10 @@
   margin-left: 7%;
   width: 1.3em;
   height: 1.3em;
-  background-color: var(--primary-color);
+  background-color: var(--inputBGColor);
   border-radius: 50%;
   vertical-align: middle;
-  border: 2px dotted var(--ui-color);
+  border: 2px dotted var(--inputColor);
   appearance: none;
   -webkit-appearance: none;
   outline: none;
@@ -160,13 +161,22 @@
   animation: spin 5s linear infinite;
 }
 
-#tokenFeed input.hideLiveFeedCheckbox {
-  display: none;
+#tokenFeed:hover > input{
+  background-color: var(--inputColor);
+  border: 2px dotted var(--inputBGColor);
 }
 
 #tokenFeed input:checked {
-  background-color: var(--ui-color);
+  background-color: var(--inputColor);
   animation: blink 2s linear infinite;
+}
+
+#tokenFeed:hover > input:checked{
+  background-color: var(--inputBGColor);
+}
+
+#tokenFeed input.hideLiveFeedCheckbox {
+  display: none;
 }
 
 @keyframes blink {

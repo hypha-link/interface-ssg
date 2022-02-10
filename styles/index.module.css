@@ -2,18 +2,17 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-  height: 60px;
-  background-color: var(--vdark-brown);
+  height: var(--nav-height);
+  background-color: var(--appBGColor);
 }
 
-.nav > * {
-  display: flex;
-  justify-content: center;
+.nav > a{
+  margin-left: 2vw;
 }
 
 .nav > div{
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   height: 100%;
   flex: 1;
@@ -21,135 +20,198 @@
 
 .nav > div > ul {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
   align-items: center;
   height: 100%;
   white-space: nowrap;
-  flex: .5;
-  margin: 0 auto;
+  flex: 1;
+  margin: 0 15%;
 }
 
 .nav > div > ul li {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex: 1;
   height: 100%;
-  margin-left: 5%;
+  width: fit-content;
 }
 
 .nav > div > ul li a {
-  font-size: 1.2em;
-  color: var(--text-color);
-  padding: 3%;
+  font-size: 1.3em;
+  font-weight: bold;
+  color: var(--inputBGColor);
 }
 
 .nav > div > ul li a:hover {
   transform: scale(1.1);
 }
 
-.logo{
-  margin-left: 3%;
+.nav .enter{
+  margin-right: 2vw;
 }
 
 /* Enter App Buttons */
 .enter {
   font-weight: 900;
-  color: var(--text-color);
+  color: var(--inputBGColor);
   font-size: 1em;
   padding: 1%;
-  border: white 1px solid;
+  border: var(--inputBGColor) 2px solid;
   transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
-  margin-right: 3%;
+  max-height: max-content;
+  font-family: "Montserrat";
 }
 
 .enter:hover {
-  color: black;
-  background-color: white;
+  color: var(--inputHoverBGColor);
+  background-color: var(--inputHoverColor);
 }
 
 .hamburger{
   display: none;
 }
 
-.hero {
+.hero{
+  position: relative;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: calc(100vh - 60px);
+  height: calc(100vh - var(--nav-height));
   width: 100vw;
-  background-color: var(--hero);
-  color: var(--text-color);
-  font-size: 3em;
+  background-color: var(--appBGColor2);
+  color: var(--appColor);
 }
 
-.hero > h1 {
-  margin: 0;
-  padding: 0;
-}
-
-.hero > a {
-  font-size: 0.75em;
-}
-
-.about {
+.hero > *{
   display: flex;
   justify-content: center;
-  align-items: center;
-  background-color: var(--med-brown);
-  min-height: 20vh;
+  flex: 1 1 0px;
+  padding: 0 4% 0 4%;
+  min-width: 0;
 }
 
-.about p {
-  color: var(--text-color);
-  margin: 0;
+.hero .desc{
+  flex-direction: column;
+  text-align: center;
+}
+
+.hero .desc > div > h2{
+  font-size: 2.5rem;
+  line-height: 1.3em;
+}
+
+.hero .desc > p{
+  margin-top: 3%;
+  font-size: 1.5rem;
+  line-height: 1.7em;
+  font-family: "Montserrat";
 }
 
 .features {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: var(--dark-brown);
-  min-height: 20vh;
+  background-color: var(--appBGColor);
+  min-height: fit-content;
+  color: var(--appColor);
 }
 
-.features p {
-  color: var(--text-color);
-  margin: 0;
+.features > h1{
+  font-size: 2em;
+  margin-top: 3%;
 }
 
-.features > div{
+.features > ul{
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  width: 100%;
+  justify-items: center;
+  gap: 5%;
+  width: 75%;
+  min-height: 60vh;
+  margin: 3%;
 }
 
-.features > div > div{
+.features > ul > li{
   display: flex;
-  justify-content: center;
-  padding: 5%;
-  background-color: var(--vdark-brown);
-  max-width: 100%;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.3em;
+  font-weight: bold;
+  margin: 5%;
+  font-family: "Montserrat";
+}
+
+.features > ul > li > svg{
+  height: 100%;
+  width: 100%;
+  margin-bottom: 10%;
+  border-radius: 10%;
+}
+
+.about {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  background-color: var(--appBGColor2);
+  min-height: 30vh;
+  padding: 3% 15%;
+  color: var(--appColor);
+}
+
+.about > h1{
+  font-size: 1.7em;
+  text-align: center;
+}
+
+.about p {
+  text-align: center;
+  line-height: 1.3em;
+  font-size: 1.2em;
+  font-family: "Montserrat";
 }
 
 .footer {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  min-height: 10vh;
-  background-color: var(--light-brown);
+  height: var(--nav-height);
+  background-color: var(--appBGColor);
 }
 
 .footer > ul{
   display: flex;
   justify-content: center;
+  align-items: center;
   flex: 1;
+  height: 100%;
 }
 
 .footer > ul li{
-  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  color: var(--inputColor);
   margin: 0 5% 0 5%;
+  height: 100%;
+}
+
+.footer > ul > li a{
+  font-size: 1.1em;
+  color: var(--inputBGColor);
+}
+
+.footer > ul > li a:hover{
+  transform: scale(1.1);
+}
+
+.footer > ul > li > a > svg{
+  height: 1.5em;
+  fill: var(--inputBGColor);
+}
+
+@media only screen and (max-width: 992px) {
+  .nav > div > ul {
+    margin: 0;
+  }
 }
 
 @media only screen and (max-width: 670px) {
@@ -160,20 +222,33 @@
 
   .hamburger{
     display: block;
-    margin-left: auto;
+    margin-left: 3%;
     margin-right: 3%;
-    color: white;
+    padding: 2%;
+    color: var(--inputBGColor);
+    font-size: 1.8em;
+    cursor: default;
+    user-select: none;
+  }
+
+  .nav{
+    justify-content: space-between;
+  }
+
+  .nav .enter{
+    margin-right: auto;
   }
 
   .nav > div {
     display: flex;
     flex-direction: column;
     position: absolute;
-    top: 60px;
+    top: var(--nav-height);
     left: 0;
     height: fit-content;
     width: 100vw;
-    background-color: var(--dark-brown);
+    background-color: var(--appBGColor);
+    z-index: 9;
   }
 
   .nav > div > ul {
@@ -183,8 +258,58 @@
 
   .nav > div > a{
     font-size: 1.2em;
-    color: var(--text-color);
     margin: 1% auto 3% auto;
     width: fit-content;
+  }
+
+  .enter{
+    background-color: var(--inputHoverColor);
+    color: var(--inputHoverBGColor);
+  }
+
+  .hero{
+    flex-direction: column;
+  }
+
+  .hero > *{
+    padding: 0 2% 5% 2%;
+  }
+
+  .hero .desc > div > h2{
+    font-size: 1.4rem;
+    margin-top: 5%;
+    line-height: normal;
+  }
+
+  .hero .desc > p{
+    font-size: .9rem;
+    line-height: 1.4em;
+  }
+
+  .features > h1{
+    font-size: 1.5em;
+    text-align: center;
+  }
+
+  .features > ul > li{
+    font-size: 1.1em;
+  }
+
+  .features > ul{
+    display: flex;
+    flex-direction: column;
+    gap: unset;
+  }
+
+  .about{
+    padding: 5% 5%;
+  }
+
+  .about p{
+    margin: 5% 0;
+  }
+
+  .footer > ul:nth-child(2){
+    display: none;
   }
 }

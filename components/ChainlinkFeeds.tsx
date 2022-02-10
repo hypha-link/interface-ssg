@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styles from '../styles/ChainlinkFeeds.module.css'
 import { TokenFeed } from './TokenFeed'
 import priceFeed, { tokenAddr, tokenAddrArr } from '../services/Chainlink_API'
-const { ethers } = require("ethers")
+import { ethers } from "ethers"
 
 export const ChainlinkFeeds = (props) => {
     const [tokenFeed, setTokenFeed] = useState([]);

@@ -1,19 +1,45 @@
 :root{
-  --mountain-gray: rgba(77, 77, 82, 1);
-  --primary-color: rgba(230, 239, 248, 1);
-  --secondary-color: rgba(179, 225, 238, 1);
-  --ui-color: rgba(42, 17, 7, 1);
-  --gravel-black: rgba(22, 24, 12, 1);
-  --chainlink-blue: rgba(55, 91, 210, 1);
-  --transparent: rgba(0, 0, 0, 0);
+  /* Sizing */
+  --nav-height: 90px;
+  --logo-size: 75px;
+  
+  /* Tooltip */
+  --tooltipMargin: 30px;
+  --tooltipArrowSize: 6px;
+  
+  /* Element Colors */
+  --appColor: var(--olive);
+  --appBGColor: white;
+  --appBGColor2: var(--pear);
 
-  /* Index */
-  --hero: rgba(82, 57, 47, 1);
-  --light-brown: rgba(72, 47, 37, 1);
-  --med-brown: rgba(62, 37, 27, 1);
-  --dark-brown: rgba(52, 27, 17, 1);
-  --vdark-brown: rgba(42, 17, 7, 1);
-  --text-color: rgba(255, 255, 255, 1);
+  --uiColor: var(--pear);
+  --uiBGColor: var(--cannon);
+  --uiBGColorPure: var(--cannonPure);
+  --uiHoverColor: var(--cannon);
+  --uiHoverColorPure: var(--cannonPure);
+
+  --inputColor: var(--pear);
+  --inputBGColor: var(--olive);
+  --inputHoverColor: var(--olive);
+  --inputHoverColorPure: var(--olivePure);
+  --inputHoverBGColor: var(--pear);
+  --inputHoverBGColorPure: var(--pearPure);
+
+  /* Hypha Colors */
+
+  /* #5B5F32 */
+  --olive: rgb(91, 95, 50);
+  --olivePure: 91, 95, 50;
+  /* #D6DE23 */
+  --pear: rgb(214, 222, 35);
+  --pearPure: 214, 222, 35;
+  /* #2a1107 */
+  --cannon: rgb(42, 17, 7);
+  --cannonPure: 42, 17, 7;
+
+  /* Partner Colors */
+  --chainlink: rgb(55, 91, 210);
+
 }
 
 /*SCROLLBAR*/
@@ -39,15 +65,23 @@
 }
 
 html,
-body {
+body{
   padding: 0;
   margin: 0;
 }
 
 html{
   overflow-x: hidden;
-  background: radial-gradient(circle, var(--primary-color) 0%, var(--secondary-color) 150%);
   height:100vh;
+  font-family: "Montserrat Alternates";
+}
+
+h1{
+  margin: 0;
+}
+
+h2{
+  margin: 0;
 }
 
 ul{
@@ -56,21 +90,42 @@ ul{
   margin: 0;
 }
 
-a {
+a{
   color: inherit;
   text-decoration: none;
+}
+
+p{
+  margin: 0;
 }
 
 /* For logo in Nav */
 .logoContainer{
   position: relative;
-  height: 60px;
-  width: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-height: var(--logo-size);
+  margin-top: 1vh;
+  margin-bottom: 1vh;
+  color: var(--olive);
+  user-select: none;
+  /* width: calc(var(--logo-size) + 10em); */
+}
+
+.logoContainer svg{
+  height: var(--logo-size);
+  width: var(--logo-size);
+}
+
+.logoContainer h1{
+  font-size: 2em;
+  padding-left: 1vw;
 }
 
 .hypha-button{
-  background-color: var(--ui-color);
-  color: var(--primary-color);
+  background-color: var(--uiBGColor);
+  color: var(--uiColor);
   border:none;
   border-radius: 5px;
   opacity: .6;
@@ -85,11 +140,56 @@ a {
 /*OVERLAY BUTTONS*/
 
 .overlay{
-  background-color: var(--ui-color);
+  background-color: var(--uiBGColor);
   position: absolute;
   bottom:calc(2% + 50px);
 }
 
-.overlay button:hover{
-  color:var(--secondary-color) !important;
+.hyphaPattern{
+  background-image: url(/patterns/HyphaPattern.svg);
+  background-attachment: fixed;
+  background-blend-mode: overlay;
+}
+
+.svgBackground{
+  aspect-ratio: 3/2;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.svgWaveV{
+  background-image: url(/patterns/WaveVertical.svg);
+}
+
+.svgWaveH{
+  background-image: url(/patterns/WaveHorizontal.svg);
+}
+
+@media only screen and (max-width: 670px) {
+  /* Shrink to size of logo + 1em for each font-size of letters */
+  .logoContainer{
+    position: relative;
+    flex: 1;
+    justify-content: flex-start;
+    width: auto;
+  }
+  /* Shrink size of svg by logo-size + .2em for each missing em of letters */
+  .logoContainer svg{
+    height: calc(var(--logo-size) - 1em);
+    width: calc(var(--logo-size) - 1em);
+  }
+  
+  .logoContainer h1{
+    position: sticky;
+    display: flex;
+    font-size: 1.8em;
+    padding: 0;
+    left: 50%;
+    transform: translate(-50%);
+  }
+
+  .svgWaveV{
+    background-image: url(/patterns/WaveHorizontal.svg);
+  }
 }

@@ -1,5 +1,7 @@
 #content {
   display: flex;
+  background-color: var(--appBGColor);
+  color: var(--appColor);
 }
 
 /*TOPBAR*/
@@ -8,26 +10,31 @@
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  height: 60px;
-  background-color: var(--ui-color);
-  color: white;
+  height: var(--nav-height);
+  background-color: var(--uiBGColor);
+  color: var(--uiColor);
 }
 
 #topBar input {
-  background-color: var(--transparent);
-  color: black;
+  background-color: transparent;
+  color: var(--uiColor);
   width: 100%;
   height: 100%;
   border: none;
+  text-align: center;
 }
 
 #topBar input::placeholder {
-  color: white;
+  color: var(--uiColor);
 }
 
 #topBar input:focus-visible {
   border: none;
   outline: none;
+}
+
+#topBar input:not(:placeholder-shown) {
+  background-color: rgba(var(--inputHoverColorPure), 0.1);
 }
 
 #topBar > *{
@@ -42,20 +49,19 @@
   justify-content: center;
 }
 
-#topBar > div:first-child{
-  justify-content: center;
-  max-width: 60px;
-  margin-left: 3%;
+#topBar > a{
+  margin-left: 2vw;
+  flex: unset;
 }
 
 /*SIDEBAR CONTAINER*/
 
 #sidebarContainer {
-  background: var(--transparent);
+  background: transparent;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: calc(100vh - 60px);
+  height: calc(100vh - var(--nav-height));
   flex: 1;
 }
 
@@ -70,7 +76,7 @@
 }
 
 #browserServers:hover {
-  background: rgba(0, 0, 0, 0.01);
+  background: rgba(var(--uiHoverColorPure), 0.01);
 }
 
 #browserServers > button {
@@ -85,9 +91,9 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  background: var(--primary-color);
-  background: var(--transparent);
-  height: calc(100vh - 60px);
+  background-color: var(--uiBGColor);
+  background: transparent;
+  height: calc(100vh - var(--nav-height));
   flex: 3;
 }
 
@@ -109,46 +115,27 @@
 
 #profile {
   display: flex;
-  /*Set connect button to bottom right of container*/
-  align-items: flex-start;
-  justify-content: flex-end;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
   min-height: 20vh;
 }
 
 #profile:hover {
-  background: rgba(0, 0, 0, 0.01);
+  background: rgba(var(--uiHoverColorPure), 0.01);
 }
 
-/*Both divs inside profile container*/
-#profile > div {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  align-items: center;
-  flex: 1;
-  height: 100%;
-  width: 40%;
-}
-
-#profile #currentActivity a {
-  text-decoration: none;
-  color: black;
-}
-
-#profile #currentActivity a:hover {
-  color: var(--ui-color);
-}
-
-#profile #connectArea {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-#profile #connectArea button {
-  height: 60px;
-  width: 140px;
+/* Settings button */
+#profile .settings{
+  width: 50px;
+  height: 50px;
   border-radius: 314px;
+}
+
+#profile .settings > svg{
+  width: 1.7em;
+  height: 1.7em;
+  fill: var(--inputColor);
 }
 
 /*FRIENDS*/
@@ -160,7 +147,7 @@
 }
 
 #friendsList:hover {
-  background: rgba(0, 0, 0, 0.01);
+  background-color: rgba(var(--uiHoverColorPure), .01);
 }
 
 #friendsList > div {
@@ -179,4 +166,10 @@
 
 #friendsList p {
   text-align: center;
+}
+
+@media only screen and (max-width: 670px) {
+  #profile{
+    flex-direction: column-reverse;
+  }
 }
