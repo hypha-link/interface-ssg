@@ -20,15 +20,15 @@
 }
 
 .edit a{
-    background-color: rgba(0, 0, 0, .5);
-    color: white !important;
+    background-color: rgba(var(--uiHoverColorPure), .6);
+    color: var(--inputColor) !important;
     border-radius: 314px;
     padding: .4em .75em;
     cursor: pointer;
 }
 
 .edit a:hover{
-    background-color: rgba(0, 0, 0, .7);
+    background-color: rgba(var(--uiHoverColorPure), 1);
 }
 
 .edit input{

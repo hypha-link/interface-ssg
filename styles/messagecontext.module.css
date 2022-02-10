@@ -1,7 +1,7 @@
 /*MESSAGE CONTEXT*/
 
 #messageContext {
-  background-color: var(--ui-color);
+  background-color: var(--uiBGColor);
   position: absolute;
   min-height: 40%;
   min-width: 53vw;
@@ -20,5 +20,5 @@
 }
 
 #messageContext > div button:hover {
-  color: var(--secondary-color);
+  color: var(--inputHoverColor);
 }

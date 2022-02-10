@@ -3,17 +3,16 @@
   justify-content: space-around;
   align-items: center;
   height: var(--nav-height);
-  background-color: white;
+  background-color: var(--appBGColor);
 }
 
-.nav > * {
-  display: flex;
-  justify-content: center;
+.nav > a{
+  margin-left: 2vw;
 }
 
 .nav > div{
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   height: 100%;
   flex: 1;
@@ -21,48 +20,51 @@
 
 .nav > div > ul {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
   align-items: center;
   height: 100%;
   white-space: nowrap;
-  flex: .5;
-  margin: 0 auto;
+  flex: 1;
+  margin: 0 15%;
 }
 
 .nav > div > ul li {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex: 1;
   height: 100%;
-  margin-left: 5%;
+  width: fit-content;
 }
 
 .nav > div > ul li a {
-  font-size: 1.1em;
+  font-size: 1.3em;
   font-weight: bold;
-  color: var(--olive-green);
-  padding: 3%;
+  color: var(--inputBGColor);
 }
 
 .nav > div > ul li a:hover {
   transform: scale(1.1);
 }
 
+.nav .enter{
+  margin-right: 2vw;
+}
+
 /* Enter App Buttons */
 .enter {
   font-weight: 900;
-  color: var(--olive-green);
+  color: var(--inputBGColor);
   font-size: 1em;
   padding: 1%;
-  border: var(--olive-green) 2px solid;
+  border: var(--inputBGColor) 2px solid;
   transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
-  margin-right: 3%;
+  max-height: max-content;
+  font-family: "Montserrat";
 }
 
 .enter:hover {
-  color: var(--yellow-lime);
-  background-color: var(--olive-green);
+  color: var(--inputHoverBGColor);
+  background-color: var(--inputHoverColor);
 }
 
 .hamburger{
@@ -70,35 +72,37 @@
 }
 
 .hero{
+  position: relative;
   display: flex;
-  height: calc(100vh - 60px);
+  height: calc(100vh - var(--nav-height));
   width: 100vw;
-  background-color: var(--yellow-lime);
-  color: var(--olive-green);
+  background-color: var(--appBGColor2);
+  color: var(--appColor);
 }
 
 .hero > *{
   display: flex;
   justify-content: center;
-  flex: 1;
-  height: 100%;
-  padding: 0 3% 0 3%;
+  flex: 1 1 0px;
+  padding: 0 4% 0 4%;
+  min-width: 0;
 }
 
 .hero .desc{
   flex-direction: column;
-  background-image: url(/hypha-pattern.svg);
-  background-attachment: fixed;
-  background-blend-mode: overlay;
+  text-align: center;
 }
 
-.hero .desc > h2{
-  font-size: 3rem;
+.hero .desc > div > h2{
+  font-size: 2.5rem;
+  line-height: 1.3em;
 }
 
 .hero .desc > p{
   margin-top: 3%;
   font-size: 1.5rem;
+  line-height: 1.7em;
+  font-family: "Montserrat";
 }
 
 .features {
@@ -106,9 +110,9 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: white;
+  background-color: var(--appBGColor);
   min-height: fit-content;
-  color: var(--olive-green);
+  color: var(--appColor);
 }
 
 .features > h1{
@@ -130,50 +134,84 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: white;
   font-size: 1.3em;
   font-weight: bold;
   margin: 5%;
+  font-family: "Montserrat";
 }
 
-.features > ul > li > div{
-  background-color: #C4C4C4;
-  min-height: 150px;
+.features > ul > li > svg{
   height: 100%;
-  min-width: 250px;
+  width: 100%;
   margin-bottom: 10%;
+  border-radius: 10%;
 }
 
 .about {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-evenly;
   align-items: center;
-  background-color: var(--yellow-lime);
-  min-height: 20vh;
+  background-color: var(--appBGColor2);
+  min-height: 30vh;
+  padding: 3% 15%;
+  color: var(--appColor);
+}
+
+.about > h1{
+  font-size: 1.7em;
+  text-align: center;
 }
 
 .about p {
-  color: black;
-  margin: 0;
+  text-align: center;
+  line-height: 1.3em;
+  font-size: 1.2em;
+  font-family: "Montserrat";
 }
 
 .footer {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  min-height: 10vh;
-  background-color: white;
+  height: var(--nav-height);
+  background-color: var(--appBGColor);
 }
 
 .footer > ul{
   display: flex;
   justify-content: center;
+  align-items: center;
   flex: 1;
+  height: 100%;
 }
 
 .footer > ul li{
-  color: var(--olive-green);
+  display: flex;
+  align-items: center;
+  color: var(--inputColor);
   margin: 0 5% 0 5%;
+  height: 100%;
+}
+
+.footer > ul > li a{
+  font-size: 1.1em;
+  color: var(--inputBGColor);
+}
+
+.footer > ul > li a:hover{
+  transform: scale(1.1);
+}
+
+.footer > ul > li > a > svg{
+  height: 1.5em;
+  fill: var(--inputBGColor);
+}
+
+@media only screen and (max-width: 992px) {
+  .nav > div > ul {
+    margin: 0;
+  }
 }
 
 @media only screen and (max-width: 670px) {
@@ -184,12 +222,21 @@
 
   .hamburger{
     display: block;
-    margin-left: auto;
+    margin-left: 3%;
     margin-right: 3%;
-    color: var(--olive-green);
-    font-size: 1.5em;
+    padding: 2%;
+    color: var(--inputBGColor);
+    font-size: 1.8em;
     cursor: default;
     user-select: none;
+  }
+
+  .nav{
+    justify-content: space-between;
+  }
+
+  .nav .enter{
+    margin-right: auto;
   }
 
   .nav > div {
@@ -200,7 +247,8 @@
     left: 0;
     height: fit-content;
     width: 100vw;
-    background-color: white;
+    background-color: var(--appBGColor);
+    z-index: 9;
   }
 
   .nav > div > ul {
@@ -210,25 +258,37 @@
 
   .nav > div > a{
     font-size: 1.2em;
-    color: black;
     margin: 1% auto 3% auto;
     width: fit-content;
   }
 
-  .hero .desc h2{
-    font-size: 2rem;
+  .enter{
+    background-color: var(--inputHoverColor);
+    color: var(--inputHoverBGColor);
   }
 
-  .hero .desc p{
-    font-size: 1rem;
+  .hero{
+    flex-direction: column;
   }
 
-  .hero .threejs{
-    display: none;
+  .hero > *{
+    padding: 0 2% 5% 2%;
+  }
+
+  .hero .desc > div > h2{
+    font-size: 1.4rem;
+    margin-top: 5%;
+    line-height: normal;
+  }
+
+  .hero .desc > p{
+    font-size: .9rem;
+    line-height: 1.4em;
   }
 
   .features > h1{
     font-size: 1.5em;
+    text-align: center;
   }
 
   .features > ul > li{
@@ -239,6 +299,14 @@
     display: flex;
     flex-direction: column;
     gap: unset;
+  }
+
+  .about{
+    padding: 5% 5%;
+  }
+
+  .about p{
+    margin: 5% 0;
   }
 
   .footer > ul:nth-child(2){

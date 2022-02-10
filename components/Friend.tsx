@@ -40,9 +40,9 @@ export const Friend = (props) => {
             delete={() => props.deleteFriend(friend.address)}
             />
             <a onClick={(e) => {console.log(friend); e.stopPropagation();}}>
-                <Image src={friend.profile && friend.profile.hasOwnProperty('image') ? `https://ipfs.io/ipfs/${friend.profile.image.alternatives[0].src.substring(7, friend.profile.image.alternatives[0].src.length)}` : `https://robohash.org/${friend.address}.png?set=set5`} alt="Friend" height={"100%"} width={"100%"} />
+                <Image src={friend.profile?.image?.alternatives[0].src ? `https://ipfs.io/ipfs/${friend.profile.image.alternatives[0].src.substring(7, friend.profile.image.alternatives[0].src.length)}` : `https://robohash.org/${friend.address}.png?set=set5`} alt="Friend" height={"100%"} width={"100%"} />
             </a>
-            <p>{friend.profile && friend.profile.hasOwnProperty('name') ? friend.profile.name : shortenIfAddress(friend.address)}</p>
+            <p>{friend.profile?.name ? friend.profile.name : shortenIfAddress(friend.address)}</p>
             <p>{metadata && friend.selected ? metadata.typing && "typing..." : ""}</p>
             <p>{metadata && friend.selected ? metadata.online && "O" : "X"}</p>
         </div>

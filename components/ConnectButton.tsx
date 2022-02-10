@@ -15,12 +15,12 @@ export const ConnectButton = (props) => {
   return (
     <div>
       {isConnected ? (
-        <button className={styles.selfProfile} onClick={() => props.disconnect()}>
-          <Image src={profile && profile.hasOwnProperty('image') ? `https://ipfs.io/ipfs/${profile.image.alternatives[0].src.substring(7, profile.image.alternatives[0].src.length)}` : `https://robohash.org/${address}.png?set=set5`} alt="Profile Image" height={"100%"} width={"100%"} />
-          <p>{profile && profile.hasOwnProperty('name') ? profile.name : shortenIfAddress(address)}</p>
+        <button className={styles.connectProfile} onClick={() => props.disconnect()}>
+          <Image src={profile?.image?.alternatives[0].src ? `https://ipfs.io/ipfs/${profile.image.alternatives[0].src.substring(7, profile.image.alternatives[0].src.length)}` : `https://robohash.org/${address}.png?set=set5`} alt="Profile Image" height={"100%"} width={"100%"} />
+          <p>{profile?.name ? profile.name : shortenIfAddress(address)}</p>
         </button>
       ) : (
-        <button className={styles.selfProfile} onClick={() => props.connect()}>
+        <button className={styles.connectProfile} onClick={() => props.connect()}>
           <p>Connect</p>
         </button>
       )}

@@ -11,6 +11,7 @@
   "dependencies": {
     "@datamodels/identity-profile-basic": "^0.1.2",
     "@ethersproject/units": "^5.5.0",
+    "@fontsource/montserrat": "^4.5.4",
     "@fontsource/montserrat-alternates": "^4.5.1",
     "@self.id/core": "^0.2.0",
     "@self.id/web": "^0.2.0",

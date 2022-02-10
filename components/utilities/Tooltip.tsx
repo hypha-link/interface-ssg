@@ -22,7 +22,7 @@ const [display, setDisplay] = useState(false);
 
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
-    if(active){
+    if(active && content){
       timeout = setTimeout(() => {
         setDisplay(true);
       }, delay || 1200);

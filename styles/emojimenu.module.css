@@ -9,3 +9,12 @@
   min-width: 10vw;
   z-index: 2;
 }
+
+#emojiMenu > button{
+  filter: opacity(0.5) drop-shadow(0 0 0 var(--inputColor));
+}
+
+#emojiMenu > button:hover{
+  filter: none;
+  transform: scale(1.2);
+}

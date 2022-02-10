@@ -5,7 +5,7 @@
   flex-direction: column;
   justify-content: space-between;
   position: absolute;
-  background-color: var(--ui-color);
+  background-color: var(--uiBGColor);
   z-index: 1;
   width: 30%;
   height: 20%;
@@ -15,7 +15,7 @@
 }
 
 #friendModal > p {
-  color: white;
+  color: var(--uiColor);
   font-size: 1.4em;
   text-align: center;
 }
@@ -23,6 +23,13 @@
 #friendModal > input {
   flex: 0.2;
   text-align: center;
+  border: var(--inputColor) 1px solid;
+  color: var(--inputColor);
+  background-color: transparent;
+}
+
+#friendModal input::placeholder {
+  color: var(--inputColor);
 }
 
 #friendModal > div {

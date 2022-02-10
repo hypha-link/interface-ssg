@@ -1,6 +1,6 @@
 .selectedFriend,
 .selectedFriend:hover {
-  background-color: rgba(22, 24, 12, 0.15) !important;
+  background-color: rgba(var(--uiHoverColorPure), 0.15) !important;
 }
 
 .friendContainer {
@@ -11,7 +11,7 @@
 }
 
 .friendContainer:hover {
-  background-color: rgba(22, 24, 12, 0.05);
+  background-color: rgba(var(--uiHoverColorPure), 0.05);
 }
 
 .friendContainer img {

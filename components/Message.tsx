@@ -75,10 +75,10 @@ export function Message(props) {
       copy={() => {navigator.clipboard.writeText(postedData.message)}}
       delete={() => {props.deleteMessage(postedData)}}
       />
-      <Image src={profile && profile.hasOwnProperty('image') ? `https://ipfs.io/ipfs/${profile.image.alternatives[0].src.substring(7, profile.image.alternatives[0].src.length)}` : `https://robohash.org/${postedData.sender}.png?set=set5`} alt="User" height="100%" width="100%" objectFit="contain" />
+      <Image src={profile?.image?.alternatives[0].src ? `https://ipfs.io/ipfs/${profile.image.alternatives[0].src.substring(7, profile.image.alternatives[0].src.length)}` : `https://robohash.org/${postedData.sender}.png?set=set5`} alt="User" height="100%" width="100%" objectFit="contain" />
       <div>
         <div>
-          <p id={styles.messageID}>{profile && profile.hasOwnProperty('name') ? profile.name : postedData.sender}</p>
+          <p id={styles.messageID}>{profile?.name ? profile.name : postedData.sender}</p>
           <p id={styles.messageDate}>{postedData.date}</p>
         </div>
         {/* Message Content */}

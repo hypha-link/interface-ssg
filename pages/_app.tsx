@@ -2,6 +2,7 @@ import '../styles/global.css'
 import { ChainId, DAppProvider} from '@usedapp/core'
 import { AppProps } from 'next/dist/shared/lib/router/router'
 import "@fontsource/montserrat-alternates"
+import "@fontsource/montserrat"
 
 const config= {
   supportedChains: [ChainId.Mainnet, ChainId.Ropsten, ChainId.Kovan, ChainId.Rinkeby],
