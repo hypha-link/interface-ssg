@@ -3,7 +3,7 @@ import styles from '../styles/Context.module.css';
 
 const ContextMenu = (props) => {
   const [anchorPoint, setAnchorPoint] = useState(props.anchorPoint);
-  const [validProps, setValidProps] = useState();
+  const [validProps, setValidProps] = useState<any[]>();
   const display = anchorPoint.x !== 0 && anchorPoint.y !== 0;
 
   const handleClick = useCallback(() => {

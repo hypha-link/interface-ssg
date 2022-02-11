@@ -27,7 +27,7 @@ export function Message(props) {
   //Check for IPFS media
   if(message.includes("ipfs")){
     imgArr.push(
-      <Image key={Math.random()} src={message} alt={message} width="200px" height="200px" objectFit="contain"></Image>
+      <Image key={Math.random()} src={message} alt={message} width="200px" height="200px" objectFit="contain"/>
     )
   }
   //Check for URLs
