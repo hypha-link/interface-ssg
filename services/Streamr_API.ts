@@ -237,6 +237,7 @@ export const grantPermissions = async (_stream: Stream, _address: string, permis
 export const revokeUserPermissions = async (_stream: Stream, _address: string) => {
   const streamPermissions = await _stream.getPermissions();
   streamPermissions.map(async(permission) => {
+    //@ts-ignore
     if(permission.user === _address){
       await _stream.revokePermission(permission.id);
     }

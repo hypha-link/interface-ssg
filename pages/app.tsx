@@ -3,7 +3,7 @@ import styles from '../styles/app.module.css'
 import Link from "next/link";
 import Head from "next/head";
 import HyphaLogo from "../public/logo/hypha-01.svg"
-import Cog from "../public/FA/cog.svg"
+import Cog from "../public/fa/cog.svg"
 
 import { useEthers } from "@usedapp/core";
 

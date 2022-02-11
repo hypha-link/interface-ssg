@@ -9,9 +9,9 @@ import LowPolyGrid from "../public/patterns/LowPolyGrid.svg"
 import SymbolScatter from "../public/patterns/SymbolScatter.svg"
 import LayeredWaves from "../public/patterns/LayeredWaves.svg"
 import BlobScene from "../public/patterns/BlobScene.svg"
-import Gitlab from "../public/FA/gitlab.svg"
-import Twitter from "../public/FA/twitter.svg"
-import Youtube from "../public/FA/youtube.svg"
+import Gitlab from "../public/fa/gitlab.svg"
+import Twitter from "../public/fa/twitter.svg"
+import Youtube from "../public/fa/youtube.svg"
 
 export default function Index() {
   const [hideMobileMenu, setHideMobileMenu] = useState(true);
