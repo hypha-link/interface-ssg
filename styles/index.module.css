@@ -105,6 +105,41 @@
   font-family: "Montserrat";
 }
 
+.hero .animation{
+  display: flex;
+  align-items: center;
+}
+
+.hero .animation > div{
+  height: 66%;
+  width: 66%;
+  animation: breathe 7s linear infinite;
+}
+
+.hero .animation > div > svg{
+  height: 100%;
+  width: 100%;
+  animation: spin 40s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes breathe {
+  0%{
+    transform: scale(1.1);
+  }
+  50%{
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.1);
+  }
+}
+
 .features {
   display: flex;
   flex-direction: column;

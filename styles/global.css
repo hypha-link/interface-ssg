@@ -159,11 +159,11 @@ p{
 }
 
 .svgWaveV{
-  background-image: url(/patterns/WaveVertical.svg);
+  background-image: url(/patterns/WaveVerticalBrown.svg);
 }
 
 .svgWaveH{
-  background-image: url(/patterns/WaveHorizontal.svg);
+  background-image: url(/patterns/WaveHorizontalBrown.svg);
 }
 
 @media only screen and (max-width: 670px) {
@@ -190,6 +190,6 @@ p{
   }
 
   .svgWaveV{
-    background-image: url(/patterns/WaveHorizontal.svg);
+    background-image: url(/patterns/WaveHorizontalBrown.svg);
   }
 }

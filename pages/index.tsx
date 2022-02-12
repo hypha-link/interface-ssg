@@ -53,8 +53,10 @@ export default function Index() {
               The only way that we can change this is by challenging the status quo. 
               Hypha is taking on this difficult challenge by decentralizing communication as we know it.</p>
           </div>
-          <div className={styles.threejs}>
-            {/* Some kind of threejs thing */}
+          <div className={styles.animation}>
+            <div>
+              <HyphaLogo/>
+            </div>
           </div>
         </section>
         <section className={styles.features}>
