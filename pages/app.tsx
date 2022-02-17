@@ -495,7 +495,7 @@ function App({ data }) {
 
           <section id={styles.friendsList}>
             <div>
-              <p>Friends List</p>
+              <p>Conversations</p>
               {friends.map((friend) => {
                 return (
                   <Tooltip key={Math.random()} content={friend.address}>

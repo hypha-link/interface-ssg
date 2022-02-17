@@ -1,0 +1,43 @@
+.footer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: var(--nav-height);
+  background-color: var(--appBGColor);
+}
+
+.footer > ul {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  height: 100%;
+}
+
+.footer > ul li {
+  display: flex;
+  align-items: center;
+  color: var(--inputColor);
+  margin: 0 5% 0 5%;
+  height: 100%;
+}
+
+.footer > ul > li a {
+  font-size: 1.1em;
+  color: var(--inputBGColor);
+}
+
+.footer > ul > li a:hover {
+  transform: scale(1.1);
+}
+
+.footer > ul > li > a > svg {
+  height: 1.5em;
+  fill: var(--inputBGColor);
+}
+
+@media only screen and (max-width: 670px) {
+  .footer > ul:nth-child(2) {
+    display: none;
+  }
+}

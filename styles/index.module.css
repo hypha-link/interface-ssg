@@ -1,77 +1,4 @@
-.nav {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  height: var(--nav-height);
-  background-color: var(--appBGColor);
-}
-
-.nav > a{
-  margin-left: 2vw;
-}
-
-.nav > div{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 100%;
-  flex: 1;
-}
-
-.nav > div > ul {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  height: 100%;
-  white-space: nowrap;
-  flex: 1;
-  margin: 0 15%;
-}
-
-.nav > div > ul li {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  width: fit-content;
-}
-
-.nav > div > ul li a {
-  font-size: 1.3em;
-  font-weight: bold;
-  color: var(--inputBGColor);
-}
-
-.nav > div > ul li a:hover {
-  transform: scale(1.1);
-}
-
-.nav .enter{
-  margin-right: 2vw;
-}
-
-/* Enter App Buttons */
-.enter {
-  font-weight: 900;
-  color: var(--inputBGColor);
-  font-size: 1em;
-  padding: 1%;
-  border: var(--inputBGColor) 2px solid;
-  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
-  max-height: max-content;
-  font-family: "Montserrat";
-}
-
-.enter:hover {
-  color: var(--inputHoverBGColor);
-  background-color: var(--inputHoverColor);
-}
-
-.hamburger{
-  display: none;
-}
-
-.hero{
+.hero {
   position: relative;
   display: flex;
   height: calc(100vh - var(--nav-height));
@@ -80,7 +7,7 @@
   color: var(--appColor);
 }
 
-.hero > *{
+.hero > * {
   display: flex;
   justify-content: center;
   flex: 1 1 0px;
@@ -88,35 +15,35 @@
   min-width: 0;
 }
 
-.hero .desc{
+.hero .desc {
   flex-direction: column;
   text-align: center;
 }
 
-.hero .desc > div > h2{
+.hero .desc > div > h2 {
   font-size: 2.5rem;
   line-height: 1.3em;
 }
 
-.hero .desc > p{
+.hero .desc > p {
   margin-top: 3%;
   font-size: 1.5rem;
   line-height: 1.7em;
   font-family: "Montserrat";
 }
 
-.hero .animation{
+.hero .animation {
   display: flex;
   align-items: center;
 }
 
-.hero .animation > div{
+.hero .animation > div {
   height: 66%;
   width: 66%;
   animation: breathe 7s linear infinite;
 }
 
-.hero .animation > div > svg{
+.hero .animation > div > svg {
   height: 100%;
   width: 100%;
   animation: spin 40s linear infinite;
@@ -129,10 +56,10 @@
 }
 
 @keyframes breathe {
-  0%{
+  0% {
     transform: scale(1.1);
   }
-  50%{
+  50% {
     transform: scale(1);
   }
   100% {
@@ -150,12 +77,12 @@
   color: var(--appColor);
 }
 
-.features > h1{
+.features > h1 {
   font-size: 2em;
   margin-top: 3%;
 }
 
-.features > ul{
+.features > ul {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   justify-items: center;
@@ -165,7 +92,7 @@
   margin: 3%;
 }
 
-.features > ul > li{
+.features > ul > li {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -175,7 +102,7 @@
   font-family: "Montserrat";
 }
 
-.features > ul > li > svg{
+.features > ul > li > svg {
   height: 100%;
   width: 100%;
   margin-bottom: 10%;
@@ -193,7 +120,7 @@
   color: var(--appColor);
 }
 
-.about > h1{
+.about > h1 {
   font-size: 1.7em;
   text-align: center;
 }
@@ -205,146 +132,50 @@
   font-family: "Montserrat";
 }
 
-.footer {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  height: var(--nav-height);
-  background-color: var(--appBGColor);
-}
-
-.footer > ul{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex: 1;
-  height: 100%;
-}
-
-.footer > ul li{
-  display: flex;
-  align-items: center;
-  color: var(--inputColor);
-  margin: 0 5% 0 5%;
-  height: 100%;
-}
-
-.footer > ul > li a{
-  font-size: 1.1em;
-  color: var(--inputBGColor);
-}
-
-.footer > ul > li a:hover{
-  transform: scale(1.1);
-}
-
-.footer > ul > li > a > svg{
-  height: 1.5em;
-  fill: var(--inputBGColor);
-}
-
-@media only screen and (max-width: 992px) {
-  .nav > div > ul {
-    margin: 0;
-  }
-}
-
 @media only screen and (max-width: 670px) {
-  /* Hide the mobile menu (when hamburger hasn't been toggled on) */
-  .hideMobileMenu{
-    display: none !important;
-  }
-
-  .hamburger{
-    display: block;
-    margin-left: 3%;
-    margin-right: 3%;
-    padding: 2%;
-    color: var(--inputBGColor);
-    font-size: 1.8em;
-    cursor: default;
-    user-select: none;
-  }
-
-  .nav{
-    justify-content: space-between;
-  }
-
-  .nav .enter{
-    margin-right: auto;
-  }
-
-  .nav > div {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: var(--nav-height);
-    left: 0;
-    height: fit-content;
-    width: 100vw;
-    background-color: var(--appBGColor);
-    z-index: 9;
-  }
-
-  .nav > div > ul {
-    display: flex;
+  .hero {
     flex-direction: column;
   }
 
-  .nav > div > a{
-    font-size: 1.2em;
-    margin: 1% auto 3% auto;
-    width: fit-content;
-  }
-
-  .enter{
-    background-color: var(--inputHoverColor);
-    color: var(--inputHoverBGColor);
-  }
-
-  .hero{
-    flex-direction: column;
-  }
-
-  .hero > *{
+  .hero > * {
     padding: 0 2% 5% 2%;
   }
 
-  .hero .desc > div > h2{
+  .hero .desc > div > h2 {
     font-size: 1.4rem;
     margin-top: 5%;
     line-height: normal;
   }
 
-  .hero .desc > p{
-    font-size: .9rem;
+  .hero .desc > p {
+    font-size: 0.9rem;
     line-height: 1.4em;
   }
 
-  .features > h1{
+  .features > h1 {
     font-size: 1.5em;
     text-align: center;
   }
 
-  .features > ul > li{
+  .features > ul > li {
     font-size: 1.1em;
   }
 
-  .features > ul{
+  .features > ul {
     display: flex;
     flex-direction: column;
     gap: unset;
   }
 
-  .about{
+  .about {
     padding: 5% 5%;
   }
 
-  .about p{
+  .about p {
     margin: 5% 0;
   }
 
-  .footer > ul:nth-child(2){
+  .footer > ul:nth-child(2) {
     display: none;
   }
 }

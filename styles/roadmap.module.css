@@ -1,0 +1,107 @@
+#title{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: var(--uiBGColor);
+    background-color: var(--appBGColor2);
+}
+
+#title > div{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 40vw;
+    height: 20vh;
+}
+
+#title > div > p{
+    margin-top: 2%;
+}
+
+#roadmap{
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: center;
+    position: relative;
+    background: linear-gradient(var(--uiBGColor), var(--uiBGColor)) no-repeat center/5px 100%;
+}
+
+#roadmap > div{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 3% 0;
+    position: relative;
+}
+
+#roadmap > div > *:not(.circle){
+    padding: 1%;
+    margin: 0 5%;
+}
+
+/* Milestone */
+#roadmap > div > .milestone{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: var(--uiColor);
+    background-Color: var(--uiBGColor);
+    background-image: url(/patterns/HyphaPattern.svg);
+    background-size: contain;
+    outline: var(--uiColor) 5px solid;
+    border-radius: 314px;
+    width: 200px;
+    height: 200px;
+}
+
+/* Circle Divider */
+#roadmap > div > .circle{
+    position: absolute;
+    background-color: var(--uiBGColor);
+    border-radius: 314px;
+    height: 30px;
+    width: 30px;
+}
+
+/* List Items */
+#roadmap > div > ul{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: var(--appColor);
+    background-Color: var(--appBGColor);
+    outline: var(--uiBGColor) 3px solid;
+    border-radius: 20px;
+    list-style: disc;
+    list-style-position: inside;
+    line-height: 2em;
+    width: 200px;
+    height: fit-content;
+    font-size: .9em;
+}
+
+#roadmap > div > .checked{
+    background-color: var(--uiColor);
+    color: var(--uiBGColor)
+}
+
+@media only screen and (max-width: 670px) {
+    #title > div{
+        width: 100vw;
+    }
+
+    #roadmap > div > .milestone{
+        font-size: .7rem;
+    }
+
+    #roadmap > div > ul{
+        font-size: .7rem;
+    }
+}

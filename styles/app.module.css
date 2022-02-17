@@ -166,6 +166,7 @@
 
 #friendsList p {
   text-align: center;
+  margin: 3% 0;
 }
 
 @media only screen and (max-width: 670px) {
