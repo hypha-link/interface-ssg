@@ -5,6 +5,7 @@
     align-items: center;
     color: var(--uiBGColor);
     background-color: var(--appBGColor2);
+    font-size: 1.3rem;
 }
 
 #title > div{
@@ -14,7 +15,7 @@
     align-items: center;
     text-align: center;
     width: 40vw;
-    height: 20vh;
+    height: 25vh;
 }
 
 #title > div > p{
@@ -93,6 +94,10 @@
 }
 
 @media only screen and (max-width: 670px) {
+    #title{
+        font-size: 1rem;
+    }
+
     #title > div{
         width: 100vw;
     }
