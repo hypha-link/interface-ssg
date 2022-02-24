@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from '../styles/app.module.css'
 import Link from "next/link";
-import Head from "next/head";
 import HyphaLogo from "../public/logo/hypha-01.svg"
 import Cog from "../public/fa/cog.svg"
 
@@ -17,11 +16,14 @@ import { Group } from "../components/Group";
 import { Tooltip } from "../components/utilities/Tooltip";
 
 import { EthereumAuthProvider, SelfID } from '@self.id/web';
-import getOrCreateMessageStream, { streamr, HyphaType, streamrUnsigned } from "../services/Streamr_API"
+import getOrCreateMessageStream, { streamr, HyphaType } from "../services/Streamr_API"
 import { BasicProfile } from "@datamodels/identity-profile-basic";
 import { Friends, MessageData } from "../components/utilities/Types";
 import { GetStaticProps } from "next";
 import useMetadata from "../hooks/useMetadata";
+import { Stream } from "streamr-client";
+
+import AppState from "../components/context/AppState";
 
 function App({ data }) {
   const { account, activateBrowserWallet, deactivate, chainId } = useEthers();
@@ -44,7 +46,6 @@ function App({ data }) {
       if(account){
         try{
           await streamr.connect()
-          await streamrUnsigned.connect();
           const selfIdClient = await SelfID.authenticate({
             //@ts-ignore
             authProvider: new EthereumAuthProvider(window.ethereum, account),
@@ -80,14 +81,6 @@ function App({ data }) {
     setMetadata(undefined);
     setProfile(undefined);
     setSelfId(undefined);
-    if(streamr){
-      streamr.getSubscriptions().forEach(async (sub) => await sub.unsubscribe());
-      await streamr.disconnect()
-    }
-    if(streamrUnsigned){
-      streamrUnsigned.getSubscriptions().forEach(async (sub) => await sub.unsubscribe());
-      await streamrUnsigned.disconnect()
-    }
   };
 
   useEffect(() => {
@@ -122,14 +115,15 @@ function App({ data }) {
   }, [selfId])
 
   const subscribeToConversations = async (_friends: Friends[]) => {
-    const subs = streamr.getSubscriptions();
+    const subs = await streamr.getSubscriptions();
     //Subscribe to stream after messages were resent
     await Promise.all(_friends.map(async (friend) => {
       //Check if friend streamID is empty & check if we are already subscribed
-      if(friend.streamID !== "" && (!subs.some((sub) => sub.streamId === friend.streamID) || subs.length === 0)){
+      if(friend.streamID !== "" && subs.length === 0){
         await streamr.subscribe(
           {
             stream: friend.streamID,
+            partition: 0,
           }, (data: MessageData) => {
             //Create a new notification if the new message was not sent by us & interface is not visible
             if(data.sender !== account && document.visibilityState !== "visible"){
@@ -155,20 +149,21 @@ function App({ data }) {
     }))
   }
   
-  const getValidStream = async (_friend: Friends): Promise<string> => {
+  const getValidStream = async (_friend: Friends) => {
     try{
-      //Check if saved stream is valid
-      const savedStream = await streamr?.getStream(_friend.streamID);
-      if(savedStream.id){
-        return savedStream.id;
+      const streams: Stream[] = [];
+      //Check if either friend has a stream
+      for await(const stream of streamr.searchStreams(_friend.address, { user: account, allowPublic: true })){
+        streams.push(stream);
       }
-      //Find valid stream or create new one.
-      else{
-        const ownerStream = streamr.getStream(`${account}/${HyphaType.Hypha}/${_friend.address}`).then(stream => stream.id);
-        const friendStream = streamr.getStream(`${_friend.address}/${HyphaType.Hypha}/${account}`).then(stream => stream.id);
-        const emptyStream = getOrCreateMessageStream(_friend.address, HyphaType.Hypha, false).then(stream => stream.id).catch(() => "");
-        return ownerStream.catch(() => friendStream.catch(() => emptyStream));
+      for await(const stream of streamr.searchStreams(account, { user: _friend.address, allowPublic: true })){
+        streams.push(stream);
       }
+      //Return found stream
+      if(streams.length !== 0) return streams[0];
+      //Create a new stream since none were found
+      const newStream = await getOrCreateMessageStream(_friend.address, HyphaType.Hypha, false);
+      return newStream;
     }
     catch(e){
       console.warn(e);
@@ -181,7 +176,7 @@ function App({ data }) {
     const streamFriends:Friends[] = stream.content.friends;
     const newFriends: Friends[] = streamFriends.map((e) => {
       if(_friend.address === e.address){
-        e.streamID = validStream;
+        e.streamID = validStream.id;
       }
       return e;
     });
@@ -202,9 +197,12 @@ function App({ data }) {
   }
 
   async function addFriends(_address: string){
+    console.log(await getValidStream({address: '0x92B188a4Db0E5a8475b3595f2A63188AF2AfAb16', selected: false, streamID: undefined}));
+    const validStream = await getValidStream({ address: _address, selected: false, streamID: undefined });
+    console.log(validStream);
     const newFriend = {
       address: _address,
-      streamID: await getValidStream({ address: _address, streamID: "", selected: false }),
+      streamID: validStream.id,
       selected: false,
     }
     //Check local storage for stream key
@@ -347,14 +345,17 @@ function App({ data }) {
   // }, [account, friends.find(friend => friend.selected)])
 
   //Publish a message to stream
-  const addMessage = async (_messageText: string, _messageDate: Date) => {
+  const addMessage = async (_message: MessageData) => {
     try{
-      const stream = await streamr.getStream(getSelectedFriend().streamID);
-      await stream.publish({
-        sender: account,
-        message: _messageText,
-        date: _messageDate
-      })
+      console.log(getSelectedFriend());
+      streamr.publish(
+        {streamId: getSelectedFriend().streamID, partition: 0},
+        {
+          sender: _message.sender,
+          message: _message.message,
+          date: _message.date
+        }
+      )
     }
     catch(err){
       alert("Please connect your wallet before using Hypha.");
@@ -367,7 +368,7 @@ function App({ data }) {
     console.log("Delete: " + _message.message)
   }
 
-  function clickMessage(_message: MessageData){
+  function selectMessage(_message: MessageData){
     try {
       console.log(_message);
     } catch (e) {
@@ -384,7 +385,7 @@ function App({ data }) {
     return friends.length > 0 && friends.find(friend => friend.selected) ? friends.find(friend => friend.selected) : { address: "", streamID: "", selected: false };
   }
 
-  const [metadata, setMetadata] = useMetadata(getSelectedFriend().streamID);
+  const [metadata, setMetadata] = useMetadata(getSelectedFriend());
 
   //Ceramic testing
   const testCeramic = async () => {
@@ -438,7 +439,11 @@ function App({ data }) {
   const testStreamr = async () => {
     try{
       // console.log(await getValidStream({ address: '0x98b01D04ab7B40Ffe856Be164f476a45Bf8E5B37', streamID: "", selected: false }));
-      console.log(streamr.getSubscriptions());
+      // console.log(streamr.getSubscriptions());
+      // for await(const stream of streamr.searchStreams('0x92B188a4Db0E5a8475b3595f2A63188AF2AfAb16', { user: account, allowPublic: true })){
+      //   console.log(stream.id);
+      // }
+      console.log(await getValidStream({address: '0x98b01D04ab7B40Ffe856Be164f476a45Bf8E5B37', selected: false, streamID: undefined}));
       // console.log(getSelectedFriend().profile?.name);
     }
     catch(e){
@@ -447,15 +452,8 @@ function App({ data }) {
   }
 
   return (
-    <>
-      <Head>
-        <title>Hypha</title>
-        <meta name="description" content="Hypha Messaging" />
-        <link rel="icon" href="../favicon.ico" />
-      </Head>
-
+    <AppState>
       {/* Top Bar */}
-
       <section id={styles.topBar}>
           <Link href="/">
             <a className="logoContainer">
@@ -476,9 +474,7 @@ function App({ data }) {
           <button className="hypha-button" onClick={async () => testStreamr()}>Notifications</button>
         </div>
       </section>
-
       {/* Content Section */}
-
       <section id={styles.content}>
         <section id={styles.sidebarContainer}>
           <section id={styles.browserServers}>
@@ -492,7 +488,6 @@ function App({ data }) {
             />
             <button className="hypha-button" onClick={() => {setFriendModal(!friendModal)}} disabled={selfId === undefined}>Add Friends</button>
           </section>
-
           <section id={styles.friendsList}>
             <div>
               <p>Conversations</p>
@@ -521,7 +516,6 @@ function App({ data }) {
               /> */}
             </div>
           </section>
-
           <section id={styles.profile}>
             <Settings
               selfId={selfId}
@@ -540,7 +534,6 @@ function App({ data }) {
             </Tooltip>
           </section>
         </section>
-
         <section id={styles.messagesContainer}>
           <div>
             <div>
@@ -551,7 +544,7 @@ function App({ data }) {
                     profile={message.sender === account ? profile : friends.find(friend => friend.address === message.sender).profile}
                     postedData={message}
                     userAddress={account}
-                    clickMessage={(message: MessageData) => clickMessage(message)}
+                    selectMessage={(message: MessageData) => selectMessage(message)}
                     deleteMessage={(message: MessageData) => deleteMessage(message)}
                     openMessageContext={(message: MessageData) => openMessageContext(message)}
                   />
@@ -562,11 +555,11 @@ function App({ data }) {
           <SendMessage
             disable={!getSelectedFriend().selected}
             typing={(typing: boolean) => setMetadata(oldMetadata => ({...oldMetadata, typing: typing}))}
-            sendMessage={(messageText: string, messageDate: Date) => addMessage(messageText, messageDate)}
+            sendMessage={(messageText: string) => addMessage({sender: account, message: messageText, date: new Date().toString()})}
           />
         </section>
       </section>
-    </>
+    </AppState>
   );
 }
 

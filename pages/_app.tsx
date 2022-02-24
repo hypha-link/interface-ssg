@@ -1,19 +1,23 @@
 import '../styles/global.css'
-import { ChainId, DAppProvider} from '@usedapp/core'
+import { Config, DAppProvider, Polygon} from '@usedapp/core'
 import { AppProps } from 'next/dist/shared/lib/router/router'
 import "@fontsource/montserrat-alternates"
 import "@fontsource/montserrat"
+import Head from 'next/head'
 
-const config= {
-  supportedChains: [ChainId.Mainnet, ChainId.Ropsten, ChainId.Kovan, ChainId.Rinkeby],
+const config: Config = {
+  networks: [Polygon],
 }
 
-function MyApp({ Component, pageProps }: AppProps) {
+export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <DAppProvider config={config}>
+      <Head>
+        <title>Hypha</title>
+        <meta name="description" content="Hypha Messaging" />
+        <link rel="icon" href="../favicon.ico" />
+      </Head>
       <Component {...pageProps}/>
     </DAppProvider>
   )
 }
-
-export default MyApp

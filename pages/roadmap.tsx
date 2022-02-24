@@ -56,7 +56,7 @@ const roadmap = () => {
                     <h3>January 2022</h3>
                 </div>
                 <div className={styles.circle}/>
-                <ul className={styles.checked}>
+                <ul>
                     <li>Hyphae (Group Messaging)</li>
                     <li>Message Query</li>
                     <li>Multi-Conversation Subscriptions</li>
@@ -80,6 +80,7 @@ const roadmap = () => {
                     <li>ENS Support</li>
                     <li>Pinned Ceramic Streams</li>
                     <li>Streamr Brubeck Update</li>
+                    <li>Metadata (typing, online, & receipt indicators)</li>
                     
                 </ul>
             </div>

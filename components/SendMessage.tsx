@@ -20,7 +20,7 @@ export const SendMessage = ( props ) => {
     if (e.key === "Enter" && inputValue.trim() !== "") {
 
       //createMessage();
-      props.sendMessage(inputValue, new Date().toString());
+      props.sendMessage(inputValue);
       setInputValue("");
       props.typing(false);
     }
@@ -30,7 +30,7 @@ export const SendMessage = ( props ) => {
     if (inputValue.trim() !== ""){
 
       //createMessage();
-      props.sendMessage(inputValue, new Date().toString());
+      props.sendMessage(inputValue);
       setInputValue("");
       props.typing(false);
     }
@@ -96,7 +96,7 @@ export const SendMessage = ( props ) => {
       const file = e.target.files[0]
       const uploadedFile = ipfs.add(file);
       uploadedFile.then((res) => {
-        props.sendMessage("https://ipfs.io/ipfs/" + res.path, new Date().toString());
+        props.sendMessage("https://ipfs.io/ipfs/" + res.path);
       });
     } catch (error) {
       console.log('Error uploading file: ', error)

@@ -63,7 +63,7 @@ export function Message(props) {
   return (
     <div
       className={postedData.sender === account ? `${styles.message} ${styles.own}` : styles.message}
-      onClick={() => props.clickMessage(postedData)}
+      onClick={() => props.selectMessage(postedData)}
       onContextMenu={(e) => {
             setTimeout(() => setAnchorPoint({x: e.pageX, y: e.pageY}), 1);
             e.preventDefault();

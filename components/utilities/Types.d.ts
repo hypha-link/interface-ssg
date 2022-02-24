@@ -11,10 +11,12 @@ export interface Friends {
 export interface MessageData {
     sender: string,
     message: string,
-    date: Date;
+    date: string;
 }
 
 export interface Metadata{
+    address: string,
     typing: boolean,
     online?: boolean,
+    receipt?: boolean,
 }
