@@ -4,6 +4,7 @@ import { AppProps } from 'next/dist/shared/lib/router/router'
 import "@fontsource/montserrat-alternates"
 import "@fontsource/montserrat"
 import Head from 'next/head'
+import AppState from '../components/context/AppState'
 
 const config: Config = {
   networks: [Polygon],
@@ -12,12 +13,14 @@ const config: Config = {
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <DAppProvider config={config}>
-      <Head>
-        <title>Hypha</title>
-        <meta name="description" content="Hypha Messaging" />
-        <link rel="icon" href="../favicon.ico" />
-      </Head>
-      <Component {...pageProps}/>
+      <AppState>
+        <Head>
+          <title>Hypha</title>
+          <meta name="description" content="Hypha Messaging" />
+          <link rel="icon" href="../favicon.ico" />
+        </Head>
+        <Component {...pageProps}/>
+      </AppState>
     </DAppProvider>
   )
 }

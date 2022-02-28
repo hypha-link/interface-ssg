@@ -5,12 +5,16 @@ import { shortenIfAddress, useSendTransaction } from '@usedapp/core'
 import ContextMenu from './ContextMenu'
 import { utils } from 'ethers'
 import { Friends, Metadata } from './utilities/Types'
+import ProfilePicture from './ProfilePicture'
 
 export const Friend = (props) => {
-    const { friend, metadata }: 
+    const { friend, metadata, inviteFriend, selectFriend, deleteFriend }: 
     {
         friend: Friends,
         metadata: Metadata,
+        inviteFriend: (friend: Friends) => void,
+        selectFriend: (friend: Friends) => void,
+        deleteFriend: (friend: Friends) => void,
     } = props;
     const [anchorPoint, setAnchorPoint] = useState({x: 0, y: 0});
     const { sendTransaction } = useSendTransaction();
@@ -20,7 +24,7 @@ export const Friend = (props) => {
         className = {friend.selected ? `${styles.friendContainer} ${styles.selectedFriend}` : styles.friendContainer} 
         onClick={() => {
             //If not selected, allow user to select friend
-            !friend.selected && props.selectFriend(friend.address)
+            !friend.selected && selectFriend(friend)
         }} 
         onContextMenu={(e) => {
             setTimeout(() => setAnchorPoint({x: e.pageX, y: e.pageY}), 1);
@@ -31,20 +35,16 @@ export const Friend = (props) => {
             anchorPoint={{x: anchorPoint.x, y: anchorPoint.y}} 
             localAnchorPoint={(ap) => setAnchorPoint(ap)}
             //If not selected, allow user to select friend
-            select={() => !friend.selected && props.selectFriend(friend.address)}
+            select={() => !friend.selected && selectFriend(friend)}
             view={() => console.log(friend.profile ? friend.profile : "User has no profile.")}
-            invite={() => props.inviteFriend(friend.address)}
+            invite={() => inviteFriend(friend)}
             send={() => {
                 sendTransaction({ to: friend.address, value: utils.parseEther(".1")});
             }} 
-            delete={() => props.deleteFriend(friend.address)}
+            delete={() => deleteFriend(friend)}
             />
-            <a onClick={(e) => {console.log(friend); e.stopPropagation();}}>
-                <Image src={friend.profile?.image?.alternatives[0].src ? `https://ipfs.io/ipfs/${friend.profile.image.alternatives[0].src.substring(7, friend.profile.image.alternatives[0].src.length)}` : `https://robohash.org/${friend.address}.png?set=set5`} alt="Friend" height={"100%"} width={"100%"} />
-            </a>
+            <ProfilePicture friend={friend} metadata={metadata} indicator={true}/>
             <p>{friend.profile?.name ? friend.profile.name : shortenIfAddress(friend.address)}</p>
-            <p>{metadata && friend.selected ? metadata.typing && "typing..." : ""}</p>
-            <p>{metadata && friend.selected ? metadata.online && "O" : "X"}</p>
         </div>
     )
 }

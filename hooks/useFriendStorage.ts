@@ -1,20 +1,34 @@
-import { SelfID } from '@self.id/web';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { StateContext } from '../components/context/AppState';
 import { Friends } from '../components/utilities/Types';
+import { TileDocument } from "@ceramicnetwork/stream-tile"
 
-export default function useFriendStorage(selfId: SelfID) {
-    const [friends, setFriends] = useState<Friends[]>();
-    const localStreamKey = "friends-streamId";
+export const localStreamKey = "conversations";
+
+export default function useFriendStorage() {
+    const { selfId, account, friends } = useContext(StateContext);
+    const [ceramicFriends, setCeramicFriends] = useState<Friends[]>(undefined);
+    const [ceramicStream, setCeramicStream] = useState<TileDocument>(undefined);
 
     useEffect(() => {
         const friendsStore = async () => {
-            if(window.localStorage.getItem(localStreamKey) !== null && selfId){
-                const stream = await selfId.client.tileLoader.load(window.localStorage.getItem(localStreamKey));
-                setFriends(stream.content.friends);
-            }
+            const stream = await selfId.client.tileLoader.load(window.localStorage.getItem(`${account}-${localStreamKey}`));
+            setCeramicFriends(stream.content.friends);
+            setCeramicStream(stream);
         }
-        friendsStore()
-    }, [selfId])
+        //Update when ceramicFriends & friends are not equal (or load ceramicFriends for first time)
+        const equality = ceramicFriends
+          ? friends?.every((friend, i) => {
+                friend.address === ceramicFriends[i]?.address &&
+                friend.selected === ceramicFriends[i]?.selected &&
+                friend.streamID === ceramicFriends[i]?.streamID;
+            })
+          : true;
+        if(
+            window.localStorage.getItem(`${account}-${localStreamKey}`) !== null && 
+            selfId && equality
+        ) friendsStore();
+    }, [selfId, friends])
 
-    return friends;
+    return { ceramicFriends, ceramicStream };
 }

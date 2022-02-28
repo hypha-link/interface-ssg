@@ -3,9 +3,11 @@ import { GlobalDispatch, GlobalState } from './AppContextTypes';
 import AppReducer from './AppReducer';
 
 export const initialState: GlobalState = {
+    account: undefined,
     streamr: undefined,
     selfId: undefined,
-    account: undefined,
+    profile: undefined,
+    notifications: [],
     friends: [],
 }
 

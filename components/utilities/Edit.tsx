@@ -1,12 +1,12 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import styles from "../../styles/edit.module.css"
 import { SelfID } from '@self.id/web'
+import { StateContext } from '../context/AppState';
 
 export const Edit = (props) => {
     const [editing, setEditing] = useState(false);
     const [inputValue, setInputValue] = useState("");
-
-    const selfId: SelfID = props.selfId;
+    const { selfId } = useContext(StateContext);
 
     const keyHandler = (e) => {
         if (e.key === "Enter" && inputValue.trim() !== "") {

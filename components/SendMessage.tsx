@@ -7,7 +7,7 @@ import { EmojiMenu } from "./EmojiMenu";
 const IPFS = require('ipfs');
 
 export const SendMessage = ( props ) => {
-  const { disable, } :
+  const { disable } :
   {
     disable: boolean,
   } = props;

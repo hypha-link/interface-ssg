@@ -24,10 +24,11 @@
 
 /*The div that holds message profile*/
 .message > div {
+  position: relative;
   display: flex;
   flex-direction: column;
   flex: 1;
-  position: relative;
+  margin: 0 2% 0 2% !important;
 }
 
 .message div div {

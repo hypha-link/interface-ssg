@@ -14,16 +14,9 @@
   background-color: rgba(var(--uiHoverColorPure), 0.05);
 }
 
-.friendContainer img {
-  border-radius: 314px;
-  max-height: 50px;
-}
-
-.friendContainer p {
-  margin-left: 2%;
+.friendContainer > p {
   user-select: none;
-}
-
-.friendContainer > a{
-  cursor: pointer;
+  margin-left: 7% !important;
+  font-weight: 900;
+  font-size: 1.2rem;
 }

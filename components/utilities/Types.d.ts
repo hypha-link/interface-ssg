@@ -6,6 +6,7 @@ export interface Friends {
     selected: boolean,
     profile?: BasicProfile,
     messages?: MessageData[],
+    metadata?: Metadata,
 };
 
 export interface MessageData {

@@ -145,6 +145,8 @@ p{
   bottom:calc(2% + 50px);
 }
 
+/*SVG*/
+
 .hyphaPattern{
   background-image: url(/patterns/HyphaPattern.svg);
   background-attachment: fixed;
@@ -164,6 +166,16 @@ p{
 
 .svgWaveH{
   background-image: url(/patterns/WaveHorizontalBrown.svg);
+}
+
+.dot{
+  display: inline-block;
+  height: 1em;
+  width: 1em;
+  outline: white solid 2px;
+  background-color: white;
+  border-radius: 314px;
+  z-index: 1;
 }
 
 @media only screen and (max-width: 670px) {

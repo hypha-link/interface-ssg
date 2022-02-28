@@ -7,7 +7,7 @@ export default function useMetadata(_friend: Friends){
     const { account } = useEthers();
     const [sendMetadata, setSendMetadata] = useState<Metadata>();
     const [lastSentMetadata, setLastSentMetadata] = useState<Metadata>();
-    const [receiveMetadata, setReceiveMetadata] = useState<Metadata>();
+    const [receiveMetadata, setReceiveMetadata] = useState<Metadata>({address: '', typing: false, online: false, receipt: false});
 
     //Receive metadata from partner
     useEffect(() => {
