@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import styles from '../styles/friend.module.css'
+import styles from '../styles/conversation.module.css'
 import Image from 'next/image'
 import { shortenIfAddress } from '@usedapp/core'
 import ContextMenu from './ContextMenu'
@@ -9,9 +9,9 @@ export const Group = (props) => {
 
     return (
         <div 
-        className = {props.selected ? `${styles.friendContainer} ${styles.selectedFriend}` : styles.friendContainer} 
+        className = {props.selected ? `${styles.conversationContainer} ${styles.selectedConversation}` : styles.conversationContainer} 
         onClick={() => {
-            //If not selected, allow user to select friend
+            //If not selected, allow user to select conversation
             !props.selected && props.clickGroup(props.address)
         }} 
         onContextMenu={(e) => {

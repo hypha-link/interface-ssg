@@ -1,6 +1,5 @@
 import styles from '../styles/index.module.css'
 import navStyles from '../styles/navigationbar.module.css'
-import Head from 'next/head'
 import Link from 'next/link'
 import HyphaLogo from "../public/logo/hypha-01.svg"
 import LayeredSteps from "../public/patterns/LayeredSteps.svg"
@@ -15,11 +14,6 @@ import Footer from '../components/Footer'
 export default function Index() {
   return (
     <>
-      <Head>
-        <title>Hypha</title>
-        <meta name="description" content="Hypha Messaging" />
-        <link rel="icon" href="../favicon.ico" />
-      </Head>
       <NavigationBar/>
       <main>
         <section className={`${styles.hero} svgBackground svgWaveV`}>

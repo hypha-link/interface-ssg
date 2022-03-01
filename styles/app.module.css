@@ -138,33 +138,35 @@
   fill: var(--inputColor);
 }
 
-/*FRIENDS*/
+/*CONVERSATIONS*/
 
-#friendsList {
+#conversationsList {
   flex-grow: 1;
   overflow-y: auto;
   visibility: hidden;
 }
 
-#friendsList:hover {
+#conversationsList:hover {
   background-color: rgba(var(--uiHoverColorPure), .01);
 }
 
-#friendsList > div {
+#conversationsList > div {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
-#friendsList div,
-#friendsList:hover,
-#friendsList:focus {
+#conversationsList div,
+#conversationsList:hover,
+#conversationsList:focus {
   visibility: visible;
 }
 
 /*Temporary*/
 
-#friendsList p {
+#conversationsList > div > p {
+  font-weight: bold;
+  font-size: 1.1rem;
   text-align: center;
   margin: 3% 0;
 }

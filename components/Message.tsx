@@ -5,19 +5,19 @@ import { TokenFeed } from "./TokenFeed";
 import ContextMenu from "./ContextMenu";
 import { useEthers } from "@usedapp/core";
 import { BasicProfile } from "@datamodels/identity-profile-basic";
-import { MessageData } from "./utilities/Types";
+import { MessageData } from "./utils/Types";
 
 export function Message(props) {
-  const { profile, postedData }:
+  const { profile, payload }:
   {
     profile: BasicProfile,
-    postedData: MessageData,
+    payload: MessageData,
   } = props;
   const { account } = useEthers();
   const [anchorPoint, setAnchorPoint] = useState({x: 0, y: 0});
 
   const urlRegex = (/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_.~#?&//=]*)/g);
-  const message = postedData.message;
+  const message = payload.message;
 
   const imgArr = [];
   const linkArr = [];
@@ -62,8 +62,8 @@ export function Message(props) {
 
   return (
     <div
-      className={postedData.sender === account ? `${styles.message} ${styles.own}` : styles.message}
-      onClick={() => props.clickMessage(postedData)}
+      className={payload.sender === account ? `${styles.message} ${styles.own}` : styles.message}
+      onClick={() => props.selectMessage(payload)}
       onContextMenu={(e) => {
             setTimeout(() => setAnchorPoint({x: e.pageX, y: e.pageY}), 1);
             e.preventDefault();
@@ -72,14 +72,14 @@ export function Message(props) {
       <ContextMenu 
       anchorPoint={{x: anchorPoint.x, y: anchorPoint.y}}
       localAnchorPoint={(ap) => setAnchorPoint(ap)}
-      copy={() => {navigator.clipboard.writeText(postedData.message)}}
-      delete={() => {props.deleteMessage(postedData)}}
+      copy={() => {navigator.clipboard.writeText(payload.message)}}
+      delete={() => {props.deleteMessage(payload)}}
       />
-      <Image src={profile?.image?.alternatives[0].src ? `https://ipfs.io/ipfs/${profile.image.alternatives[0].src.substring(7, profile.image.alternatives[0].src.length)}` : `https://robohash.org/${postedData.sender}.png?set=set5`} alt="User" height="100%" width="100%" objectFit="contain" />
+      <Image src={profile?.image?.alternatives[0].src ? `https://ipfs.io/ipfs/${profile.image.alternatives[0].src.substring(7, profile.image.alternatives[0].src.length)}` : `https://robohash.org/${payload.sender}.png?set=set5`} alt="User" height="100%" width="100%" objectFit="contain" />
       <div>
         <div>
-          <p id={styles.messageID}>{profile?.name ? profile.name : postedData.sender}</p>
-          <p id={styles.messageDate}>{postedData.date}</p>
+          <p id={styles.messageID}>{profile?.name ? profile.name : payload.sender}</p>
+          <p id={styles.messageDate}>{payload.date}</p>
         </div>
         {/* Message Content */}
         {imgArr}

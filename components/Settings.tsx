@@ -10,7 +10,7 @@ export const Settings = (props) => {
     const selectedTab = () => {
         switch(tab){
             case 'profile':
-                return <Profile selfId={props.selfId} address={props.address}/>
+                return <Profile/>
             case 'manageData':
                 return <ManageData/>
             case 'appearance':

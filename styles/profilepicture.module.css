@@ -1,0 +1,19 @@
+.profilePictureContainer{
+    width: fit-content;
+    position: relative;
+    cursor: pointer;
+}
+
+.profilePictureContainer img {
+    border-radius: 314px;
+    max-height: 50px;
+}
+
+/* Typing positioning & Tooltip container */
+.profilePictureContainer > div{
+    position: absolute;
+    bottom: 10%;
+    right: 0;
+    width: 1em;
+    height: 1em;
+}

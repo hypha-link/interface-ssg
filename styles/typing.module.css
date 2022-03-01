@@ -1,0 +1,68 @@
+.background{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    outline: var(--appBGColor) solid 2px;
+}
+
+.typing{
+    width: 2em;
+    right: -25%;
+}
+
+.online{
+    background-color: rgb(0,220,0) !important;
+}
+
+.typingContainer{
+    display: flex;
+    justify-content: space-evenly;
+    width: 2em;
+}
+
+.typingHidden{
+    display: none !important;
+}
+
+.typingContainer span{
+    background-color: var(--uiBGColor);
+    opacity: .9;
+    outline: transparent solid 2px !important;
+    height: .5em;
+    width: .5em;
+}
+
+.typingContainer span:nth-child(1){
+    animation: typing 1.5s linear infinite;
+    animation-delay: -.75s;
+}
+
+.typingContainer span:nth-child(2){
+    animation: typing 1.5s linear infinite;
+    animation-delay: -.5s;
+}
+
+.typingContainer span:nth-child(3){
+    animation: typing 1.5s linear infinite;
+    animation-delay: -.25s;
+}
+
+@keyframes typing{
+  0%{
+      opacity: .2;
+      transform: scale(.8);
+  }
+  33%{
+      opacity: 1;
+      transform: scale(1);
+  }
+  66%{
+      opacity: .2;
+      transform: scale(.8);
+  }
+  100%{
+      opacity: .2;
+      transform: scale(.8);
+  }
+}

@@ -1,29 +1,21 @@
-.selectedFriend,
-.selectedFriend:hover {
+.selectedConversation,
+.selectedConversation:hover {
   background-color: rgba(var(--uiHoverColorPure), 0.15) !important;
 }
 
-.friendContainer {
+.conversationContainer {
   display: flex;
   padding: 2.5%;
   justify-content: flex-start;
   align-items: center;
 }
 
-.friendContainer:hover {
+.conversationContainer:hover {
   background-color: rgba(var(--uiHoverColorPure), 0.05);
 }
 
-.friendContainer img {
-  border-radius: 314px;
-  max-height: 50px;
-}
-
-.friendContainer p {
-  margin-left: 2%;
+.conversationContainer > p {
   user-select: none;
-}
-
-.friendContainer > a{
-  cursor: pointer;
+  margin-left: 7% !important;
+  font-size: 1.2rem;
 }

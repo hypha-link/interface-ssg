@@ -1,22 +1,22 @@
 import React, {useState} from 'react'
-import styles from '../styles/FriendModal.module.css'
+import styles from '../styles/ConversationModal.module.css'
 
-export const FriendModal = (props) => {
+export const ConversationModal = (props) => {
     const [inputValue, setInputValue] = useState("");
 
     const keyHandler = (e) => {
         if (e.key === "Enter" && inputValue.trim() !== "") {
-            props.addFriend(inputValue);
+            props.addConversation(inputValue);
         }
       };
 
     return (
         props.show ?
-        <div id={styles.friendModal}>
-            <p>Add a friend?</p>
+        <div id={styles.conversationModal}>
+            <p>Add conversation?</p>
             <input
             type="text"
-            placeholder="Friend's Address"
+            placeholder="Enter an Ethereum address"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={(e) => keyHandler(e)}
@@ -26,11 +26,11 @@ export const FriendModal = (props) => {
                 <button
                 className="hypha-button"
                 onClick={() => {
-                    props.addFriend(inputValue);
+                    props.addConversation(inputValue);
                     setInputValue("");
                 }}
                 >
-                Add Friend
+                Add Conversation
                 </button>
                 <button
                 className="hypha-button"
