@@ -1,22 +1,21 @@
-.selectedFriend,
-.selectedFriend:hover {
+.selectedConversation,
+.selectedConversation:hover {
   background-color: rgba(var(--uiHoverColorPure), 0.15) !important;
 }
 
-.friendContainer {
+.conversationContainer {
   display: flex;
   padding: 2.5%;
   justify-content: flex-start;
   align-items: center;
 }
 
-.friendContainer:hover {
+.conversationContainer:hover {
   background-color: rgba(var(--uiHoverColorPure), 0.05);
 }
 
-.friendContainer > p {
+.conversationContainer > p {
   user-select: none;
   margin-left: 7% !important;
-  font-weight: 900;
   font-size: 1.2rem;
 }

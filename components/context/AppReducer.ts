@@ -1,4 +1,4 @@
-import { Friends } from '../utilities/Types';
+import { Conversations } from '../utils/Types';
 import { Actions, ActionType, GlobalState, } from './AppContextTypes'
 import { initialState } from './AppState';
 
@@ -32,56 +32,56 @@ export default function AppReducer(state: GlobalState, action: ActionType): Glob
                 ...state,
                 notifications: [...state.notifications, action.payload]
             };
-        case Actions.SET_FRIENDS:
+        case Actions.SET_CONVERSATIONS:
             return {
                 ...state,
-                friends: action.payload
+                conversations: action.payload
             };
-        case Actions.ADD_FRIEND:
+        case Actions.ADD_CONVERSATION:
             return {
                 ...state,
-                friends: [
-                    ...state.friends, 
+                conversations: [
+                    ...state.conversations, 
                     action.payload
                 ]
             }
-        case Actions.DELETE_FRIEND:
+        case Actions.DELETE_CONVERSATION:
             return {
                 ...state,
-                friends: state.friends.filter(friend => friend !== action.payload)
+                conversations: state.conversations.filter(conversation => conversation !== action.payload)
             };
-        case Actions.SELECT_FRIEND:
+        case Actions.SELECT_CONVERSATION:
             return {
                 ...state,
-                friends:
-                state.friends.map(friend => {
-                    if(friend.address === action.payload.address) {
-                        console.log(friend.address);
+                conversations:
+                state.conversations.map(conversation => {
+                    if(conversation.address === action.payload.address) {
+                        console.log(conversation.address);
                         
-                        friend.selected = true;
+                        conversation.selected = true;
                     }
                     else{
                         console.log(action.payload.address);
                         
-                        friend.selected = false;
+                        conversation.selected = false;
                     }
-                    return friend;
+                    return conversation;
                 })
             };
         // Not used
-        case Actions.INVITE_FRIEND:
+        case Actions.INVITE_CONVERSATION:
             return {
                 ...state,
-                friends: [...state.friends]
+                conversations: [...state.conversations]
             };
         case Actions.SET_MESSAGES:
-            const newFriend = action.payload.friend;
-            newFriend.messages = [...newFriend.messages, ...action.payload.messages];
+            const newConversation = action.payload.conversation;
+            newConversation.messages = [...newConversation.messages, ...action.payload.messages];
             return {
                 ...state,
-                friends: [
-                    ...state.friends,
-                    newFriend
+                conversations: [
+                    ...state.conversations,
+                    newConversation
                 ]
             }
         // Not used
@@ -95,13 +95,13 @@ export default function AppReducer(state: GlobalState, action: ActionType): Glob
             return {...state};
         // Not used
         case Actions.SET_METADATA:
-            const newFriend2 = action.payload.friend;
-            newFriend2.metadata = action.payload.metadata
+            const newConversation2 = action.payload.conversation;
+            newConversation2.metadata = action.payload.metadata
             return {
                 ...state,
-                friends: [
-                    ...state.friends,
-                    newFriend2
+                conversations: [
+                    ...state.conversations,
+                    newConversation2
                 ]
             }
     }

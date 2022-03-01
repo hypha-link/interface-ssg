@@ -50,7 +50,7 @@ export default async function getOrCreateMessageStream(_address: string, _type: 
     }
     //Create a new message stream or select one that exists
     const stream = await streamr.getOrCreateStream(streamProps);
-    //Grant permissions to selected friend
+    //Grant permissions to selected conversation
     await stream.grantPermissions({
       user: _address,
       permissions: [StreamPermission.PUBLISH, StreamPermission.SUBSCRIBE, StreamPermission.GRANT, StreamPermission.EDIT, StreamPermission.DELETE]
@@ -78,7 +78,7 @@ export default async function getOrCreateMessageStream(_address: string, _type: 
     }
     //Create a new message stream or select one that exists
     const stream = await streamr.getOrCreateStream(streamProps);
-    //Grant permissions to selected friend
+    //Grant permissions to selected conversation
     await stream.grantPermissions({
       user: _address,
       permissions: [StreamPermission.PUBLISH, StreamPermission.SUBSCRIBE, StreamPermission.GRANT, StreamPermission.EDIT, StreamPermission.DELETE]
@@ -106,7 +106,7 @@ export default async function getOrCreateMessageStream(_address: string, _type: 
     }
     //Create a new message stream or select one that exists
     const stream = await streamr.getOrCreateStream(streamProps);
-    //Grant permissions to selected friend
+    //Grant permissions to selected conversation
     await stream.grantPermissions({
       user: _address,
       permissions: [StreamPermission.PUBLISH, StreamPermission.SUBSCRIBE, StreamPermission.GRANT, StreamPermission.EDIT, StreamPermission.DELETE],

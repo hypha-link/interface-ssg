@@ -26,7 +26,7 @@ const roadmap = () => {
                 <div className={styles.circle}/>
                 <ul className={styles.checked}>
                     <li>1 to 1 Ethereum Messaging</li>
-                    <li>Basic Friend Storage</li>
+                    <li>Basic Conversation Storage</li>
                     <li>Price Feeds</li>
                     <li>Emojis</li>
                     <li>IPFS Integration</li>

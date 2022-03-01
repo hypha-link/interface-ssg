@@ -13,7 +13,7 @@ export const ConnectButton = (props) => {
     <div>
       {isConnected ? (
         <button className={styles.connectProfile} onClick={() => props.disconnect()}>
-          <ProfilePicture friend={{address: account, profile: profile}}/>
+          <ProfilePicture conversation={{address: account, profile: profile}}/>
           <p>{profile?.name ? profile.name : shortenIfAddress(account)}</p>
         </button>
       ) : (

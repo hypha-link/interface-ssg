@@ -8,19 +8,19 @@ import { useEthers } from "@usedapp/core";
 
 import { ConnectButton } from "../components/ConnectButton";
 import { Message } from "../components/Message";
-import { Friend } from "../components/Friend";
+import { Conversation } from "../components/Conversation";
 import { SendMessage } from "../components/SendMessage";
-import { FriendModal } from "../components/FriendModal";
+import { ConversationModal } from "../components/ConversationModal";
 import { Settings } from "../components/Settings";
-import { Tooltip } from "../components/utilities/Tooltip";
+import { Tooltip } from "../components/utils/Tooltip";
 
 import { EthereumAuthProvider, SelfID } from '@self.id/web';
 import getOrCreateMessageStream, { streamr, HyphaType } from "../services/Streamr_API"
-import { Friends, MessageData } from "../components/utilities/Types";
+import { Conversations, MessageData } from "../components/utils/Types";
 import { GetStaticProps } from "next";
-import useMetadata from "../hooks/useMetadata";
+import useMetadata from "../components/hooks/useMetadata";
 import { Stream } from "streamr-client";
-import useFriendStorage, { localStreamKey } from "../hooks/useFriendStorage"
+import useConversationStorage, { localStreamKey } from "../components/hooks/useConversationStorage"
 
 import { DispatchContext, StateContext } from "../components/context/AppState";
 import { Actions } from "../components/context/AppContextTypes";
@@ -29,22 +29,22 @@ function App({ data }) {
   const { account, activateBrowserWallet, deactivate, chainId } = useEthers();
 
   //Global State
-  const { selfId, profile, notifications, friends } = useContext(StateContext);
+  const { selfId, profile, notifications, conversations } = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
 
   //Component Constructors
-  const [friendModal, setFriendModal] = useState(false);
+  const [conversationModal, setConversationModal] = useState(false);
   const [settingsModal, setSettingsModal] = useState(false);
   const [searchKey, setSearchKey] = useState<string>('');
 
-  const getSelectedFriend = () => {
-    return friends.find((friend) => friend.selected)
-    ? friends.find((friend) => friend.selected)
+  const getSelectedConversation = () => {
+    return conversations.find((conversation) => conversation.selected)
+    ? conversations.find((conversation) => conversation.selected)
     : { address: "", streamID: "", selected: false };
   }
 
-  const [metadata, setMetadata] = useMetadata(getSelectedFriend());
-  const { ceramicFriends, ceramicStream } = useFriendStorage();
+  const [metadata, setMetadata] = useMetadata(getSelectedConversation());
+  const { ceramicConversations, ceramicStream } = useConversationStorage();
 
   useEffect(() => {
     const connect = async () => {
@@ -88,49 +88,49 @@ function App({ data }) {
   };
 
   useEffect(() => {
-    async function loadFriends(){
-      //Add friend user profiles to object
-      const newFriends = await Promise.all(ceramicFriends.map(async (friend) => {
+    async function loadConversations(){
+      //Add conversation user profiles to object
+      const newConversations = await Promise.all(ceramicConversations.map(async (conversation) => {
         try{
-          friend.profile = await selfId.client.get('basicProfile', `${friend.address}@eip155:${chainId}`);
+          conversation.profile = await selfId.client.get('basicProfile', `${conversation.address}@eip155:${chainId}`);
         }
         catch(e){
-          console.warn(`There is no DID that exists for ${friend.address}`);
+          console.warn(`There is no DID that exists for ${conversation.address}`);
         }
-        return friend;
+        return conversation;
       }));
-      //Set valid streams if any friends don't have one
-      if(newFriends.some(friend => friend.streamID === '' || friend.streamID === undefined)) await setAllValidStreams(newFriends);
-      //Subscribe if friends don't have empty/null streamIDs
-      if(newFriends.filter(friend => friend.streamID === '' || friend.streamID === undefined).length === 0) await subscribeToConversations(newFriends);
-      dispatch({ type: Actions.SET_FRIENDS, payload: newFriends });
+      //Set valid streams if any conversations don't have one
+      if(newConversations.some(conversation => conversation.streamID === '' || conversation.streamID === undefined)) await setAllValidStreams(newConversations);
+      //Subscribe if conversations don't have empty/null streamIDs
+      if(newConversations.filter(conversation => conversation.streamID === '' || conversation.streamID === undefined).length === 0) await subscribeToConversations(newConversations);
+      dispatch({ type: Actions.SET_CONVERSATIONS, payload: newConversations });
     }
-    if(selfId && ceramicFriends?.length > 0){
-      loadFriends();
+    if(selfId && ceramicConversations?.length > 0){
+      loadConversations();
       setMetadata(oldMetadata => ({...oldMetadata, online: true}));
     }
-  }, [selfId, ceramicFriends])
+  }, [selfId, ceramicConversations])
 
-  const subscribeToConversations = async (_friends: Friends[]) => {
+  const subscribeToConversations = async (_conversations: Conversations[]) => {
     const subs = await streamr.getSubscriptions();
     //Subscribe to stream after messages were resent
-    await Promise.all(_friends.map(async (friend) => {
-      //Check if friend streamID is empty & check if we are already subscribed
-      if(friend.streamID !== "" && subs.length === 0){
+    await Promise.all(_conversations.map(async (conversation) => {
+      //Check if conversation streamID is empty & check if we are already subscribed
+      if(conversation.streamID !== "" && subs.length === 0){
         await streamr.subscribe(
           {
-            stream: friend.streamID,
+            stream: conversation.streamID,
             partition: 0,
           }, (data: MessageData) => {
             //Create a new notification if the new message was not sent by us & interface is not visible
             if(data.sender !== account && document.visibilityState !== "visible"){
-              const name = getSelectedFriend().profile?.name ? getSelectedFriend().profile?.name : data.sender;
-              const image = getSelectedFriend().profile?.image?.alternatives[0].src ? `https://ipfs.io/ipfs/${getSelectedFriend().profile.image.alternatives[0].src?.substring(7, getSelectedFriend().profile.image.alternatives[0].src?.length)}` : `https://robohash.org/${data.sender}.png?set=set5`;
+              const name = getSelectedConversation().profile?.name ? getSelectedConversation().profile?.name : data.sender;
+              const image = getSelectedConversation().profile?.image?.alternatives[0].src ? `https://ipfs.io/ipfs/${getSelectedConversation().profile.image.alternatives[0].src?.substring(7, getSelectedConversation().profile.image.alternatives[0].src?.length)}` : `https://robohash.org/${data.sender}.png?set=set5`;
               const notification = new Notification(`${name} sent you a message!`, {body: data.message, icon: image});
               dispatch({ type: Actions.ADD_NOTIFICATION, payload: notification });
             }
-            const newFriends = _friends.map((e) => {
-              if(friend.address === e.address){
+            const newConversations = _conversations.map((e) => {
+              if(conversation.address === e.address){
                 if(e.messages){
                   e.messages = [...e.messages, data];
                 }
@@ -140,27 +140,27 @@ function App({ data }) {
               }
               return e;
             })
-            dispatch({ type: Actions.SET_FRIENDS, payload: newFriends });
+            dispatch({ type: Actions.SET_CONVERSATIONS, payload: newConversations });
           }
         )
       }
     }))
   }
   
-  const getValidStream = async (_friend: Friends) => {
+  const getValidStream = async (_conversation: Conversations) => {
     try{
       const streams: Stream[] = [];
-      //Check if either friend has a stream
-      for await(const stream of streamr.searchStreams(_friend.address, { user: account, allowPublic: true })){
+      //Check if either conversation has a stream
+      for await(const stream of streamr.searchStreams(_conversation.address, { user: account, allowPublic: true })){
         streams.push(stream);
       }
-      for await(const stream of streamr.searchStreams(account, { user: _friend.address, allowPublic: true })){
+      for await(const stream of streamr.searchStreams(account, { user: _conversation.address, allowPublic: true })){
         streams.push(stream);
       }
       //Return found stream
       if(streams.length !== 0) return streams[0];
       //Create a new stream since none were found
-      const newStream = await getOrCreateMessageStream(_friend.address, HyphaType.Hypha, false);
+      const newStream = await getOrCreateMessageStream(_conversation.address, HyphaType.Hypha, false);
       return newStream;
     }
     catch(e){
@@ -168,51 +168,51 @@ function App({ data }) {
     }
   }
 
-  const setValidStream = async (_friend: Friends) => {
-    const validStream = await getValidStream(_friend);
-    const newFriends: Friends[] = ceramicFriends.map((e) => {
-      if(_friend.address === e.address){
+  const setValidStream = async (_conversation: Conversations) => {
+    const validStream = await getValidStream(_conversation);
+    const newConversations: Conversations[] = ceramicConversations.map((e) => {
+      if(_conversation.address === e.address){
         e.streamID = validStream.id;
       }
       return e;
     });
-    dispatch({ type: Actions.SET_FRIENDS, payload: newFriends });
-    await ceramicStream.update({friends: [...newFriends]});
+    dispatch({ type: Actions.SET_CONVERSATIONS, payload: newConversations });
+    await ceramicStream.update({conversations: [...newConversations]});
   }
 
-  const setAllValidStreams = async (_friends: Friends[]) => {
-    //Check if any of the friends have empty or undefined streamIDs
-    if(_friends.filter(friend => friend.streamID === "" || friend.streamID === undefined).length > 0){
-      Promise.all(_friends.map(friend => {
+  const setAllValidStreams = async (_conversations: Conversations[]) => {
+    //Check if any of the conversations have empty or undefined streamIDs
+    if(_conversations.filter(conversation => conversation.streamID === "" || conversation.streamID === undefined).length > 0){
+      Promise.all(_conversations.map(conversation => {
         return new Promise<void>((resolve) => {
-          setValidStream(friend);
+          setValidStream(conversation);
           resolve();
         });
       }));
     }
   }
 
-  async function addFriends(_address: string){
-    //Check if friend exists already
-    if(!ceramicFriends?.some(friend => friend.address === _address)){
+  async function addConversations(_address: string){
+    //Check if conversation exists already
+    if(!ceramicConversations?.some(conversation => conversation.address === _address)){
       const validStream = await getValidStream({ address: _address, selected: false, streamID: undefined });
       console.log(validStream);
-      const newFriend = {
+      const newConversation = {
         address: _address,
         streamID: validStream.id,
         selected: false,
       }
-      //Create a new friends stream if there are no previously existing streams & pin it
-      if(ceramicFriends){
-        await ceramicStream.update({friends: [...ceramicFriends, newFriend]})
+      //Create a new conversations stream if there are no previously existing streams & pin it
+      if(ceramicConversations){
+        await ceramicStream.update({conversations: [...ceramicConversations, newConversation]})
       }
       else{
         const stream = await selfId.client.tileLoader.create(
           {
-            friends: [newFriend]
+            conversations: [newConversation]
           },
           {
-            tags: ['friends'],
+            tags: ['conversations'],
           },
           {
             pin: true,
@@ -221,24 +221,24 @@ function App({ data }) {
         //Add a new local storage record of the stream ID
         window.localStorage.setItem(`${account}-${localStreamKey}`, stream.id.toString());
       }
-      dispatch({ type: Actions.ADD_FRIEND, payload: newFriend });
+      dispatch({ type: Actions.ADD_CONVERSATION, payload: newConversation });
     }
   }
 
-  async function deleteFriend(_friend: Friends){
-    //Remove friend if found
-    const newFriends = ceramicFriends.filter(friend => friend !== _friend);
-    await ceramicStream.update({friends: [...newFriends]});
-    dispatch({ type: Actions.DELETE_FRIEND, payload: _friend });
+  async function deleteConversation(_conversation: Conversations){
+    //Remove conversation if found
+    const newConversations = ceramicConversations.filter(conversation => conversation !== _conversation);
+    await ceramicStream.update({conversations: [...newConversations]});
+    dispatch({ type: Actions.DELETE_CONVERSATION, payload: _conversation });
   }
 
-  //Selects a new stream to load when friend is clicked
-  async function selectFriend(_friend: Friends){
-    //Subscribe if friends don't have empty/null streamIDs
-    if(friends.filter(friend => friend.streamID === "" || friend.streamID === undefined).length === 0){
-      await subscribeToConversations(friends);
+  //Selects a new stream to load when conversation is clicked
+  async function selectConversation(_conversation: Conversations){
+    //Subscribe if conversations don't have empty/null streamIDs
+    if(conversations.filter(conversation => conversation.streamID === "" || conversation.streamID === undefined).length === 0){
+      await subscribeToConversations(conversations);
     }
-    dispatch({ type: Actions.SELECT_FRIEND, payload: _friend });
+    dispatch({ type: Actions.SELECT_CONVERSATION, payload: _conversation });
     //Check if user has browser notifications toggled on
     if(Notification.permission === "default"){
       Notification.requestPermission()
@@ -248,8 +248,8 @@ function App({ data }) {
     }
   }
 
-  const inviteFriend = async (_friend: Friends) => {
-    console.log(`Invite ${_friend.address} to group`);
+  const inviteConversation = async (_conversation: Conversations) => {
+    console.log(`Invite ${_conversation.address} to group`);
   }
 
   // Load messages on startup
@@ -258,12 +258,12 @@ function App({ data }) {
   //     try {
   //       let timeoutID: NodeJS.Timeout;
   //       let messageArr: MessageData[];
-  //       const stream = await streamr.getStream(getSelectedFriend().streamID);
+  //       const stream = await streamr.getStream(getSelectedConversation().streamID);
   //       const storageNodes = await stream.getStorageNodes();
   //       //Load the last 50 messages from previous session if messages are being stored
   //       if(storageNodes.length !== 0){
   //         await streamr.resend(
-  //             getSelectedFriend().streamID,
+  //             getSelectedConversation().streamID,
   //             {
   //               last: 50,
   //             },
@@ -275,7 +275,7 @@ function App({ data }) {
   //               clearInterval(timeoutID);
   //               timeoutID = setTimeout(() => {
   //                 //Load messages after all data has been collected
-  //                 dispatch({ type: Actions.SET_MESSAGES, payload: {friend: getSelectedFriend(), messages: messageArr} })
+  //                 dispatch({ type: Actions.SET_MESSAGES, payload: {conversation: getSelectedConversation(), messages: messageArr} })
   //               }, 100);
   //             }
   //           )
@@ -285,16 +285,16 @@ function App({ data }) {
   //     }
   //   }
   //   //Load if the user wallet is connected
-  //   if(account && getSelectedFriend().messages.length === 0  && getSelectedFriend().streamID !== ""){
+  //   if(account && getSelectedConversation().messages.length === 0  && getSelectedConversation().streamID !== ""){
   //     loadMessages();
   //   }
-  // }, [account, friends.find(friend => friend.selected)])
+  // }, [account, conversations.find(conversation => conversation.selected)])
 
   //Publish a message to stream
   const addMessage = async (_message: MessageData) => {
     try{
       streamr.publish(
-        {streamId: getSelectedFriend().streamID, partition: 0},
+        {streamId: getSelectedConversation().streamID, partition: 0},
         {
           sender: _message.sender,
           message: _message.message,
@@ -329,17 +329,17 @@ function App({ data }) {
   //Ceramic testing
   const testCeramic = async () => {
 
-    //Create a new "friends stream"
+    //Create a new "conversations stream"
     const stream = await selfId.client.tileLoader.create(
       {
-        friends: {
+        conversations: {
           test1: 'test1 address',
           test2: 'test2 address',
           test3: 'test3 address',
         },
       },
       {
-        tags: ['friends'],
+        tags: ['conversations'],
       },
       {
         pin: true,
@@ -355,7 +355,7 @@ function App({ data }) {
     const testUpdate = async (streamId) => {
       // const streamUpdate = await selfId.client.tileLoader.load('kjzl6cwe1jw146bdy7uhcesi6lnuj83sen0t7slvxnfcx6h5fz01p94nu2haccd');
       const streamUpdate = await selfId.client.tileLoader.load(streamId);
-      await streamUpdate.update({friends: {...streamUpdate.content.friends, test4: 'test4 address'}});
+      await streamUpdate.update({conversations: {...streamUpdate.content.conversations, test4: 'test4 address'}});
       console.log(stream.content);
     }
 
@@ -383,7 +383,7 @@ function App({ data }) {
       //   console.log(stream.id);
       // }
       console.log(await getValidStream({address: '0x98b01D04ab7B40Ffe856Be164f476a45Bf8E5B37', selected: false, streamID: undefined}));
-      // console.log(getSelectedFriend().profile?.name);
+      // console.log(getSelectedConversation().profile?.name);
     }
     catch(e){
       console.error(e);
@@ -400,12 +400,12 @@ function App({ data }) {
             </a>
           </Link>
         <div>
-          <p>{getSelectedFriend().profile?.name ? getSelectedFriend().profile?.name : getSelectedFriend().address !== "" ? getSelectedFriend().address : "Select A Friend"}</p>
+          <p>{getSelectedConversation().profile?.name ? getSelectedConversation().profile?.name : getSelectedConversation().address !== "" ? getSelectedConversation().address : "Select A Conversation"}</p>
         </div>
         <div>
           <input
           type="text"
-          placeholder="Search..."
+          placeholder="Search messages..."
           onChange={(e) => setSearchKey(e.target.value)}
           />
         </div>
@@ -417,29 +417,29 @@ function App({ data }) {
       <section id={styles.content}>
         <section id={styles.sidebarContainer}>
           <section id={styles.browserServers}>
-            <FriendModal
-              show={friendModal}
-              addFriend={(address: string) => {
-                setFriendModal(false);
-                addFriends(address);
+            <ConversationModal
+              show={conversationModal}
+              addConversation={(address: string) => {
+                setConversationModal(false);
+                addConversations(address);
               }}
-              cancel={() => setFriendModal(false)}
+              cancel={() => setConversationModal(false)}
             />
-            <button className="hypha-button" onClick={() => {setFriendModal(!friendModal)}} disabled={selfId === undefined}>Add Friends</button>
+            <button className="hypha-button" onClick={() => {setConversationModal(!conversationModal)}} disabled={selfId === undefined}>Add Conversations</button>
           </section>
-          <section id={styles.friendsList}>
+          <section id={styles.conversationsList}>
             <div>
               <p>Conversations</p>
-              {friends.map((_friend) => {
+              {conversations.map((_conversation) => {
                 return (
-                  <Tooltip key={Math.random()} content={_friend.address}>
-                    <Friend
+                  <Tooltip key={Math.random()} content={_conversation.address}>
+                    <Conversation
                       key={Math.random()}
-                      friend={_friend}
+                      conversation={_conversation}
                       metadata={metadata}
-                      inviteFriend={(_friend: Friends) => inviteFriend(_friend)}
-                      selectFriend={(_friend: Friends) => selectFriend(_friend)}
-                      deleteFriend={(_friend: Friends) => deleteFriend(_friend)}
+                      inviteConversation={(_conversation: Conversations) => inviteConversation(_conversation)}
+                      selectConversation={(_conversation: Conversations) => selectConversation(_conversation)}
+                      deleteConversation={(_conversation: Conversations) => deleteConversation(_conversation)}
                     />
                   </Tooltip>
                 );
@@ -472,11 +472,11 @@ function App({ data }) {
         <section id={styles.messagesContainer}>
           <div>
             <div>
-              {getSelectedFriend().messages?.filter(e => e.message.includes(searchKey)) && getSelectedFriend().messages?.filter(e => e.message.includes(searchKey)).map((message: MessageData) => {
+              {getSelectedConversation().messages?.filter(e => e.message.includes(searchKey)) && getSelectedConversation().messages?.filter(e => e.message.includes(searchKey)).map((message: MessageData) => {
                 return (
                   <Message
                     key={Math.random()}
-                    profile={message.sender === account ? profile : friends.find(friend => friend.address === message.sender).profile}
+                    profile={message.sender === account ? profile : conversations.find(conversation => conversation.address === message.sender).profile}
                     payload={message}
                     userAddress={account}
                     selectMessage={(message: MessageData) => selectMessage(message)}
@@ -488,7 +488,7 @@ function App({ data }) {
             </div>
           </div>
           <SendMessage
-            disable={!getSelectedFriend().selected}
+            disable={!getSelectedConversation().selected}
             typing={(typing: boolean) => setMetadata(oldMetadata => ({...oldMetadata, typing: typing}))}
             sendMessage={(messageText: string) => addMessage({sender: account, message: messageText, date: new Date().toString()})}
           />

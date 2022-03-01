@@ -8,7 +8,7 @@ export const initialState: GlobalState = {
     selfId: undefined,
     profile: undefined,
     notifications: [],
-    friends: [],
+    conversations: [],
 }
 
 export const StateContext = createContext<GlobalState>(initialState);

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import Image from 'next/image'
 import { shortenIfAddress, useEthers } from '@usedapp/core'
 import styles from '../../styles/settings.module.css'
-import { Edit } from '../utilities/Edit'
+import { Edit } from '../utils/Edit'
 import { BasicProfile } from '@datamodels/identity-profile-basic'
 import { StateContext } from '../context/AppState'
 

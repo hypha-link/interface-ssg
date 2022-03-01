@@ -1,6 +1,6 @@
 import { BasicProfile } from "@datamodels/identity-profile-basic";
 
-export interface Friends {
+export interface Conversations {
     address: string,
     streamID: string,
     selected: boolean,

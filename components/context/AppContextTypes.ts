@@ -1,7 +1,7 @@
 import { BasicProfile } from "@datamodels/identity-profile-basic";
 import { SelfID } from "@self.id/web";
 import StreamrClient from "streamr-client";
-import { Friends, MessageData, Metadata } from "../utilities/Types";
+import { Conversations, MessageData, Metadata } from "../utils/Types";
 
 export interface GlobalState{
     account: string,
@@ -9,7 +9,7 @@ export interface GlobalState{
     selfId: SelfID,
     profile: BasicProfile,
     notifications: Notification[],
-    friends: Friends[],
+    conversations: Conversations[],
 }
 
 export type GlobalDispatch = (fn: ActionType) => void;
@@ -21,11 +21,11 @@ export enum Actions{
     SET_SELFID = 'SET_SELFID',
     SET_PROFILE = 'SET_PROFILE',
     ADD_NOTIFICATION = 'ADD_NOTIFICATION',
-    SET_FRIENDS = 'SET_FRIENDS',
-    ADD_FRIEND = 'ADD_FRIEND',
-    DELETE_FRIEND = 'DELETE_FRIEND',
-    SELECT_FRIEND = 'SELECT_FRIEND',
-    INVITE_FRIEND = 'INVITE_FRIEND',
+    SET_CONVERSATIONS = 'SET_CONVERSATIONS',
+    ADD_CONVERSATION = 'ADD_CONVERSATION',
+    DELETE_CONVERSATION = 'DELETE_CONVERSATION',
+    SELECT_CONVERSATION = 'SELECT_CONVERSATION',
+    INVITE_CONVERSATION = 'INVITE_CONVERSATION',
     SET_MESSAGES = 'SET_MESSAGES',
     ADD_MESSAGE = 'ADD_MESSAGE',
     DELETE_MESSAGE = 'DELETE_MESSAGE',
@@ -44,16 +44,16 @@ type SetStreamr = Action<Actions.SET_STREAMR, StreamrClient>
 type SetSelfId = Action<Actions.SET_SELFID, SelfID>
 type SetProfile = Action<Actions.SET_PROFILE, BasicProfile>
 type AddNotification = Action<Actions.ADD_NOTIFICATION, Notification>
-type SetFriends = Action<Actions.SET_FRIENDS, Friends[]>
-type AddFriend = Action<Actions.ADD_FRIEND, Friends>
-type DeleteFriend = Action<Actions.DELETE_FRIEND, Friends>
-type SelectFriend = Action<Actions.SELECT_FRIEND, Friends>
-type InviteFriend = Action<Actions.INVITE_FRIEND, Friends>
-type SetMessages = Action<Actions.SET_MESSAGES, { friend: Friends, messages: MessageData[] }>
+type SetConversations = Action<Actions.SET_CONVERSATIONS, Conversations[]>
+type AddConversation = Action<Actions.ADD_CONVERSATION, Conversations>
+type DeleteConversation = Action<Actions.DELETE_CONVERSATION, Conversations>
+type SelectConversation = Action<Actions.SELECT_CONVERSATION, Conversations>
+type InviteConversation = Action<Actions.INVITE_CONVERSATION, Conversations>
+type SetMessages = Action<Actions.SET_MESSAGES, { conversation: Conversations, messages: MessageData[] }>
 type AddMessage = Action<Actions.ADD_MESSAGE, MessageData>
 type DeleteMessage = Action<Actions.DELETE_MESSAGE, MessageData>
 type SelectMessage = Action<Actions.SELECT_MESSAGE, MessageData>
-type SetMetadata = Action<Actions.SET_METADATA, { friend: Friends, metadata: Metadata }>
+type SetMetadata = Action<Actions.SET_METADATA, { conversation: Conversations, metadata: Metadata }>
 
 export type ActionType = 
 | ClearState
@@ -62,11 +62,11 @@ export type ActionType =
 | SetSelfId
 | SetProfile
 | AddNotification
-| SetFriends
-| AddFriend
-| DeleteFriend
-| SelectFriend
-| InviteFriend
+| SetConversations
+| AddConversation
+| DeleteConversation
+| SelectConversation
+| InviteConversation
 | SetMessages
 | AddMessage
 | DeleteMessage

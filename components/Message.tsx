@@ -5,7 +5,7 @@ import { TokenFeed } from "./TokenFeed";
 import ContextMenu from "./ContextMenu";
 import { useEthers } from "@usedapp/core";
 import { BasicProfile } from "@datamodels/identity-profile-basic";
-import { MessageData } from "./utilities/Types";
+import { MessageData } from "./utils/Types";
 
 export function Message(props) {
   const { profile, payload }:

@@ -1,6 +1,6 @@
-/* FRIEND MODAL */
+/* CONVERSATION MODAL */
 
-#friendModal {
+#conversationModal {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -14,13 +14,13 @@
   padding: 1%;
 }
 
-#friendModal > p {
+#conversationModal > p {
   color: var(--uiColor);
   font-size: 1.4em;
   text-align: center;
 }
 
-#friendModal > input {
+#conversationModal > input {
   flex: 0.2;
   text-align: center;
   border: var(--inputColor) 1px solid;
@@ -28,16 +28,16 @@
   background-color: transparent;
 }
 
-#friendModal input::placeholder {
+#conversationModal input::placeholder {
   color: var(--inputColor);
 }
 
-#friendModal > div {
+#conversationModal > div {
   display: flex;
   justify-content: center;
   flex: 0.2;
 }
 
-#friendModal > div > button {
+#conversationModal > div > button {
   flex: 1;
 }
