@@ -67,21 +67,20 @@ const roadmap = () => {
                     <li>Typescript</li>
                 </ul>
             </div>
-            {/* Polish */}
+            {/* Streamr Brubeck & Polish */}
             <div>
                 <div className={styles.milestone}>
-                    <h1>Polish</h1>
+                    <h1>Streamr Brubeck & Polish</h1>
                     <h3>February 2022</h3>
                 </div>
                 <div className={styles.circle}/>
-                <ul>
-                    <li>UI / UX Focus & Redesign</li>
-                    <li>NFTs in messages</li>
-                    <li>ENS Support</li>
-                    <li>Pinned Ceramic Streams</li>
+                <ul className={styles.checked}>
+                    <li>UI / UX Redesign</li>
+                    {/* <li>NFTs in messages</li> */}
+                    {/* <li>ENS Support</li> */}
+                    {/* <li>Pinned Ceramic Streams</li> */}
                     <li>Streamr Brubeck Update</li>
-                    <li>Metadata (typing, online, & receipt indicators)</li>
-                    
+                    <li>Metadata (typing & online indicators)</li>
                 </ul>
             </div>
             {/* Mycelium */}
