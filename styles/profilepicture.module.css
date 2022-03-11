@@ -6,13 +6,16 @@
 
 .profilePictureContainer img {
     border-radius: 314px;
-    max-height: 50px;
+    height: inherit;
+    width: inherit;
+    max-height: inherit;
+    max-width: inherit;
 }
 
 /* Typing positioning & Tooltip container */
 .profilePictureContainer > div{
     position: absolute;
-    bottom: 10%;
+    bottom: 0;
     right: 0;
     width: 1em;
     height: 1em;

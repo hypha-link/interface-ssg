@@ -1,9 +1,13 @@
 import React, { useContext, useState } from 'react'
 import styles from "../../styles/edit.module.css"
-import { SelfID } from '@self.id/web'
 import { StateContext } from '../context/AppState';
 
-export const Edit = (props) => {
+export enum EditType{
+    Name = 'name',
+    Description = 'description',
+}
+
+export const Edit = ({type}: {type: EditType}) => {
     const [editing, setEditing] = useState(false);
     const [inputValue, setInputValue] = useState("");
     const { selfId } = useContext(StateContext);
@@ -25,7 +29,7 @@ export const Edit = (props) => {
     };
 
     const selectedType = (newChange) => {
-        switch(props.type){
+        switch(type){
             case 'name':
                 changeName(newChange);
                 break;
@@ -56,7 +60,7 @@ export const Edit = (props) => {
                 <input
                 name="edit"
                 type="text"
-                placeholder={props.type}
+                placeholder={type}
                 autoComplete="off"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}

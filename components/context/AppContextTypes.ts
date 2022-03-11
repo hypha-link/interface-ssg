@@ -1,15 +1,14 @@
-import { BasicProfile } from "@datamodels/identity-profile-basic";
 import { SelfID } from "@self.id/web";
 import StreamrClient from "streamr-client";
-import { Conversations, MessageData, Metadata } from "../utils/Types";
+import { Conversations, MessagePayload, Metadata, Profile } from "../utils/Types";
 
 export interface GlobalState{
-    account: string,
     streamr: StreamrClient,
     selfId: SelfID,
-    profile: BasicProfile,
+    ownProfile: Profile,
     notifications: Notification[],
     conversations: Conversations[],
+    selectedConversation: Conversations
 }
 
 export type GlobalDispatch = (fn: ActionType) => void;
@@ -42,17 +41,17 @@ type ClearState = Action<Actions.CLEAR_STATE, void>
 type SetAccount = Action<Actions.SET_ACCOUNT, string>
 type SetStreamr = Action<Actions.SET_STREAMR, StreamrClient>
 type SetSelfId = Action<Actions.SET_SELFID, SelfID>
-type SetProfile = Action<Actions.SET_PROFILE, BasicProfile>
+type SetProfile = Action<Actions.SET_PROFILE, Profile>
 type AddNotification = Action<Actions.ADD_NOTIFICATION, Notification>
 type SetConversations = Action<Actions.SET_CONVERSATIONS, Conversations[]>
 type AddConversation = Action<Actions.ADD_CONVERSATION, Conversations>
 type DeleteConversation = Action<Actions.DELETE_CONVERSATION, Conversations>
 type SelectConversation = Action<Actions.SELECT_CONVERSATION, Conversations>
 type InviteConversation = Action<Actions.INVITE_CONVERSATION, Conversations>
-type SetMessages = Action<Actions.SET_MESSAGES, { conversation: Conversations, messages: MessageData[] }>
-type AddMessage = Action<Actions.ADD_MESSAGE, MessageData>
-type DeleteMessage = Action<Actions.DELETE_MESSAGE, MessageData>
-type SelectMessage = Action<Actions.SELECT_MESSAGE, MessageData>
+type SetMessages = Action<Actions.SET_MESSAGES, { conversation: Conversations, messages: MessagePayload[] }>
+type AddMessage = Action<Actions.ADD_MESSAGE, MessagePayload>
+type DeleteMessage = Action<Actions.DELETE_MESSAGE, MessagePayload>
+type SelectMessage = Action<Actions.SELECT_MESSAGE, MessagePayload>
 type SetMetadata = Action<Actions.SET_METADATA, { conversation: Conversations, metadata: Metadata }>
 
 export type ActionType = 

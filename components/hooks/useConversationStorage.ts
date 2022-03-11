@@ -6,26 +6,26 @@ import { TileDocument } from "@ceramicnetwork/stream-tile"
 export const localStreamKey = "conversations";
 
 export default function useConversationStorage() {
-    const { selfId, account, conversations } = useContext(StateContext);
+    const { selfId, ownProfile, conversations } = useContext(StateContext);
     const [ceramicConversations, setCeramicConversations] = useState<Conversations[]>(undefined);
     const [ceramicStream, setCeramicStream] = useState<TileDocument>(undefined);
 
     useEffect(() => {
         const conversationsStore = async () => {
-            const stream = await selfId.client.tileLoader.load(window.localStorage.getItem(`${account}-${localStreamKey}`));
+            const stream = await selfId.client.tileLoader.load(window.localStorage.getItem(`${ownProfile?.address}-${localStreamKey}`));
             setCeramicConversations(stream.content.conversations);
             setCeramicStream(stream);
         }
         //Update when ceramicConversations & conversations are not equal (or load ceramicConversations for first time)
         const equality = ceramicConversations
           ? conversations?.every((conversation, i) => {
-                conversation.address === ceramicConversations[i]?.address &&
+                conversation.profile === ceramicConversations[i]?.profile &&
                 conversation.selected === ceramicConversations[i]?.selected &&
-                conversation.streamID === ceramicConversations[i]?.streamID;
+                conversation.streamId === ceramicConversations[i]?.streamId;
             })
           : true;
         if(
-            window.localStorage.getItem(`${account}-${localStreamKey}`) !== null && 
+            window.localStorage.getItem(`${ownProfile?.address}-${localStreamKey}`) !== null && 
             selfId && equality
         ) conversationsStore();
     }, [selfId, conversations])

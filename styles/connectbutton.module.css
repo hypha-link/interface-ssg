@@ -17,11 +17,6 @@
   background-color: rgba(var(--uiHoverColorPure), 1);
 }
 
-.connectProfile img {
-  border-radius: 314px;
-  max-height: 50px;
-}
-
 .connectProfile > p {
   flex-grow: 1;
   margin: 0 2% 0 2%;

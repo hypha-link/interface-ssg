@@ -1,20 +1,23 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import styles from '../styles/Message.module.css';
 import Image from "next/image";
 import { TokenFeed } from "./TokenFeed";
 import ContextMenu from "./ContextMenu";
-import { useEthers } from "@usedapp/core";
-import { BasicProfile } from "@datamodels/identity-profile-basic";
-import { MessageData } from "./utils/Types";
+import { MessagePayload, Profile } from "./utils/Types";
+import getProfileImage from "../get/getProfileImage";
+import { StateContext } from "./context/AppState";
 
-export function Message(props) {
-  const { profile, payload }:
-  {
-    profile: BasicProfile,
-    payload: MessageData,
-  } = props;
-  const { account } = useEthers();
+type MessageProps = {
+  payload: MessagePayload
+  selectMessage: (payload: MessagePayload) => void
+  deleteMessage: (payload: MessagePayload) => void
+}
+
+export function Message({payload, selectMessage, deleteMessage}: MessageProps) {
   const [anchorPoint, setAnchorPoint] = useState({x: 0, y: 0});
+  const { ownProfile, selectedConversation } = useContext(StateContext);
+  //Set to owner profile, otherwise set to address that matches profile
+  const profile = payload.sender === ownProfile.address ? ownProfile : selectedConversation.profile.find(_profile => _profile.address === payload.sender)
 
   const urlRegex = (/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_.~#?&//=]*)/g);
   const message = payload.message;
@@ -62,8 +65,8 @@ export function Message(props) {
 
   return (
     <div
-      className={payload.sender === account ? `${styles.message} ${styles.own}` : styles.message}
-      onClick={() => props.selectMessage(payload)}
+      className={payload.sender === profile.address ? `${styles.message} ${styles.own}` : styles.message}
+      onClick={() => selectMessage(payload)}
       onContextMenu={(e) => {
             setTimeout(() => setAnchorPoint({x: e.pageX, y: e.pageY}), 1);
             e.preventDefault();
@@ -73,9 +76,9 @@ export function Message(props) {
       anchorPoint={{x: anchorPoint.x, y: anchorPoint.y}}
       localAnchorPoint={(ap) => setAnchorPoint(ap)}
       copy={() => {navigator.clipboard.writeText(payload.message)}}
-      delete={() => {props.deleteMessage(payload)}}
+      delete={() => {deleteMessage(payload)}}
       />
-      <Image src={profile?.image?.alternatives[0].src ? `https://ipfs.io/ipfs/${profile.image.alternatives[0].src.substring(7, profile.image.alternatives[0].src.length)}` : `https://robohash.org/${payload.sender}.png?set=set5`} alt="User" height="100%" width="100%" objectFit="contain" />
+      <Image src={getProfileImage(profile)} alt="User" height="100%" width="100%" objectFit="contain" />
       <div>
         <div>
           <p id={styles.messageID}>{profile?.name ? profile.name : payload.sender}</p>

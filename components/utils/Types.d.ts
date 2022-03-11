@@ -1,15 +1,21 @@
 import { BasicProfile } from "@datamodels/identity-profile-basic";
+import { ConversationType } from "../../services/Streamr_API";
 
 export interface Conversations {
-    address: string,
-    streamID: string,
+    profile: Profile[],
+    streamId: string,
     selected: boolean,
-    profile?: BasicProfile,
-    messages?: MessageData[],
+    type: ConversationType,
     metadata?: Metadata,
+    messages?: MessageData[],
+    metadata?: Metadata[],
 };
 
-export interface MessageData {
+interface Profile extends BasicProfile{
+    address: string,
+}
+
+export interface MessagePayload {
     sender: string,
     message: string,
     date: string;

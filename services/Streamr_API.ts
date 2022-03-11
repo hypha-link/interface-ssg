@@ -20,7 +20,7 @@ const streamrClient = () => {
 
 export const streamr: StreamrClient = streamrClient();
 
-export enum HyphaType{
+export enum ConversationType{
   Hypha = "hypha",
   Hyphae = "hyphae",
   Mycelium = "mycelium",
@@ -29,7 +29,7 @@ export enum HyphaType{
 /**
  * @returns Message Stream
  */
-export default async function getOrCreateMessageStream(_address: string, _type: HyphaType, _addToStorage?: boolean) {
+export default async function getOrCreateMessageStream(_address: string, _type: ConversationType, _addToStorage?: boolean) {
 
   //Get the address of the connected wallet
   const account = await streamr.getAddress();
@@ -119,11 +119,11 @@ export default async function getOrCreateMessageStream(_address: string, _type: 
   }
 
   switch(_type){
-    case HyphaType.Hypha:
+    case ConversationType.Hypha:
       return createHypha();
-    case HyphaType.Hyphae:
+    case ConversationType.Hyphae:
       return createHyphae();
-    case HyphaType.Mycelium:
+    case ConversationType.Mycelium:
       return createMycelium();
     default:
       return createHypha();

@@ -15,8 +15,8 @@ import { Settings } from "../components/Settings";
 import { Tooltip } from "../components/utils/Tooltip";
 
 import { EthereumAuthProvider, SelfID } from '@self.id/web';
-import getOrCreateMessageStream, { streamr, HyphaType } from "../services/Streamr_API"
-import { Conversations, MessageData } from "../components/utils/Types";
+import getOrCreateMessageStream, { streamr, ConversationType } from "../services/Streamr_API"
+import { Conversations, MessagePayload } from "../components/utils/Types";
 import { GetStaticProps } from "next";
 import useMetadata from "../components/hooks/useMetadata";
 import { Stream } from "streamr-client";
@@ -24,12 +24,14 @@ import useConversationStorage, { localStreamKey } from "../components/hooks/useC
 
 import { DispatchContext, StateContext } from "../components/context/AppState";
 import { Actions } from "../components/context/AppContextTypes";
+import getHyphaProfile from "../get/getHyphaProfile";
+import getProfileImage from "../get/getProfileImage";
 
 function App({ data }) {
   const { account, activateBrowserWallet, deactivate, chainId } = useEthers();
 
   //Global State
-  const { selfId, profile, notifications, conversations } = useContext(StateContext);
+  const { selfId, notifications, conversations, selectedConversation } = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
 
   //Component Constructors
@@ -37,18 +39,14 @@ function App({ data }) {
   const [settingsModal, setSettingsModal] = useState(false);
   const [searchKey, setSearchKey] = useState<string>('');
 
-  const getSelectedConversation = () => {
-    return conversations.find((conversation) => conversation.selected)
-    ? conversations.find((conversation) => conversation.selected)
-    : { address: "", streamID: "", selected: false };
-  }
-
-  const [metadata, setMetadata] = useMetadata(getSelectedConversation());
+  const [metadata, setMetadata] = useMetadata(selectedConversation);
   const { ceramicConversations, ceramicStream } = useConversationStorage();
 
   useEffect(() => {
     const connect = async () => {
       try{
+        //Set account before setting profile (since loading can take a while)
+        dispatch({ type: Actions.SET_ACCOUNT, payload: account });
         await streamr.connect()
         const selfIdClient = await SelfID.authenticate({
           //@ts-ignore
@@ -57,7 +55,7 @@ function App({ data }) {
           connectNetwork: 'testnet-clay',
         })
         dispatch({ type: Actions.SET_SELFID, payload: selfIdClient });
-        dispatch({ type: Actions.SET_PROFILE, payload: await selfIdClient.get('basicProfile') });
+        dispatch({ type: Actions.SET_PROFILE, payload: {address: account, ...await selfIdClient.get('basicProfile')} });
       }
       catch{
         console.log("User needs an Ethereum wallet to connect to Hypha.");
@@ -65,7 +63,6 @@ function App({ data }) {
     }
     if(account){
       connect();
-      dispatch({ type: Actions.SET_ACCOUNT, payload: account });
     }
   }, [account])
 
@@ -89,20 +86,24 @@ function App({ data }) {
 
   useEffect(() => {
     async function loadConversations(){
-      //Add conversation user profiles to object
+      //Add conversation profiles to object
       const newConversations = await Promise.all(ceramicConversations.map(async (conversation) => {
-        try{
-          conversation.profile = await selfId.client.get('basicProfile', `${conversation.address}@eip155:${chainId}`);
-        }
-        catch(e){
-          console.warn(`There is no DID that exists for ${conversation.address}`);
-        }
-        return conversation;
+        const newProfile = await Promise.all(conversation.profile.map(async (profile) => {
+          try{
+            profile = {address: profile.address, ...await selfId.client.get('basicProfile', `${profile.address}@eip155:${chainId}`)}
+          }
+          catch(e){
+            console.warn(`There is no DID that exists for ${profile.address}`);
+          }
+          return profile;
+        }))
+        const newConversation = {...conversation, profile: newProfile};
+        return newConversation;
       }));
       //Set valid streams if any conversations don't have one
-      if(newConversations.some(conversation => conversation.streamID === '' || conversation.streamID === undefined)) await setAllValidStreams(newConversations);
-      //Subscribe if conversations don't have empty/null streamIDs
-      if(newConversations.filter(conversation => conversation.streamID === '' || conversation.streamID === undefined).length === 0) await subscribeToConversations(newConversations);
+      if(newConversations.some(conversation => conversation.streamId === '' || conversation.streamId === undefined)) await setAllValidStreams(newConversations);
+      //Subscribe if conversations don't have empty/null streamIds
+      if(newConversations.filter(conversation => conversation.streamId === '' || conversation.streamId === undefined).length === 0) await subscribeToConversations(newConversations);
       dispatch({ type: Actions.SET_CONVERSATIONS, payload: newConversations });
     }
     if(selfId && ceramicConversations?.length > 0){
@@ -115,30 +116,32 @@ function App({ data }) {
     const subs = await streamr.getSubscriptions();
     //Subscribe to stream after messages were resent
     await Promise.all(_conversations.map(async (conversation) => {
-      //Check if conversation streamID is empty & check if we are already subscribed
-      if(conversation.streamID !== "" && subs.length === 0){
+      //Check if conversation streamId is empty & check if we are already subscribed
+      if(conversation.streamId !== "" && subs.length === 0){
         await streamr.subscribe(
           {
-            stream: conversation.streamID,
+            stream: conversation.streamId,
             partition: 0,
-          }, (data: MessageData) => {
+          }, (data: MessagePayload) => {
             //Create a new notification if the new message was not sent by us & interface is not visible
             if(data.sender !== account && document.visibilityState !== "visible"){
-              const name = getSelectedConversation().profile?.name ? getSelectedConversation().profile?.name : data.sender;
-              const image = getSelectedConversation().profile?.image?.alternatives[0].src ? `https://ipfs.io/ipfs/${getSelectedConversation().profile.image.alternatives[0].src?.substring(7, getSelectedConversation().profile.image.alternatives[0].src?.length)}` : `https://robohash.org/${data.sender}.png?set=set5`;
+              //Get the profile of the user that sent the message
+              const senderProfile = conversation.profile.find(_profile => _profile.address === data.sender);
+              const name = senderProfile?.name ? senderProfile?.name : data.sender;
+              const image = getProfileImage(senderProfile);
               const notification = new Notification(`${name} sent you a message!`, {body: data.message, icon: image});
               dispatch({ type: Actions.ADD_NOTIFICATION, payload: notification });
             }
-            const newConversations = _conversations.map((e) => {
-              if(conversation.address === e.address){
-                if(e.messages){
-                  e.messages = [...e.messages, data];
+            const newConversations = _conversations.map((_conversation) => {
+              if(conversation.streamId === _conversation.streamId){
+                if(_conversation.messages){
+                  _conversation.messages = [..._conversation.messages, data];
                 }
                 else{
-                  e.messages = [data];
+                  _conversation.messages = [data];
                 }
               }
-              return e;
+              return _conversation;
             })
             dispatch({ type: Actions.SET_CONVERSATIONS, payload: newConversations });
           }
@@ -151,16 +154,16 @@ function App({ data }) {
     try{
       const streams: Stream[] = [];
       //Check if either conversation has a stream
-      for await(const stream of streamr.searchStreams(_conversation.address, { user: account, allowPublic: true })){
+      for await(const stream of streamr.searchStreams(getHyphaProfile(_conversation).address, { user: account, allowPublic: true })){
         streams.push(stream);
       }
-      for await(const stream of streamr.searchStreams(account, { user: _conversation.address, allowPublic: true })){
+      for await(const stream of streamr.searchStreams(account, { user: getHyphaProfile(_conversation).address, allowPublic: true })){
         streams.push(stream);
       }
       //Return found stream
       if(streams.length !== 0) return streams[0];
       //Create a new stream since none were found
-      const newStream = await getOrCreateMessageStream(_conversation.address, HyphaType.Hypha, false);
+      const newStream = await getOrCreateMessageStream(getHyphaProfile(_conversation).address, ConversationType.Hypha, false);
       return newStream;
     }
     catch(e){
@@ -170,19 +173,19 @@ function App({ data }) {
 
   const setValidStream = async (_conversation: Conversations) => {
     const validStream = await getValidStream(_conversation);
-    const newConversations: Conversations[] = ceramicConversations.map((e) => {
-      if(_conversation.address === e.address){
-        e.streamID = validStream.id;
+    const newConversations: Conversations[] = ceramicConversations.map((conversation) => {
+      if(getHyphaProfile(_conversation).address === getHyphaProfile(conversation).address){
+        conversation.streamId = validStream.id;
       }
-      return e;
+      return conversation;
     });
     dispatch({ type: Actions.SET_CONVERSATIONS, payload: newConversations });
     await ceramicStream.update({conversations: [...newConversations]});
   }
 
   const setAllValidStreams = async (_conversations: Conversations[]) => {
-    //Check if any of the conversations have empty or undefined streamIDs
-    if(_conversations.filter(conversation => conversation.streamID === "" || conversation.streamID === undefined).length > 0){
+    //Check if any of the conversations have empty or undefined streamIds
+    if(_conversations.filter(conversation => conversation.streamId === "" || conversation.streamId === undefined).length > 0){
       Promise.all(_conversations.map(conversation => {
         return new Promise<void>((resolve) => {
           setValidStream(conversation);
@@ -194,13 +197,14 @@ function App({ data }) {
 
   async function addConversations(_address: string){
     //Check if conversation exists already
-    if(!ceramicConversations?.some(conversation => conversation.address === _address)){
-      const validStream = await getValidStream({ address: _address, selected: false, streamID: undefined });
+    if(!ceramicConversations?.some(conversation => getHyphaProfile(conversation).address === _address)){
+      const validStream = await getValidStream({ profile: [{ address: _address }], streamId: undefined, selected: false, type: ConversationType.Hypha });
       console.log(validStream);
-      const newConversation = {
-        address: _address,
-        streamID: validStream.id,
+      const newConversation: Conversations = {
+        profile: [{ address: _address }],
+        streamId: validStream.id,
         selected: false,
+        type: ConversationType.Hypha,
       }
       //Create a new conversations stream if there are no previously existing streams & pin it
       if(ceramicConversations){
@@ -234,8 +238,8 @@ function App({ data }) {
 
   //Selects a new stream to load when conversation is clicked
   async function selectConversation(_conversation: Conversations){
-    //Subscribe if conversations don't have empty/null streamIDs
-    if(conversations.filter(conversation => conversation.streamID === "" || conversation.streamID === undefined).length === 0){
+    //Subscribe if conversations don't have empty/null streamIds
+    if(conversations.filter(conversation => conversation.streamId === "" || conversation.streamId === undefined).length === 0){
       await subscribeToConversations(conversations);
     }
     dispatch({ type: Actions.SELECT_CONVERSATION, payload: _conversation });
@@ -249,7 +253,7 @@ function App({ data }) {
   }
 
   const inviteConversation = async (_conversation: Conversations) => {
-    console.log(`Invite ${_conversation.address} to group`);
+    console.log(`Invite ${getHyphaProfile(_conversation).address} to group`);
   }
 
   // Load messages on startup
@@ -257,17 +261,17 @@ function App({ data }) {
   //   async function loadMessages() {
   //     try {
   //       let timeoutID: NodeJS.Timeout;
-  //       let messageArr: MessageData[];
-  //       const stream = await streamr.getStream(getSelectedConversation().streamID);
+  //       let messageArr: MessagePayload[];
+  //       const stream = await streamr.getStream(selectedConversation.streamId);
   //       const storageNodes = await stream.getStorageNodes();
   //       //Load the last 50 messages from previous session if messages are being stored
   //       if(storageNodes.length !== 0){
   //         await streamr.resend(
-  //             getSelectedConversation().streamID,
+  //             selectedConversation.streamId,
   //             {
   //               last: 50,
   //             },
-  //             (message: MessageData) => {
+  //             (message: MessagePayload) => {
   //               //Collect all data
   //               messageArr.push(message);
   //               //Reset timer if all data hasn't been gathered yet
@@ -275,7 +279,7 @@ function App({ data }) {
   //               clearInterval(timeoutID);
   //               timeoutID = setTimeout(() => {
   //                 //Load messages after all data has been collected
-  //                 dispatch({ type: Actions.SET_MESSAGES, payload: {conversation: getSelectedConversation(), messages: messageArr} })
+  //                 dispatch({ type: Actions.SET_MESSAGES, payload: {conversation: selectedConversation, messages: messageArr} })
   //               }, 100);
   //             }
   //           )
@@ -285,16 +289,16 @@ function App({ data }) {
   //     }
   //   }
   //   //Load if the user wallet is connected
-  //   if(account && getSelectedConversation().messages.length === 0  && getSelectedConversation().streamID !== ""){
+  //   if(account && selectedConversation.messages.length === 0  && selectedConversation.streamId !== ""){
   //     loadMessages();
   //   }
   // }, [account, conversations.find(conversation => conversation.selected)])
 
   //Publish a message to stream
-  const addMessage = async (_message: MessageData) => {
+  const addMessage = async (_message: MessagePayload) => {
     try{
       streamr.publish(
-        {streamId: getSelectedConversation().streamID, partition: 0},
+        {streamId: selectedConversation.streamId, partition: 0},
         {
           sender: _message.sender,
           message: _message.message,
@@ -309,11 +313,11 @@ function App({ data }) {
   };
 
   //Delete a message
-  async function deleteMessage(_message: MessageData){
+  async function deleteMessage(_message: MessagePayload){
     console.log("Delete: " + _message.message)
   }
 
-  function selectMessage(_message: MessageData){
+  function selectMessage(_message: MessagePayload){
     try {
       console.log(_message);
     } catch (e) {
@@ -321,69 +325,10 @@ function App({ data }) {
     }
   }
 
-  //Opens message context menu
-  function openMessageContext(_message: MessageData){
-    console.log("Open Message Context");
-  }
-
-  //Ceramic testing
-  const testCeramic = async () => {
-
-    //Create a new "conversations stream"
-    const stream = await selfId.client.tileLoader.create(
-      {
-        conversations: {
-          test1: 'test1 address',
-          test2: 'test2 address',
-          test3: 'test3 address',
-        },
-      },
-      {
-        tags: ['conversations'],
-      },
-      {
-        pin: true,
-      }
-    );
-
-    //Test Pinning
-    const testPinning = async (streamId) => {
-      await selfId.client.ceramic.pin.add(streamId);
-      console.log(await selfId.client.ceramic.pin.ls());
-    }
-
-    const testUpdate = async (streamId) => {
-      // const streamUpdate = await selfId.client.tileLoader.load('kjzl6cwe1jw146bdy7uhcesi6lnuj83sen0t7slvxnfcx6h5fz01p94nu2haccd');
-      const streamUpdate = await selfId.client.tileLoader.load(streamId);
-      await streamUpdate.update({conversations: {...streamUpdate.content.conversations, test4: 'test4 address'}});
-      console.log(stream.content);
-    }
-
-    const testGet = async () => {
-      const data = await selfId.client.get('basicProfile', `${account}@eip155:1`);
-      console.log(data);
-    }
-
-    //General Info
-    console.log(`Stream id: ${stream.id.toString()}`);
-    console.log(`User DID: ${selfId.client.ceramic.did.id.toString()}`);
-    console.log(stream.content);
-
-    //Test Functions
-    testPinning(stream.id);
-    // testUpdate(stream.id);
-    // testGet();
-  }
-
   const testStreamr = async () => {
     try{
-      // console.log(await getValidStream({ address: '0x98b01D04ab7B40Ffe856Be164f476a45Bf8E5B37', streamID: "", selected: false }));
-      // console.log(streamr.getSubscriptions());
-      // for await(const stream of streamr.searchStreams('0x92B188a4Db0E5a8475b3595f2A63188AF2AfAb16', { user: account, allowPublic: true })){
-      //   console.log(stream.id);
-      // }
-      console.log(await getValidStream({address: '0x98b01D04ab7B40Ffe856Be164f476a45Bf8E5B37', selected: false, streamID: undefined}));
-      // console.log(getSelectedConversation().profile?.name);
+      dispatch({type: Actions.ADD_CONVERSATION, payload: { profile: [{ address: 'hyphae' }], selected: false, streamId: '', type: ConversationType.Hyphae }});
+      dispatch({type: Actions.ADD_CONVERSATION, payload: { profile: [{ address: 'mycelium' }], selected: false, streamId: '', type: ConversationType.Mycelium }});
     }
     catch(e){
       console.error(e);
@@ -400,7 +345,7 @@ function App({ data }) {
             </a>
           </Link>
         <div>
-          <p>{getSelectedConversation().profile?.name ? getSelectedConversation().profile?.name : getSelectedConversation().address !== "" ? getSelectedConversation().address : "Select A Conversation"}</p>
+          <p>{selectedConversation.streamId !== '' ? selectedConversation.type === ConversationType.Hypha ? getHyphaProfile(selectedConversation)?.name : selectedConversation.streamId : 'Select A Conversation'}</p>
         </div>
         <div>
           <input
@@ -432,7 +377,6 @@ function App({ data }) {
               <p>Conversations</p>
               {conversations.map((_conversation) => {
                 return (
-                  <Tooltip key={Math.random()} content={_conversation.address}>
                     <Conversation
                       key={Math.random()}
                       conversation={_conversation}
@@ -441,18 +385,8 @@ function App({ data }) {
                       selectConversation={(_conversation: Conversations) => selectConversation(_conversation)}
                       deleteConversation={(_conversation: Conversations) => deleteConversation(_conversation)}
                     />
-                  </Tooltip>
                 );
               })}
-              {/* <Group
-                key={Math.random()}
-                profile={"test profile"}
-                selected={false}
-                name={"test group"}
-                streamID={"test stream"}
-                clickGroup={() => console.log("Group Clicked")}
-                deleteGroup={() => console.log("Delete Group")}
-              /> */}
             </div>
           </section>
           <section id={styles.profile}>
@@ -472,23 +406,20 @@ function App({ data }) {
         <section id={styles.messagesContainer}>
           <div>
             <div>
-              {getSelectedConversation().messages?.filter(e => e.message.includes(searchKey)) && getSelectedConversation().messages?.filter(e => e.message.includes(searchKey)).map((message: MessageData) => {
+              {selectedConversation.messages?.filter(e => e.message.includes(searchKey)) && selectedConversation.messages?.filter(e => e.message.includes(searchKey)).map((message: MessagePayload) => {
                 return (
                   <Message
                     key={Math.random()}
-                    profile={message.sender === account ? profile : conversations.find(conversation => conversation.address === message.sender).profile}
                     payload={message}
-                    userAddress={account}
-                    selectMessage={(message: MessageData) => selectMessage(message)}
-                    deleteMessage={(message: MessageData) => deleteMessage(message)}
-                    openMessageContext={(message: MessageData) => openMessageContext(message)}
+                    selectMessage={(message: MessagePayload) => selectMessage(message)}
+                    deleteMessage={(message: MessagePayload) => deleteMessage(message)}
                   />
                 );
               })}
             </div>
           </div>
           <SendMessage
-            disable={!getSelectedConversation().selected}
+            disable={!selectedConversation.selected}
             typing={(typing: boolean) => setMetadata(oldMetadata => ({...oldMetadata, typing: typing}))}
             sendMessage={(messageText: string) => addMessage({sender: account, message: messageText, date: new Date().toString()})}
           />

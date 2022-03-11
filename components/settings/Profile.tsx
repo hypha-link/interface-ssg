@@ -1,30 +1,15 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useContext } from 'react'
 import Image from 'next/image'
-import { shortenIfAddress, useEthers } from '@usedapp/core'
+import { shortenIfAddress } from '@usedapp/core'
 import styles from '../../styles/settings.module.css'
-import { Edit } from '../utils/Edit'
-import { BasicProfile } from '@datamodels/identity-profile-basic'
+import { Edit, EditType } from '../utils/Edit'
 import { StateContext } from '../context/AppState'
+import getProfileImage from '../../get/getProfileImage'
 
 const IPFS = require('ipfs');
 
-export const Profile = (props) => {
-    const [profile, setProfile] = useState<BasicProfile>();
-    const { selfId } = useContext(StateContext);
-    const { account } = useEthers();
-
-    const loadProfile = async () => {
-        setProfile(await selfId.get('basicProfile'));
-    }
-
-    useEffect(() => {
-        if(selfId)
-            loadProfile();
-        //Cleanup
-        return () => {
-            setProfile(undefined);
-        }
-    }, [selfId])
+export const Profile = () => {
+    const { selfId, ownProfile } = useContext(StateContext);
 
     const changeImage = async (newImage) => {
         await selfId.merge('basicProfile', {
@@ -55,20 +40,25 @@ export const Profile = (props) => {
             <h2>Profile</h2>
             <div>
                 <div>
-                    <p>{profile?.name ? profile.name : shortenIfAddress(account)}</p>
-                    <Edit type='name' selfId={selfId} disabled={profile?.name && true}/>
+                    <p>{ownProfile?.name ? ownProfile.name : shortenIfAddress(ownProfile?.address)}</p>
+                    <Edit type={EditType.Name}/>
                 </div>
                 <div>
-                    <p>{profile && profile?.description ? profile.description : ''}</p>
-                    <Edit type='description' selfId={selfId} disabled={profile?.description && true}/>
+                    <p>{ownProfile && ownProfile?.description ? ownProfile.description : ''}</p>
+                    <Edit type={EditType.Description}/>
                 </div>
             </div>
             <div>
                 <label id={styles.addFileLabel} htmlFor={styles.addFile}>
-                    <Image src={profile?.image?.alternatives[0].src ? `https://ipfs.io/ipfs/${profile.image.alternatives[0].src.substring(7, profile.image.alternatives[0].src.length)}` : `https://robohash.org/${account}.png?set=set5`} alt="Profile Image" height={"100%"} width={"100%"}/>
+                    <Image src={getProfileImage(ownProfile)} alt="Profile Image" height={"100%"} width={"100%"}/>
                     <div className={styles.imageOverlay}>Change</div>
                 </label>
-                <input id={styles.addFile} type="file" onChange={() => window.open("https://clay.self.id/me/profile/edit")} disabled={selfId === undefined}></input>
+                <input 
+                id={styles.addFile} 
+                type="file" 
+                onChange={() => window.open("https://clay.self.id/me/profile/edit")} 
+                disabled={selfId === undefined}
+                ></input>
             </div>
         </div>
     )

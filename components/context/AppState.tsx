@@ -1,14 +1,15 @@
 import React, { useReducer, createContext } from 'react'
+import { ConversationType } from '../../services/Streamr_API';
 import { GlobalDispatch, GlobalState } from './AppContextTypes';
 import AppReducer from './AppReducer';
 
 export const initialState: GlobalState = {
-    account: undefined,
     streamr: undefined,
     selfId: undefined,
-    profile: undefined,
+    ownProfile: undefined,
     notifications: [],
     conversations: [],
+    selectedConversation: { profile: [{ address:'' }], streamId: '', selected: false, type: ConversationType.Hypha },
 }
 
 export const StateContext = createContext<GlobalState>(initialState);

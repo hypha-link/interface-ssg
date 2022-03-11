@@ -1,20 +1,32 @@
+.conversationContainer{
+  width: 100%;
+  height: fit-content;
+}
+
 .selectedConversation,
 .selectedConversation:hover {
   background-color: rgba(var(--uiHoverColorPure), 0.15) !important;
 }
 
-.conversationContainer {
+.conversation {
+  width: 100%;
+}
+
+.conversation:hover {
+  background-color: rgba(var(--uiHoverColorPure), 0.05);
+}
+
+/* Tooltip Wrapper */
+.conversation > div{
   display: flex;
   padding: 2.5%;
   justify-content: flex-start;
   align-items: center;
+  box-sizing: border-box;
+  width: 100%;
 }
 
-.conversationContainer:hover {
-  background-color: rgba(var(--uiHoverColorPure), 0.05);
-}
-
-.conversationContainer > p {
+.conversation > div > p {
   user-select: none;
   margin-left: 7% !important;
   font-size: 1.2rem;

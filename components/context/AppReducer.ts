@@ -1,4 +1,3 @@
-import { Conversations } from '../utils/Types';
 import { Actions, ActionType, GlobalState, } from './AppContextTypes'
 import { initialState } from './AppState';
 
@@ -9,7 +8,7 @@ export default function AppReducer(state: GlobalState, action: ActionType): Glob
         case Actions.SET_ACCOUNT:
             return {
                 ...state,
-                account: action.payload
+                ownProfile: {...state.ownProfile, address: action.payload}
             }
         // Not used
         case Actions.SET_STREAMR:
@@ -25,7 +24,7 @@ export default function AppReducer(state: GlobalState, action: ActionType): Glob
         case Actions.SET_PROFILE:
             return {
                 ...state,
-                profile: action.payload
+                ownProfile: action.payload
             };
         case Actions.ADD_NOTIFICATION:
             return {
@@ -55,18 +54,17 @@ export default function AppReducer(state: GlobalState, action: ActionType): Glob
                 ...state,
                 conversations:
                 state.conversations.map(conversation => {
-                    if(conversation.address === action.payload.address) {
-                        console.log(conversation.address);
-                        
+                    if(conversation.streamId === action.payload.streamId) {
+                        console.log(conversation.streamId);
                         conversation.selected = true;
                     }
                     else{
-                        console.log(action.payload.address);
-                        
+                        console.log(action.payload.streamId);
                         conversation.selected = false;
                     }
                     return conversation;
-                })
+                }),
+                selectedConversation: action.payload
             };
         // Not used
         case Actions.INVITE_CONVERSATION:
