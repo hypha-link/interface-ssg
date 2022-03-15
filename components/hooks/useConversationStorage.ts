@@ -17,17 +17,13 @@ export default function useConversationStorage() {
             setCeramicStream(stream);
         }
         //Update when ceramicConversations & conversations are not equal (or load ceramicConversations for first time)
-        const equality = ceramicConversations
-          ? conversations?.every((conversation, i) => {
-                conversation.profile === ceramicConversations[i]?.profile &&
-                conversation.selected === ceramicConversations[i]?.selected &&
-                conversation.streamId === ceramicConversations[i]?.streamId;
-            })
-          : true;
-        if(
-            window.localStorage.getItem(`${ownProfile?.address}-${localStreamKey}`) !== null && 
-            selfId && equality
-        ) conversationsStore();
+        const shouldUpdateConversations = conversations?.every((conversation, i) => {
+            conversation.profile === ceramicConversations[i]?.profile &&
+            conversation.selected === ceramicConversations[i]?.selected &&
+            conversation.streamId === ceramicConversations[i]?.streamId &&
+            conversation.type === ceramicConversations[i]?.type;
+        })
+        if(window.localStorage.getItem(`${ownProfile?.address}-${localStreamKey}`) !== null && selfId && shouldUpdateConversations) conversationsStore();
     }, [selfId, conversations])
 
     return { ceramicConversations, ceramicStream };

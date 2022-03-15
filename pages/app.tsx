@@ -231,7 +231,7 @@ function App({ data }) {
 
   async function deleteConversation(_conversation: Conversations){
     //Remove conversation if found
-    const newConversations = ceramicConversations.filter(conversation => conversation !== _conversation);
+    const newConversations = ceramicConversations.filter(conversation => conversation.streamId !== _conversation.streamId);
     await ceramicStream.update({conversations: [...newConversations]});
     dispatch({ type: Actions.DELETE_CONVERSATION, payload: _conversation });
   }
