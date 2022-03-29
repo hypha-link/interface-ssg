@@ -1,5 +1,5 @@
 import styles from '../../styles/conversation.module.css'
-import { shortenIfAddress, useSendTransaction } from '@usedapp/core';
+import { useSendTransaction } from '@usedapp/core';
 import React, { useState } from 'react'
 import { Conversations, Metadata } from '../utils/Types';
 import ProfilePicture from '../ProfilePicture';
@@ -7,6 +7,7 @@ import { Tooltip } from '../utils/Tooltip';
 import ContextMenu from '../ContextMenu';
 import { utils } from 'ethers';
 import getHyphaProfile from '../../get/getHyphaProfile';
+import getShortAddress from '../../get/getShortAddress';
 
 type HyphaProps = {
   conversation: Conversations
@@ -34,9 +35,9 @@ export default function Hypha({conversation, metadata, inviteConversation, selec
       }}
     >
       <Tooltip key={Math.random()} content={profile?.address}>
-        <ProfilePicture profile={profile} metadata={metadata} />
+        <ProfilePicture profile={profile} metadata={metadata}/>
         <p>
-          {profile?.name ? profile.name : shortenIfAddress(profile?.address)}
+          {profile?.name ? profile.name : getShortAddress(profile?.address)}
         </p>
       </Tooltip>
       <ContextMenu
@@ -47,9 +48,7 @@ export default function Hypha({conversation, metadata, inviteConversation, selec
           !conversation.selected && selectConversation(conversation)
         }
         view={() =>
-          console.log(
-            conversation.profile ? conversation.profile : "User has no profile."
-          )
+          console.log(conversation || "User has no profile.")
         }
         invite={() => inviteConversation(conversation)}
         send={() => {

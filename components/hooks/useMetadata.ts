@@ -1,11 +1,11 @@
-import { useEthers } from '@usedapp/core';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Conversations, Metadata } from '../utils/Types';
-import { streamr } from '../../services/Streamr_API';
 import getHyphaProfile from '../../get/getHyphaProfile';
+import { StateContext } from '../context/AppState';
+import { StreamPermission } from 'streamr-client';
 
 export default function useMetadata(_conversation: Conversations){
-    const { account } = useEthers();
+    const { ownProfile, streamr, streamrDelegate } = useContext(StateContext);
     const [sendMetadata, setSendMetadata] = useState<Metadata>();
     const [lastSentMetadata, setLastSentMetadata] = useState<Metadata>();
     const [receiveMetadata, setReceiveMetadata] = useState<Metadata>({address: '', typing: false, online: false, receipt: false});
@@ -18,7 +18,7 @@ export default function useMetadata(_conversation: Conversations){
               console.log(`Subscribing to ${getHyphaProfile(_conversation)?.name || getHyphaProfile(_conversation)?.address} metadata`);
               await streamr.subscribe({ streamId: _conversation.streamId, partition: 1 },
                   (data: Metadata) => {
-                      if(data.address !== account){
+                      if(data.address !== ownProfile.address){
                       setReceiveMetadata({ address: data.address, typing: data.typing, online: data.online });
                       }
                   });
@@ -32,14 +32,29 @@ export default function useMetadata(_conversation: Conversations){
     //Send metadata to partner
     useEffect(() => {
         const publishMetadata = async () => {
-          await streamr.publish(
-            { streamId: _conversation.streamId, partition: 1 },
-            {
-            address: account,
-            typing: sendMetadata.typing,
-            online: sendMetadata.online,
-            },
-          )
+          try{
+            //Grant publish permissions to the delegate if it doesn't have them already
+            if(!await streamr.isStreamPublisher(_conversation.streamId, streamrDelegate?.wallet.address)){
+              await streamr.grantPermissions(_conversation.streamId, 
+                {
+                  user: streamrDelegate?.wallet.address,
+                  permissions: [StreamPermission.PUBLISH],
+                }
+              )
+            }
+            console.log(sendMetadata)
+            await streamrDelegate?.client.publish(
+              { streamId: _conversation.streamId, partition: 1 },
+              {
+                address: ownProfile.address,
+                typing: sendMetadata.typing,
+                online: sendMetadata.online,
+              },
+            )
+          }
+          catch(e){
+            alert('Please fund the connected wallet with Matic tokens to use Hypha');
+          }
         }
         //Only send new metadata
         if(_conversation.streamId !== "" && JSON.stringify(lastSentMetadata) !== JSON.stringify(sendMetadata)){

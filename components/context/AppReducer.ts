@@ -1,3 +1,4 @@
+import StreamrClient from 'streamr-client';
 import { Actions, ActionType, GlobalState, } from './AppContextTypes'
 import { initialState } from './AppState';
 
@@ -5,16 +6,33 @@ export default function AppReducer(state: GlobalState, action: ActionType): Glob
     switch(action.type){
         case Actions.CLEAR_STATE:
             return {...initialState};
+        case Actions.SET_WEB3_PROVIDER:
+            return {
+                ...state,
+                web3Provider: action.payload
+            };
         case Actions.SET_ACCOUNT:
             return {
                 ...state,
                 ownProfile: {...state.ownProfile, address: action.payload}
-            }
-        // Not used
+            };
+        //Streamr Session consists of a authenticated streamr instance & a copy of the delegated wallet
         case Actions.SET_STREAMR:
             return {
                 ...state,
-                streamr: action.payload
+                streamr: new StreamrClient({
+                        auth: {
+                            ethereum: window.ethereum
+                        },
+                    }),
+                streamrDelegate: {
+                    client: new StreamrClient({
+                        auth: {
+                            privateKey: action.payload.privateKey
+                        }
+                    }),
+                    wallet: action.payload,
+                },
             };
         case Actions.SET_SELFID:
             return {
@@ -43,7 +61,7 @@ export default function AppReducer(state: GlobalState, action: ActionType): Glob
                     ...state.conversations, 
                     action.payload
                 ]
-            }
+            };
         case Actions.DELETE_CONVERSATION:
             return {
                 ...state,
@@ -55,11 +73,9 @@ export default function AppReducer(state: GlobalState, action: ActionType): Glob
                 conversations:
                 state.conversations.map(conversation => {
                     if(conversation.streamId === action.payload.streamId) {
-                        console.log(conversation.streamId);
                         conversation.selected = true;
                     }
                     else{
-                        console.log(action.payload.streamId);
                         conversation.selected = false;
                     }
                     return conversation;
@@ -81,7 +97,7 @@ export default function AppReducer(state: GlobalState, action: ActionType): Glob
                     ...state.conversations,
                     newConversation
                 ]
-            }
+            };
         // Not used
         case Actions.ADD_MESSAGE:
             return {...state};
@@ -101,6 +117,6 @@ export default function AppReducer(state: GlobalState, action: ActionType): Glob
                     ...state.conversations,
                     newConversation2
                 ]
-            }
+            };
     }
 }

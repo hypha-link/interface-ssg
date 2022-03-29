@@ -2,24 +2,6 @@ import StreamrClient, { Stream, StreamPermission } from "streamr-client";
 
 const STREAMR_GERMANY = '0x31546eEA76F2B2b3C5cC06B1c93601dc35c9D916';
 
-//Create the Streamr client
-const streamrClient = () => {
-  let client = undefined;
-  try{
-    //@ts-ignore
-    const { ethereum } = window;
-    client = new StreamrClient({
-      auth: {ethereum},
-    })
-  }
-  catch{
-    console.log("User needs to be signed in with an Ethereum wallet to authenticate Streamr.");
-  }
-  return client;
-}
-
-export const streamr: StreamrClient = streamrClient();
-
 export enum ConversationType{
   Hypha = "hypha",
   Hyphae = "hyphae",
@@ -29,7 +11,7 @@ export enum ConversationType{
 /**
  * @returns Message Stream
  */
-export default async function getOrCreateMessageStream(_address: string, _type: ConversationType, _addToStorage?: boolean) {
+export default async function getOrCreateMessageStream(streamr: StreamrClient, _address: string, _type: ConversationType, _addToStorage?: boolean) {
 
   //Get the address of the connected wallet
   const account = await streamr.getAddress();

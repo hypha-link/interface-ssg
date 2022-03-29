@@ -1,9 +1,12 @@
 import { SelfID } from "@self.id/web";
+import { providers, Wallet } from "ethers";
 import StreamrClient from "streamr-client";
 import { Conversations, MessagePayload, Metadata, Profile } from "../utils/Types";
 
 export interface GlobalState{
+    web3Provider: providers.Web3Provider
     streamr: StreamrClient,
+    streamrDelegate: { client: StreamrClient, wallet: Wallet }
     selfId: SelfID,
     ownProfile: Profile,
     notifications: Notification[],
@@ -15,6 +18,7 @@ export type GlobalDispatch = (fn: ActionType) => void;
 
 export enum Actions{
     CLEAR_STATE = 'CLEAR_STATE',
+    SET_WEB3_PROVIDER = 'SET_PROVIDER',
     SET_ACCOUNT = 'SET_ACCOUNT',
     SET_STREAMR = 'SET_STREAMR',
     SET_SELFID = 'SET_SELFID',
@@ -38,8 +42,9 @@ export type Action<Type, Payload> = {
 }
 
 type ClearState = Action<Actions.CLEAR_STATE, void>
+type SetWeb3Provider = Action<Actions.SET_WEB3_PROVIDER, providers.Web3Provider>
 type SetAccount = Action<Actions.SET_ACCOUNT, string>
-type SetStreamr = Action<Actions.SET_STREAMR, StreamrClient>
+type SetStreamr = Action<Actions.SET_STREAMR, Wallet>
 type SetSelfId = Action<Actions.SET_SELFID, SelfID>
 type SetProfile = Action<Actions.SET_PROFILE, Profile>
 type AddNotification = Action<Actions.ADD_NOTIFICATION, Notification>
@@ -56,6 +61,7 @@ type SetMetadata = Action<Actions.SET_METADATA, { conversation: Conversations, m
 
 export type ActionType = 
 | ClearState
+| SetWeb3Provider
 | SetAccount
 | SetStreamr
 | SetSelfId

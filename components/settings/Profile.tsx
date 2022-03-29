@@ -1,10 +1,10 @@
 import React, { useContext } from 'react'
 import Image from 'next/image'
-import { shortenIfAddress } from '@usedapp/core'
 import styles from '../../styles/settings.module.css'
 import { Edit, EditType } from '../utils/Edit'
 import { StateContext } from '../context/AppState'
 import getProfileImage from '../../get/getProfileImage'
+import getShortAddress from '../../get/getShortAddress'
 
 const IPFS = require('ipfs');
 
@@ -40,7 +40,7 @@ export const Profile = () => {
             <h2>Profile</h2>
             <div>
                 <div>
-                    <p>{ownProfile?.name ? ownProfile.name : shortenIfAddress(ownProfile?.address)}</p>
+                    <p>{ownProfile?.name ? ownProfile.name : getShortAddress(ownProfile?.address)}</p>
                     <Edit type={EditType.Name}/>
                 </div>
                 <div>

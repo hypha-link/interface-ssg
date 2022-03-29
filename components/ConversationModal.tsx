@@ -1,17 +1,17 @@
 import React, {useState} from 'react'
-import styles from '../styles/ConversationModal.module.css'
+import styles from '../styles/conversationmodal.module.css'
 
-export const ConversationModal = (props) => {
+export const ConversationModal = ({show, addConversation, cancel}: { show: boolean, addConversation: (inputValue: string) => void, cancel: () => void}) => {
     const [inputValue, setInputValue] = useState("");
 
     const keyHandler = (e) => {
         if (e.key === "Enter" && inputValue.trim() !== "") {
-            props.addConversation(inputValue);
+            addConversation(inputValue);
         }
       };
 
     return (
-        props.show ?
+        show ?
         <div id={styles.conversationModal}>
             <p>Add conversation?</p>
             <input
@@ -26,7 +26,7 @@ export const ConversationModal = (props) => {
                 <button
                 className="hypha-button"
                 onClick={() => {
-                    props.addConversation(inputValue);
+                    addConversation(inputValue);
                     setInputValue("");
                 }}
                 >
@@ -35,7 +35,7 @@ export const ConversationModal = (props) => {
                 <button
                 className="hypha-button"
                 onClick={() => {
-                    props.cancel();
+                    cancel();
                     setInputValue("");
                 }}
                 >

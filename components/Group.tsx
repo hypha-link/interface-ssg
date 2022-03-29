@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import styles from '../styles/conversation.module.css'
 import Image from 'next/image'
-import { shortenIfAddress } from '@usedapp/core'
 import ContextMenu from './ContextMenu'
+import getShortAddress from '../get/getShortAddress'
 
 export const Group = (props) => {
     const [anchorPoint, setAnchorPoint] = useState({x: 0, y: 0});
@@ -28,7 +28,7 @@ export const Group = (props) => {
             delete={() => props.deleteGroup(props.address)}
             />
             <Image src={`https://robohash.org/${props.address}.png?set=set4`} alt="Group" height={"100%"} width={"100%"} />
-            <p>{shortenIfAddress(props.address)}</p>
+            <p>{getShortAddress(props.address)}</p>
             <p>Members</p>
         </div>
     )

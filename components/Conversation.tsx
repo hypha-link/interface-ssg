@@ -8,10 +8,10 @@ import Mycelium from './conversations/Mycelium'
 
 type ConversationProps = {
     conversation: Conversations
-    metadata: Metadata
-    inviteConversation: (conversation: Conversations) => void
+    metadata?: Metadata
+    inviteConversation?: (conversation: Conversations) => void
     selectConversation: (conversation: Conversations) => void
-    deleteConversation: (conversation: Conversations) => void
+    deleteConversation?: (conversation: Conversations) => void
 }
 
 export const Conversation = ({conversation, metadata, inviteConversation, selectConversation, deleteConversation}: ConversationProps) => {

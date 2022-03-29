@@ -4,7 +4,9 @@ import { GlobalDispatch, GlobalState } from './AppContextTypes';
 import AppReducer from './AppReducer';
 
 export const initialState: GlobalState = {
+    web3Provider: undefined,
     streamr: undefined,
+    streamrDelegate: undefined,
     selfId: undefined,
     ownProfile: undefined,
     notifications: [],
