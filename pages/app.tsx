@@ -35,6 +35,7 @@ import getHyphaProfile from "../get/getHyphaProfile";
 import getProfileImage from "../get/getProfileImage";
 import { ethers } from "ethers";
 import useStreamrSession from '../components/hooks/useStreamrSession';
+import { InviteModal } from "../components/InviteModal";
 
 function App({ data }) {
   const { activateBrowserWallet } = useEthers();
@@ -46,11 +47,14 @@ function App({ data }) {
 
   //Component Constructors
   const [conversationModal, setConversationModal] = useState(false);
+  const [invitedConversation, setInvitedConversation] = useState<Conversations>(undefined);
   const [settingsModal, setSettingsModal] = useState(false);
   const [searchKey, setSearchKey] = useState<string>('');
 
   const [metadata, setMetadata] = useMetadata(selectedConversation);
   const { ceramicConversations, ceramicStream } = useConversationStorage();
+
+  console.log(conversations);
 
   useStreamrSession();
 
@@ -77,13 +81,19 @@ function App({ data }) {
 
   //Connects ethereum wallet to Hypha
   const connect = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    provider.send("eth_requestAccounts", []);
-    const signer = provider.getSigner();
-    activateBrowserWallet();
-    dispatch({ type: Actions.SET_WEB3_PROVIDER, payload: provider });
-    dispatch({ type: Actions.SET_ACCOUNT, payload: await signer.getAddress() });
-    console.log("The client attempted to connect");
+    try{
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+      activateBrowserWallet();
+      dispatch({ type: Actions.SET_WEB3_PROVIDER, payload: provider });
+      dispatch({ type: Actions.SET_ACCOUNT, payload: await signer.getAddress() });
+      console.log("The client attempted to connect");
+    }
+    catch(e){
+      alert('Please enable your wallet to connect to Hypha.');
+      console.error(`Could not connect to wallet: ` + e);
+    }
   };
 
   //Disconnects wallet and removes all data from window
@@ -254,19 +264,20 @@ function App({ data }) {
     //Subscribe if conversations don't have empty/null streamIds
     if(conversations.filter(conversation => conversation.streamId === "" || conversation.streamId === undefined).length === 0){
       await subscribeToConversations(conversations);
-    }
-    dispatch({ type: Actions.SELECT_CONVERSATION, payload: _conversation });
-    //Check if user has browser notifications toggled on
-    if(Notification.permission === "default"){
-      Notification.requestPermission()
-      .then((e) => {
-        console.log(Notification.permission);
-      })
+      dispatch({ type: Actions.SELECT_CONVERSATION, payload: _conversation });
+      //Check if user has browser notifications toggled on
+      if(Notification.permission === "default"){
+        Notification.requestPermission()
+        .then((e) => {
+          console.log(Notification.permission);
+        })
+      }
     }
   }
 
   const inviteConversation = async (_conversation: Conversations) => {
-    console.log(`Invite ${getHyphaProfile(_conversation).address} to group`);
+    console.log(`Invite ${getHyphaProfile(_conversation).address}`);
+    setInvitedConversation(_conversation);
   }
 
   // Load messages on startup
@@ -310,7 +321,8 @@ function App({ data }) {
   //Publish a message to stream
   const addMessage = async (_message: MessagePayload) => {
     try{
-      if(!await streamr.hasPermission({allowPublic: true, permission: StreamPermission.PUBLISH, streamId: selectedConversation.streamId, user: streamrDelegate?.wallet.address })){
+      //Grant publish permissions to the delegate if it doesn't have them already
+      if(!await streamr.isStreamPublisher(selectedConversation.streamId, streamrDelegate?.wallet.address)){
         await streamr.grantPermissions(selectedConversation.streamId, {
           user: streamrDelegate?.wallet.address,
           permissions: [StreamPermission.PUBLISH],
@@ -345,8 +357,8 @@ function App({ data }) {
 
   const testStreamr = async () => {
     try{
-      // dispatch({type: Actions.ADD_CONVERSATION, payload: { profile: [{ address: 'hyphae' }], selected: false, streamId: '', type: ConversationType.Hyphae }});
-      // dispatch({type: Actions.ADD_CONVERSATION, payload: { profile: [{ address: 'mycelium' }], selected: false, streamId: '', type: ConversationType.Mycelium }});
+      dispatch({type: Actions.ADD_CONVERSATION, payload: { profile: [{ address: 'hyphae' }], selected: false, streamId: 'Johns Hyphae', type: ConversationType.Hyphae }});
+      dispatch({type: Actions.ADD_CONVERSATION, payload: { profile: [{ address: 'mycelium' }], selected: false, streamId: 'Johns Mycelium', type: ConversationType.Mycelium }});
       // console.log(await streamr.getStream('0x98b01d04ab7b40ffe856be164f476a45bf8e5b37/hypha/0x92B188a4Db0E5a8475b3595f2A63188AF2AfAb16'));
       // console.log(await streamr.getStream(selectedConversation.streamId));
     }
@@ -408,6 +420,10 @@ function App({ data }) {
                 );
               })}
             </div>
+            <InviteModal 
+              invitedConversation={invitedConversation}
+              cancel={() => setInvitedConversation(undefined)}
+            />
           </section>
           <section id={styles.profile}>
             <Settings

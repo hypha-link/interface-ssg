@@ -8,10 +8,10 @@ import getHyphaProfile from '../../get/getHyphaProfile';
 
 type MyceliumProps = {
   conversation: Conversations
-  metadata: Metadata
-  inviteConversation: (conversation: Conversations) => void
+  metadata?: Metadata
+  inviteConversation?: (conversation: Conversations) => void
   selectConversation: (conversation: Conversations) => void
-  deleteConversation: (conversation: Conversations) => void
+  deleteConversation?: (conversation: Conversations) => void
 }
 
 export default function Mycelium({conversation, metadata, inviteConversation, selectConversation, deleteConversation}: MyceliumProps) {

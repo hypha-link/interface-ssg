@@ -73,12 +73,17 @@ export default function AppReducer(state: GlobalState, action: ActionType): Glob
                 conversations:
                 state.conversations.map(conversation => {
                     if(conversation.streamId === action.payload.streamId) {
-                        conversation.selected = true;
+                        return {
+                            ...conversation,
+                            selected: true
+                        }
                     }
                     else{
-                        conversation.selected = false;
+                        return {
+                            ...conversation,
+                            selected: false
+                        }
                     }
-                    return conversation;
                 }),
                 selectedConversation: action.payload
             };

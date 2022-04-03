@@ -11,10 +11,10 @@ import getShortAddress from '../../get/getShortAddress';
 
 type HyphaProps = {
   conversation: Conversations
-  metadata: Metadata
-  inviteConversation: (conversation: Conversations) => void
+  metadata?: Metadata
+  inviteConversation?: (conversation: Conversations) => void
   selectConversation: (conversation: Conversations) => void
-  deleteConversation: (conversation: Conversations) => void
+  deleteConversation?: (conversation: Conversations) => void
 }
 
 export default function Hypha({conversation, metadata, inviteConversation, selectConversation, deleteConversation}: HyphaProps) {

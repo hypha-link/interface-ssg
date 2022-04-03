@@ -8,10 +8,10 @@ import getHyphaProfile from '../../get/getHyphaProfile';
 
 type HyphaeProps = {
   conversation: Conversations
-  metadata: Metadata
-  inviteConversation: (conversation: Conversations) => void
+  metadata?: Metadata
+  inviteConversation?: (conversation: Conversations) => void
   selectConversation: (conversation: Conversations) => void
-  deleteConversation: (conversation: Conversations) => void
+  deleteConversation?: (conversation: Conversations) => void
 }
 
 export default function Hyphae({conversation, metadata, inviteConversation, selectConversation, deleteConversation}: HyphaeProps) {

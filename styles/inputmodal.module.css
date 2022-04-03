@@ -1,0 +1,64 @@
+/* CONVERSATION MODAL */
+
+#inputModal {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: absolute;
+    background-color: var(--uiBGColor);
+    z-index: 1;
+    width: 30%;
+    max-height: 50%;
+    bottom: 30%;
+    left: 10%;
+    padding: 1%;
+  }
+
+  #inputModal > section{
+      display: flex;
+      flex: 1;
+      border-radius: 2%;
+      background-color: var(--appBGColor2);
+      padding: 2%;
+  }
+
+  #inputModal > section > div{
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      align-items: center;
+  }
+
+  #inputModal > section > div > h1{
+    font-size: 1.2em;
+    text-align: center;
+  }
+  
+  #inputModal > h1 {
+    color: var(--uiColor);
+    font-size: 1.4em;
+    text-align: center;
+  }
+  
+  #inputModal > input {
+    flex: 0.2;
+    text-align: center;
+    border: var(--inputColor) 1px solid;
+    color: var(--inputColor);
+    background-color: transparent;
+  }
+  
+  #inputModal input::placeholder {
+    color: var(--inputColor);
+  }
+  
+  #inputModal > div {
+    display: flex;
+    justify-content: center;
+    flex: 0.2;
+  }
+  
+  #inputModal > div > button {
+    flex: 1;
+  }
+  
