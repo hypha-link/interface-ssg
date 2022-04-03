@@ -54,8 +54,6 @@ function App({ data }) {
   const [metadata, setMetadata] = useMetadata(selectedConversation);
   const { ceramicConversations, ceramicStream } = useConversationStorage();
 
-  console.log(conversations);
-
   useStreamrSession();
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react'
 import { StreamPermission } from 'streamr-client';
 import { ConversationType } from '../services/Streamr_API';
-import styles from '../styles/inputmodal.module.css'
+import styles from '../styles/invitemodal.module.css'
 import { StateContext } from './context/AppState'
 import { Conversation } from './Conversation';
 import { Conversations } from './utils/Types';
@@ -51,7 +51,7 @@ export const InviteModal = ({invitedConversation, cancel}: { invitedConversation
 
   return (
     invitedConversation ?
-    <div id={styles.inputModal}>
+    <div id={styles.inviteModal}>
         <h1>Invite to:</h1>
         <section>
           <div>
@@ -80,9 +80,10 @@ export const InviteModal = ({invitedConversation, cancel}: { invitedConversation
           </div>
         </section>
         <h1>Or create a new one!</h1>
-        <button className="hypha-button" onClick={() => console.log('create')}>
-          Create new Hyphae/Mycelium
-        </button>
+        <button className="hypha-button" onClick={() => {
+          console.log('Create new');
+
+        }}>Create new Hyphae/Mycelium</button>
         <div>
             <button className="hypha-button" onClick={() => {
               const invitee = localConversations.find((_conversation) => _conversation.selected === true && _conversation.type !== ConversationType.Hypha);

@@ -1,6 +1,6 @@
 /* CONVERSATION MODAL */
 
-#inputModal {
+#inviteModal {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -12,35 +12,38 @@
     bottom: 30%;
     left: 10%;
     padding: 1%;
+    overflow-y: hidden;
   }
 
-  #inputModal > section{
+  #inviteModal > section{
       display: flex;
       flex: 1;
       border-radius: 2%;
       background-color: var(--appBGColor2);
       padding: 2%;
+      overflow-y: hidden;
   }
 
-  #inputModal > section > div{
+  #inviteModal > section > div{
       display: flex;
       flex-direction: column;
       flex: 1;
       align-items: center;
+      overflow-y: scroll;
   }
 
-  #inputModal > section > div > h1{
+  #inviteModal > section > div > h1{
     font-size: 1.2em;
     text-align: center;
   }
   
-  #inputModal > h1 {
+  #inviteModal > h1 {
     color: var(--uiColor);
     font-size: 1.4em;
     text-align: center;
   }
   
-  #inputModal > input {
+  #inviteModal > input {
     flex: 0.2;
     text-align: center;
     border: var(--inputColor) 1px solid;
@@ -48,17 +51,17 @@
     background-color: transparent;
   }
   
-  #inputModal input::placeholder {
+  #inviteModal input::placeholder {
     color: var(--inputColor);
   }
   
-  #inputModal > div {
+  #inviteModal > div {
     display: flex;
     justify-content: center;
     flex: 0.2;
   }
   
-  #inputModal > div > button {
+  #inviteModal > div > button {
     flex: 1;
   }
   
