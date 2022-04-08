@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react'
+import React, {useContext, useEffect, useMemo, useState} from 'react'
 import { StreamPermission } from 'streamr-client';
 import { ConversationType } from '../services/Streamr_API';
 import styles from '../styles/invitemodal.module.css'
@@ -6,16 +6,18 @@ import { StateContext } from './context/AppState'
 import { Conversation } from './Conversation';
 import { Conversations } from './utils/Types';
 
-export const InviteModal = ({invitedConversation, cancel}: { invitedConversation: Conversations, cancel: () => void}) => {
+export const InviteModal = ({invitedConversation, createHyphae, createMycelium, cancel}: { invitedConversation: Conversations, createHyphae: () => void, createMycelium: (name: string) => void, cancel: () => void}) => {
   const { conversations, streamr, streamrDelegate } = useContext(StateContext);
   const [localConversations, setLocalConversations] = useState<Conversations[]>(conversations);
+  const [isCreateNew, setIsCreateNew] = useState(false);
+  const invitee = useMemo(() => localConversations.find((_conversation) => _conversation.selected === true && _conversation.type !== ConversationType.Hypha), [localConversations]);
 
   useEffect(() => {
     setLocalConversations(conversations);
   }, [conversations])
 
   const inviteConversation = async (_conversation: Conversations) => {
-    console.log(`Invited ${_conversation}`);
+    console.log(`Invited ${_conversation.streamId}`);
     //Grant publish permissions to the delegate if it doesn't have them already
     if(!await streamr.isStreamPublisher(invitedConversation.streamId, streamrDelegate?.wallet.address)){
       await streamr.grantPermissions(invitedConversation.streamId, {
@@ -32,7 +34,7 @@ export const InviteModal = ({invitedConversation, cancel}: { invitedConversation
   }
 
   const selectConversation = async (_conversation: Conversations) => {
-    console.log(`Selected ${_conversation}`);
+    console.log(`Selected ${_conversation.streamId}`);
     setLocalConversations(localConversations.map(conversation => {
       if(conversation.streamId === _conversation.streamId){
         return {
@@ -49,10 +51,16 @@ export const InviteModal = ({invitedConversation, cancel}: { invitedConversation
     }))
   }
 
+  const closeWindow = () => {
+    setLocalConversations(conversations); 
+    setIsCreateNew(false);
+    cancel();
+  }
+
   return (
     invitedConversation ?
     <div id={styles.inviteModal}>
-        <h1>Invite to:</h1>
+        <h1 className={styles.title}>Invite</h1>
         <section>
           <div>
             <h1>Hyphae</h1>
@@ -79,24 +87,43 @@ export const InviteModal = ({invitedConversation, cancel}: { invitedConversation
             })}
           </div>
         </section>
-        <h1>Or create a new one!</h1>
-        <button className="hypha-button" onClick={() => {
-          console.log('Create new');
-
-        }}>Create new Hyphae/Mycelium</button>
-        <div>
+        <button id={styles.invite} className={`${invitee && styles.inviteeSelected} hypha-button`} onClick={() => {
+          if(invitee){
+            inviteConversation(invitee);
+            closeWindow();
+          }
+        }}>Invite</button>
+        <h1 className={styles.title}>Create</h1>
+        <div id={styles.createNew}>
+          {
+            isCreateNew ?
+            <>
+              <button
+              className="hypha-button"
+              onClick={() => {
+                createHyphae();
+                closeWindow();
+              }}
+              >Hyphae</button>
+              <button
+              className="hypha-button"
+              id={styles.mycelium}
+              onClick={() => {
+                createMycelium('test');
+                closeWindow();
+              }}
+              >Mycelium</button>
+            </>
+            :
             <button className="hypha-button" onClick={() => {
-              const invitee = localConversations.find((_conversation) => _conversation.selected === true && _conversation.type !== ConversationType.Hypha);
-              if(invitee){
-                inviteConversation(invitee);
-                cancel();
-              }
-            }}>Invite</button>
-            <button className="hypha-button" onClick={() => {
-              setLocalConversations(conversations); 
-              cancel();
-            }}>Close</button>
+              console.log('Create new');
+              setIsCreateNew(true);
+            }}>Create new Hyphae/Mycelium</button>
+          }
         </div>
+        <button id={styles.cancel} className='hypha-button' onClick={() => {
+          closeWindow();
+        }}>X</button>
     </div>
     :
     null

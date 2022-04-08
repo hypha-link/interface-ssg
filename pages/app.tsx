@@ -353,6 +353,16 @@ function App({ data }) {
     }
   }
 
+  function createHyphae(){
+    console.log('Create Hyphae');
+    getOrCreateMessageStream(streamr, Math.random().toString(), ConversationType.Hyphae, false);
+  }
+
+  function createMycelium(name: string){
+    console.log('Create Mycelium ' + name);
+    getOrCreateMessageStream(streamr, name, ConversationType.Mycelium, false);
+  }
+
   const testStreamr = async () => {
     try{
       dispatch({type: Actions.ADD_CONVERSATION, payload: { profile: [{ address: 'hyphae' }], selected: false, streamId: 'Johns Hyphae', type: ConversationType.Hyphae }});
@@ -420,6 +430,8 @@ function App({ data }) {
             </div>
             <InviteModal 
               invitedConversation={invitedConversation}
+              createHyphae={() => createHyphae()}
+              createMycelium={(name: string) => createMycelium(name)}
               cancel={() => setInvitedConversation(undefined)}
             />
           </section>
