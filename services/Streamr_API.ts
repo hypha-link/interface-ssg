@@ -26,8 +26,8 @@ export default async function getOrCreateMessageStream(streamr: StreamrClient, _
           fields: [{name: "sender", type: "string"},{name: "message", type: "string"},{name: "date", type: "number"}],
         },
         partitions: 2,
-        requireSignedData: false,
-        requireEncryptedData: false,
+        requireSignedData: true,
+        requireEncryptedData: true,
         storageDays: 1,
         inactivityThresholdHours: 1,
       }
@@ -59,8 +59,8 @@ export default async function getOrCreateMessageStream(streamr: StreamrClient, _
           fields: [{name: "sender", type: "string"},{name: "message", type: "string"},{name: "date", type: "number"}],
         },
         partitions: 2,
-        requireSignedData: false,
-        requireEncryptedData: false,
+        requireSignedData: true,
+        requireEncryptedData: true,
         storageDays: 1,
         inactivityThresholdHours: 1,
       }
@@ -87,8 +87,8 @@ export default async function getOrCreateMessageStream(streamr: StreamrClient, _
           fields: [{name: "sender", type: "string"},{name: "message", type: "string"},{name: "date", type: "number"}],
         },
         partitions: 2,
-        requireSignedData: false,
-        requireEncryptedData: false,
+        requireSignedData: true,
+        requireEncryptedData: true,
         storageDays: 1,
         inactivityThresholdHours: 1,
       }

@@ -1,14 +1,36 @@
-import React, {useState} from 'react'
+import { utils } from 'ethers';
+import React, {useContext, useState} from 'react'
 import styles from '../styles/conversationmodal.module.css'
+import { StateContext } from './context/AppState';
 
 export const ConversationModal = ({show, addConversation, cancel}: { show: boolean, addConversation: (inputValue: string) => void, cancel: () => void}) => {
-    const [inputValue, setInputValue] = useState("");
+    const [inputValue, setInputValue] = useState('');
+    const [placeholderText, setPlaceholderText] = useState('Enter an Ethereum address');
+    const {ownProfile} = useContext(StateContext);
 
-    const keyHandler = (e) => {
-        if (e.key === "Enter" && inputValue.trim() !== "") {
+    const keyHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            handleSubmission();
+        }
+    };
+
+    const handleSubmission = () => {
+        if(utils.isAddress(inputValue) && inputValue !== ownProfile.address){
             addConversation(inputValue);
         }
-      };
+        else if(inputValue === ''){
+            setPlaceholderText('Enter an Ethereum address');
+            setInputValue('');
+        }
+        else if(inputValue === ownProfile.address){
+            setPlaceholderText('Please enter the address of another user');
+            setInputValue('');
+        }
+        else{
+            setPlaceholderText(`${inputValue} is not an Ethereum address`);
+            setInputValue('');
+        }
+    }
 
     return (
         show ?
@@ -16,7 +38,7 @@ export const ConversationModal = ({show, addConversation, cancel}: { show: boole
             <p>Add conversation?</p>
             <input
             type="text"
-            placeholder="Enter an Ethereum address"
+            placeholder={placeholderText}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={(e) => keyHandler(e)}
@@ -26,8 +48,7 @@ export const ConversationModal = ({show, addConversation, cancel}: { show: boole
                 <button
                 className="hypha-button"
                 onClick={() => {
-                    addConversation(inputValue);
-                    setInputValue("");
+                    handleSubmission();
                 }}
                 >
                 Add Conversation
@@ -36,7 +57,7 @@ export const ConversationModal = ({show, addConversation, cancel}: { show: boole
                 className="hypha-button"
                 onClick={() => {
                     cancel();
-                    setInputValue("");
+                    setInputValue('');
                 }}
                 >
                 Close

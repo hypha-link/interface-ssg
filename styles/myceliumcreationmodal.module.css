@@ -1,0 +1,46 @@
+/* CONVERSATION MODAL */
+
+#modal {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: absolute;
+  background-color: var(--uiBGColor);
+  background-image: url(/patterns/HyphaPattern.svg);
+  background-size: contain;
+  border: var(--uiColor) 2px solid;
+  z-index: 1;
+  width: 30%;
+  max-height: 20%;
+  bottom: 60%;
+  left: 10%;
+  padding: 1%;
+}
+
+#modal > p {
+  color: var(--uiColor);
+  font-size: 1.4em;
+  text-align: center;
+}
+
+#modal > input {
+  flex: 0.2;
+  text-align: center;
+  border: var(--inputColor) 1px solid;
+  color: var(--inputColor);
+  background-color: transparent;
+}
+
+#modal input::placeholder {
+  color: var(--inputColor);
+}
+
+#modal > div {
+  display: flex;
+  justify-content: center;
+  flex: 0.2;
+}
+
+#modal > div > button {
+  flex: 1;
+}

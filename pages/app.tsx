@@ -36,6 +36,7 @@ import getProfileImage from "../get/getProfileImage";
 import { ethers } from "ethers";
 import useStreamrSession from '../components/hooks/useStreamrSession';
 import { InviteModal } from "../components/InviteModal";
+import { MyceliumCreationModal } from "../components/MyceliumCreationModal";
 
 function App({ data }) {
   const { activateBrowserWallet } = useEthers();
@@ -48,6 +49,7 @@ function App({ data }) {
   //Component Constructors
   const [conversationModal, setConversationModal] = useState(false);
   const [invitedConversation, setInvitedConversation] = useState<Conversations>(undefined);
+  const [showMyceliumCreationModal, setShowMyceliumCreationModal] = useState(false);
   const [settingsModal, setSettingsModal] = useState(false);
   const [searchKey, setSearchKey] = useState<string>('');
 
@@ -431,8 +433,13 @@ function App({ data }) {
             <InviteModal 
               invitedConversation={invitedConversation}
               createHyphae={() => createHyphae()}
-              createMycelium={(name: string) => createMycelium(name)}
+              openMyceliumModal={() => {setShowMyceliumCreationModal(true)}}
               cancel={() => setInvitedConversation(undefined)}
+            />
+            <MyceliumCreationModal
+              show={showMyceliumCreationModal}
+              create={(name: string) => createMycelium(name)}
+              cancel={() => setShowMyceliumCreationModal(false)}
             />
           </section>
           <section id={styles.profile}>

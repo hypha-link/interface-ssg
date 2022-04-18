@@ -6,7 +6,7 @@ import { StateContext } from './context/AppState'
 import { Conversation } from './Conversation';
 import { Conversations } from './utils/Types';
 
-export const InviteModal = ({invitedConversation, createHyphae, createMycelium, cancel}: { invitedConversation: Conversations, createHyphae: () => void, createMycelium: (name: string) => void, cancel: () => void}) => {
+export const InviteModal = ({invitedConversation, createHyphae, openMyceliumModal, cancel}: { invitedConversation: Conversations, createHyphae: () => void, openMyceliumModal: () => void, cancel: () => void}) => {
   const { conversations, streamr, streamrDelegate } = useContext(StateContext);
   const [localConversations, setLocalConversations] = useState<Conversations[]>(conversations);
   const [isCreateNew, setIsCreateNew] = useState(false);
@@ -109,7 +109,7 @@ export const InviteModal = ({invitedConversation, createHyphae, createMycelium, 
               className="hypha-button"
               id={styles.mycelium}
               onClick={() => {
-                createMycelium('test');
+                openMyceliumModal();
                 closeWindow();
               }}
               >Mycelium</button>
