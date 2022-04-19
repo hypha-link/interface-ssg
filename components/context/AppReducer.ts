@@ -85,7 +85,7 @@ export default function AppReducer(state: GlobalState, action: ActionType): Glob
                         }
                     }
                 }),
-                selectedConversation: action.payload
+                selectedConversation: {...action.payload, selected: true}
             };
         // Not used
         case Actions.INVITE_CONVERSATION:

@@ -15,14 +15,14 @@
   background-color: var(--uiBGColor);
   z-index: 1;
   width: 30%;
-  max-height: 50%;
-  bottom: 30%;
+  max-height: 60%;
+  bottom: 20%;
   left: 10%;
   padding: 1%;
   overflow-y: hidden;
 }
 
-#inviteModal > section {
+#invite {
   display: flex;
   flex: 1;
   background-color: var(--appBGColor2);
@@ -30,7 +30,23 @@
   overflow-y: hidden;
 }
 
-#inviteModal > section > div {
+#invite > div {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+#invite > div > .title {
+  color: var(--uiBGColor);
+}
+
+.inviteContainer {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+}
+
+.inviteContainer > div {
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -38,26 +54,34 @@
   overflow-y: scroll;
 }
 
-#inviteModal > section > div > h1 {
+.inviteContainer > div > h1 {
   font-size: 1.2em;
   text-align: center;
+  padding: 5% 0;
 }
 
-#inviteModal > div {
-  display: flex;
-  justify-content: center;
-  flex: 0.2;
-}
-
-#invite {
+#inviteButton {
   flex: .2;
   font-weight: 900;
+  margin-top: 2%;
 }
 
 .inviteeSelected{
-  background-color: var(--uiColor);
-  color: var(--uiBGColor);
+  opacity: .9;
   border-radius: unset;
+}
+
+#create {
+  display: flex;
+  flex-direction: column;
+  padding: 2%;
+  flex: .25;
+}
+
+#create > div {
+  display: flex;
+  justify-content: center;
+  flex: 1;
 }
 
 #createNew {
@@ -69,6 +93,11 @@
   flex: 1;
   font-size: 1rem;
   font-weight: 900;
+  margin: 1%;
+}
+
+#createNew > button:not(#mycelium) {
+  border: var(--uiColor) 2px solid;
 }
 
 #createNew > #mycelium{
@@ -80,7 +109,7 @@
 
 #cancel {
   position: absolute;
-  top: 2%;
-  right: 2%;
+  top: 5%;
+  right: 5%;
   font-weight: 900;
 }

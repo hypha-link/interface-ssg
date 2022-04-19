@@ -9,7 +9,6 @@ import { Conversations } from './utils/Types';
 export const InviteModal = ({invitedConversation, createHyphae, openMyceliumModal, cancel}: { invitedConversation: Conversations, createHyphae: () => void, openMyceliumModal: () => void, cancel: () => void}) => {
   const { conversations, streamr, streamrDelegate } = useContext(StateContext);
   const [localConversations, setLocalConversations] = useState<Conversations[]>(conversations);
-  const [isCreateNew, setIsCreateNew] = useState(false);
   const invitee = useMemo(() => localConversations.find((_conversation) => _conversation.selected === true && _conversation.type !== ConversationType.Hypha), [localConversations]);
 
   useEffect(() => {
@@ -53,50 +52,52 @@ export const InviteModal = ({invitedConversation, createHyphae, openMyceliumModa
 
   const closeWindow = () => {
     setLocalConversations(conversations); 
-    setIsCreateNew(false);
     cancel();
   }
 
   return (
     invitedConversation ?
     <div id={styles.inviteModal}>
-        <h1 className={styles.title}>Invite</h1>
-        <section>
-          <div>
-            <h1>Hyphae</h1>
-            {localConversations.filter(_conversation => _conversation.type === ConversationType.Hyphae).map((_conversation) => {
-              return (
-                <Conversation
-                  key={Math.random()}
-                  conversation={_conversation}
-                  selectConversation={(_conversation: Conversations) => selectConversation(_conversation)}
-                />
-              )
-            })}
+      <section id={styles.invite}>
+        <div>
+          <h1 className={styles.title}>Invite</h1>
+          <div className={styles.inviteContainer}>
+            <div>
+              <h1>Hyphae</h1>
+              {localConversations.filter(_conversation => _conversation.type === ConversationType.Hyphae).map((_conversation) => {
+                return (
+                  <Conversation
+                    key={Math.random()}
+                    conversation={_conversation}
+                    selectConversation={(_conversation: Conversations) => selectConversation(_conversation)}
+                  />
+                )
+              })}
+            </div>
+            <div>
+              <h1>Mycelium</h1>
+              {localConversations.filter(_conversation => _conversation.type === ConversationType.Mycelium).map((_conversation) => {
+                return (
+                  <Conversation
+                    key={Math.random()}
+                    conversation={_conversation}
+                    selectConversation={(_conversation: Conversations) => selectConversation(_conversation)}
+                  />
+                )
+              })}
+            </div>
           </div>
-          <div>
-            <h1>Mycelium</h1>
-            {localConversations.filter(_conversation => _conversation.type === ConversationType.Mycelium).map((_conversation) => {
-              return (
-                <Conversation
-                  key={Math.random()}
-                  conversation={_conversation}
-                  selectConversation={(_conversation: Conversations) => selectConversation(_conversation)}
-                />
-              )
-            })}
-          </div>
-        </section>
-        <button id={styles.invite} className={`${invitee && styles.inviteeSelected} hypha-button`} onClick={() => {
+          <button id={styles.inviteButton} className={`${invitee && styles.inviteeSelected} hypha-button`} onClick={() => {
           if(invitee){
             inviteConversation(invitee);
             closeWindow();
           }
-        }}>Invite</button>
+          }}>Invite</button>
+        </div>
+      </section>
+      <section id={styles.create}>
         <h1 className={styles.title}>Create</h1>
         <div id={styles.createNew}>
-          {
-            isCreateNew ?
             <>
               <button
               className="hypha-button"
@@ -114,16 +115,11 @@ export const InviteModal = ({invitedConversation, createHyphae, openMyceliumModa
               }}
               >Mycelium</button>
             </>
-            :
-            <button className="hypha-button" onClick={() => {
-              console.log('Create new');
-              setIsCreateNew(true);
-            }}>Create new Hyphae/Mycelium</button>
-          }
         </div>
-        <button id={styles.cancel} className='hypha-button' onClick={() => {
-          closeWindow();
-        }}>X</button>
+      </section>
+      <button id={styles.cancel} className='hypha-button' onClick={() => {
+        closeWindow();
+      }}>X</button>
     </div>
     :
     null

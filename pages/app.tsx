@@ -265,6 +265,7 @@ function App({ data }) {
     if(conversations.filter(conversation => conversation.streamId === "" || conversation.streamId === undefined).length === 0){
       await subscribeToConversations(conversations);
       dispatch({ type: Actions.SELECT_CONVERSATION, payload: _conversation });
+      console.log(_conversation);
       //Check if user has browser notifications toggled on
       if(Notification.permission === "default"){
         Notification.requestPermission()
@@ -355,14 +356,17 @@ function App({ data }) {
     }
   }
 
-  function createHyphae(){
-    console.log('Create Hyphae');
-    getOrCreateMessageStream(streamr, Math.random().toString(), ConversationType.Hyphae, false);
+  async function createHyphae(){
+    const id = Math.random().toString();
+    console.log('Create Hyphae ' + id);
+    const stream = await getOrCreateMessageStream(streamr, id, ConversationType.Hyphae, false);
+    dispatch({type: Actions.ADD_CONVERSATION, payload: { profile: [{ address: 'hyphae' }], selected: false, streamId: stream.id, type: ConversationType.Hyphae }});
   }
 
-  function createMycelium(name: string){
+  async function createMycelium(name: string){
     console.log('Create Mycelium ' + name);
-    getOrCreateMessageStream(streamr, name, ConversationType.Mycelium, false);
+    const stream = await getOrCreateMessageStream(streamr, name, ConversationType.Mycelium, false);
+    dispatch({type: Actions.ADD_CONVERSATION, payload: { profile: [{ address: 'mycelium' }], selected: false, streamId: stream.id, type: ConversationType.Mycelium }});
   }
 
   const testStreamr = async () => {
@@ -432,13 +436,13 @@ function App({ data }) {
             </div>
             <InviteModal 
               invitedConversation={invitedConversation}
-              createHyphae={() => createHyphae()}
+              createHyphae={async () => await createHyphae()}
               openMyceliumModal={() => {setShowMyceliumCreationModal(true)}}
               cancel={() => setInvitedConversation(undefined)}
             />
             <MyceliumCreationModal
               show={showMyceliumCreationModal}
-              create={(name: string) => createMycelium(name)}
+              create={async (name: string) => await createMycelium(name)}
               cancel={() => setShowMyceliumCreationModal(false)}
             />
           </section>

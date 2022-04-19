@@ -22,6 +22,7 @@ export const MyceliumCreationModal = ({show, create, cancel}: { show: boolean, c
         }
         else{
             create(inputValue);
+            setInputValue('');
             cancel();
         }
     }
