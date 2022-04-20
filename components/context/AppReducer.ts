@@ -85,43 +85,80 @@ export default function AppReducer(state: GlobalState, action: ActionType): Glob
                         }
                     }
                 }),
-                selectedConversation: {...action.payload, selected: true}
             };
-        // Not used
         case Actions.INVITE_CONVERSATION:
             return {
                 ...state,
                 conversations: [...state.conversations]
             };
         case Actions.SET_MESSAGES:
-            const newConversation = action.payload.conversation;
-            newConversation.messages = [...newConversation.messages, ...action.payload.messages];
             return {
                 ...state,
-                conversations: [
-                    ...state.conversations,
-                    newConversation
-                ]
+                conversations: 
+                state.conversations.map(conversation => {
+                    if(conversation.streamId === action.payload.conversation.streamId){
+                        return {
+                            ...conversation,
+                            messages: action.payload.messages
+                        }
+                    }
+                    else{
+                        return conversation;
+                    }
+                })
+            };
+        case Actions.ADD_MESSAGE:
+            return {
+                ...state,
+                conversations: 
+                state.conversations.map(conversation => {
+                    if(conversation.streamId === action.payload.conversation.streamId){
+                        return {
+                            ...conversation,
+                            messages: [...(conversation?.messages || []), action.payload.message]
+                        }
+                    }
+                    else{
+                        return conversation;
+                    }
+                })
+            };
+        case Actions.DELETE_MESSAGE:
+            return {
+                ...state,
+                conversations: 
+                state.conversations.map(conversation => {
+                    if(conversation.streamId === action.payload.conversation.streamId){
+                        return {
+                            ...conversation,
+                            messages: conversation.messages.filter(message => message !== action.payload.message)
+                        }
+                    }
+                    else{
+                        return conversation;
+                    }
+                })
+            };
+        case Actions.SELECT_MESSAGE:
+            return {
+                ...state
             };
         // Not used
-        case Actions.ADD_MESSAGE:
-            return {...state};
-        // Not used
-        case Actions.DELETE_MESSAGE:
-            return {...state};
-        // Not used
-        case Actions.SELECT_MESSAGE:
-            return {...state};
-        // Not used
         case Actions.SET_METADATA:
-            const newConversation2 = action.payload.conversation;
-            newConversation2.metadata = action.payload.metadata
             return {
                 ...state,
-                conversations: [
-                    ...state.conversations,
-                    newConversation2
-                ]
+                conversations: 
+                state.conversations.map(conversation => {
+                    if(conversation.streamId === action.payload.conversation.streamId){
+                        return {
+                            ...conversation,
+                            metadata: action.payload.metadata
+                        }
+                    }
+                    else{
+                        return conversation;
+                    }
+                })
             };
     }
 }

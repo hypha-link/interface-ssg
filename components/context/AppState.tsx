@@ -11,7 +11,6 @@ export const initialState: GlobalState = {
     ownProfile: undefined,
     notifications: [],
     conversations: [],
-    selectedConversation: { profile: [{ address:'' }], streamId: '', selected: false, type: ConversationType.Hypha },
 }
 
 export const StateContext = createContext<GlobalState>(initialState);

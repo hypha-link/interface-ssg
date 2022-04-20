@@ -11,7 +11,6 @@ export interface GlobalState{
     ownProfile: Profile,
     notifications: Notification[],
     conversations: Conversations[],
-    selectedConversation: Conversations
 }
 
 export type GlobalDispatch = (fn: ActionType) => void;
@@ -54,9 +53,9 @@ type DeleteConversation = Action<Actions.DELETE_CONVERSATION, Conversations>
 type SelectConversation = Action<Actions.SELECT_CONVERSATION, Conversations>
 type InviteConversation = Action<Actions.INVITE_CONVERSATION, Conversations>
 type SetMessages = Action<Actions.SET_MESSAGES, { conversation: Conversations, messages: MessagePayload[] }>
-type AddMessage = Action<Actions.ADD_MESSAGE, MessagePayload>
-type DeleteMessage = Action<Actions.DELETE_MESSAGE, MessagePayload>
-type SelectMessage = Action<Actions.SELECT_MESSAGE, MessagePayload>
+type AddMessage = Action<Actions.ADD_MESSAGE, { conversation: Conversations, message: MessagePayload }>
+type DeleteMessage = Action<Actions.DELETE_MESSAGE, { conversation: Conversations, message: MessagePayload }>
+type SelectMessage = Action<Actions.SELECT_MESSAGE, { conversation: Conversations, message: MessagePayload }>
 type SetMetadata = Action<Actions.SET_METADATA, { conversation: Conversations, metadata: Metadata }>
 
 export type ActionType = 

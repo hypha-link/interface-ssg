@@ -3,9 +3,10 @@ import styles from '../styles/Message.module.css';
 import Image from "next/image";
 import { TokenFeed } from "./TokenFeed";
 import ContextMenu from "./ContextMenu";
-import { MessagePayload, Profile } from "./utils/Types";
+import { MessagePayload } from "./utils/Types";
 import getProfileImage from "../get/getProfileImage";
 import { StateContext } from "./context/AppState";
+import useSelectedConversation from "./hooks/useSelectedConversation";
 
 type MessageProps = {
   payload: MessagePayload
@@ -15,7 +16,8 @@ type MessageProps = {
 
 export function Message({payload, selectMessage, deleteMessage}: MessageProps) {
   const [anchorPoint, setAnchorPoint] = useState({x: 0, y: 0});
-  const { ownProfile, selectedConversation } = useContext(StateContext);
+  const selectedConversation = useSelectedConversation();
+  const { ownProfile } = useContext(StateContext);
   //Set to owner profile, otherwise set to address that matches profile
   const profile = payload.sender === ownProfile.address ? ownProfile : selectedConversation.profile.find(_profile => _profile.address === payload.sender)
 

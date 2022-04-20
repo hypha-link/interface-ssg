@@ -54,6 +54,7 @@ export default function useMetadata(_conversation: Conversations){
           }
           catch(e){
             alert('Please fund the connected wallet with Matic tokens to use Hypha');
+            console.error(e);
           }
         }
         //Only send new metadata

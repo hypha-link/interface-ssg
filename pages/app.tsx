@@ -37,12 +37,13 @@ import { ethers } from "ethers";
 import useStreamrSession from '../components/hooks/useStreamrSession';
 import { InviteModal } from "../components/InviteModal";
 import { MyceliumCreationModal } from "../components/MyceliumCreationModal";
+import useSelectedConversation from "../components/hooks/useSelectedConversation";
 
 function App({ data }) {
   const { activateBrowserWallet } = useEthers();
 
   //Global State
-  const { selfId, notifications, conversations, selectedConversation, streamr, streamrDelegate, ownProfile, web3Provider } = useContext(StateContext);
+  const { selfId, notifications, conversations, streamr, streamrDelegate, ownProfile, web3Provider } = useContext(StateContext);
   const { address: ownAddress } = ownProfile || {};
   const dispatch = useContext(DispatchContext);
 
@@ -53,6 +54,7 @@ function App({ data }) {
   const [settingsModal, setSettingsModal] = useState(false);
   const [searchKey, setSearchKey] = useState<string>('');
 
+  const selectedConversation = useSelectedConversation();
   const [metadata, setMetadata] = useMetadata(selectedConversation);
   const { ceramicConversations, ceramicStream } = useConversationStorage();
 
@@ -113,15 +115,14 @@ function App({ data }) {
       const newConversations = await Promise.all(ceramicConversations.map(async (conversation) => {
         const newProfile = await Promise.all(conversation.profile.map(async (profile) => {
           try{
-            profile = {address: profile.address, ...await selfId.client.get('basicProfile', `${profile.address}@eip155:${web3Provider.network.chainId}`)}
+            return {address: profile.address, ...await selfId.client.get('basicProfile', `${profile.address}@eip155:${web3Provider.network.chainId}`)}
           }
           catch(e){
             console.warn(`There is no DID that exists for ${profile.address}`);
           }
-          return profile;
         }))
-        const newConversation = {...conversation, profile: newProfile};
-        return newConversation;
+        //Returns the conversation with a profile
+        return {...conversation, profile: newProfile};
       }));
       //Set valid streams if any conversations don't have one
       if(newConversations.some(conversation => conversation.streamId === '' || conversation.streamId === undefined)) await setAllValidStreams(newConversations);
@@ -155,18 +156,7 @@ function App({ data }) {
               const notification = new Notification(`${name} sent you a message!`, {body: data.message, icon: image});
               dispatch({ type: Actions.ADD_NOTIFICATION, payload: notification });
             }
-            const newConversations = _conversations.map((_conversation) => {
-              if(conversation.streamId === _conversation.streamId){
-                if(_conversation.messages){
-                  _conversation.messages = [..._conversation.messages, data];
-                }
-                else{
-                  _conversation.messages = [data];
-                }
-              }
-              return _conversation;
-            })
-            dispatch({ type: Actions.SET_CONVERSATIONS, payload: newConversations });
+            dispatch({ type: Actions.ADD_MESSAGE, payload: {conversation: conversation, message: data}});
           }
         )
       }
@@ -261,11 +251,10 @@ function App({ data }) {
 
   //Selects a new stream to load when conversation is clicked
   async function selectConversation(_conversation: Conversations){
+    dispatch({ type: Actions.SELECT_CONVERSATION, payload: _conversation });
     //Subscribe if conversations don't have empty/null streamIds
     if(conversations.filter(conversation => conversation.streamId === "" || conversation.streamId === undefined).length === 0){
       await subscribeToConversations(conversations);
-      dispatch({ type: Actions.SELECT_CONVERSATION, payload: _conversation });
-      console.log(_conversation);
       //Check if user has browser notifications toggled on
       if(Notification.permission === "default"){
         Notification.requestPermission()
@@ -340,6 +329,7 @@ function App({ data }) {
     }
     catch(e){
       alert('Please fund the connected wallet with Matic tokens to use Hypha');
+      console.error(e);
     }
   };
 
