@@ -6,7 +6,7 @@ import ProfilePicture from '../ProfilePicture';
 import { Tooltip } from '../utils/Tooltip';
 import ContextMenu from '../ContextMenu';
 import { utils } from 'ethers';
-import getHyphaProfile from '../../get/getHyphaProfile';
+import getConversationProfile from '../../get/getConversationProfile';
 import getShortAddress from '../../get/getShortAddress';
 
 type HyphaProps = {
@@ -20,7 +20,7 @@ type HyphaProps = {
 export default function Hypha({conversation, metadata, inviteConversation, selectConversation, deleteConversation}: HyphaProps) {
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
   const { sendTransaction } = useSendTransaction();
-  const profile = getHyphaProfile(conversation);
+  const profile = getConversationProfile(conversation);
 
   return (
     <div
@@ -48,7 +48,7 @@ export default function Hypha({conversation, metadata, inviteConversation, selec
           !conversation.selected && selectConversation(conversation)
         }
         view={() =>
-          console.log(conversation || "User has no profile.")
+          console.log(conversation || "No profile exists.")
         }
         invite={() => inviteConversation(conversation)}
         send={() => {

@@ -4,7 +4,7 @@ import { Conversations, Metadata } from '../utils/Types';
 import ProfilePicture from '../ProfilePicture';
 import { Tooltip } from '../utils/Tooltip';
 import ContextMenu from '../ContextMenu';
-import getHyphaProfile from '../../get/getHyphaProfile';
+import getConversationProfile from '../../get/getConversationProfile';
 
 type MyceliumProps = {
   conversation: Conversations
@@ -30,14 +30,15 @@ export default function Mycelium({conversation, metadata, inviteConversation, se
       }}
     >
       <Tooltip key={Math.random()} content={conversation.streamId}>
-        <ProfilePicture profile={getHyphaProfile(conversation)} metadata={metadata}/>
-        <p>{conversation.streamId}</p>
+        <ProfilePicture profile={getConversationProfile(conversation)} metadata={metadata}/>
+        <p>{conversation.streamId.substring(conversation.streamId.lastIndexOf('/') + 1)}</p>
       </Tooltip>
       <ContextMenu 
         anchorPoint={{x: anchorPoint.x, y: anchorPoint.y}} 
         localAnchorPoint={(ap) => setAnchorPoint(ap)}
         //If not selected, allow user to select conversation
         select={() => !conversation.selected && selectConversation(conversation)}
+        view={() => console.log(conversation || "No profile exists.")}
         invite={() => inviteConversation(conversation)}
         leave_mycelium={() => deleteConversation(conversation)}
       />

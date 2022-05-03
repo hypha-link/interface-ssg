@@ -31,7 +31,7 @@ import useConversationStorage, { localStreamKey } from "../components/hooks/useC
 
 import { DispatchContext, StateContext } from "../components/context/AppState";
 import { Actions } from "../components/context/AppContextTypes";
-import getHyphaProfile from "../get/getHyphaProfile";
+import getConversationProfile from "../get/getConversationProfile";
 import getProfileImage from "../get/getProfileImage";
 import { ethers } from "ethers";
 import useStreamrSession from '../components/hooks/useStreamrSession';
@@ -140,8 +140,11 @@ function App({ data }) {
     const subs = await streamr.getSubscriptions();
     //Subscribe to stream after messages were resent
     await Promise.all(_conversations.map(async (conversation) => {
+      console.log(subs);
+      console.log(subs.filter(sub => sub.streamPartId.substring(0, sub.streamPartId.indexOf('#')) === conversation.streamId).length === 0);
       //Check if conversation streamId is empty & check if we are already subscribed
-      if(conversation.streamId !== "" && subs.length === 0){
+      if(conversation.streamId !== "" && subs.filter(sub => sub.streamPartId.substring(0, sub.streamPartId.indexOf('#')) === conversation.streamId).length === 0){
+        console.log('SUBSCRIBED' + conversation.streamId);
         await streamr.subscribe(
           {
             stream: conversation.streamId,
@@ -164,19 +167,21 @@ function App({ data }) {
   }
   
   const getValidStream = async (_conversation: Conversations) => {
+    if(_conversation.type !== ConversationType.Hypha) return;
+
     try{
       const streams: Stream[] = [];
       //Check if either conversation has a stream
-      for await(const stream of streamr.searchStreams(getHyphaProfile(_conversation).address, { user: ownAddress, allowPublic: true })){
+      for await(const stream of streamr.searchStreams(getConversationProfile(_conversation).address, { user: ownAddress, allowPublic: true })){
         streams.push(stream);
       }
-      for await(const stream of streamr.searchStreams(ownAddress, { user: getHyphaProfile(_conversation).address, allowPublic: true })){
+      for await(const stream of streamr.searchStreams(ownAddress, { user: getConversationProfile(_conversation).address, allowPublic: true })){
         streams.push(stream);
       }
       //Return found stream
       if(streams.length !== 0) return streams[0];
       //Create a new stream since none were found
-      const newStream = await getOrCreateMessageStream(streamr, getHyphaProfile(_conversation).address, ConversationType.Hypha, false);
+      const newStream = await getOrCreateMessageStream(streamr, getConversationProfile(_conversation).address, ConversationType.Hypha, false);
       return newStream;
     }
     catch(e){
@@ -185,9 +190,11 @@ function App({ data }) {
   }
 
   const setValidStream = async (_conversation: Conversations) => {
+    if(_conversation.type !== ConversationType.Hypha) return;
+
     const validStream = await getValidStream(_conversation);
     const newConversations: Conversations[] = ceramicConversations.map((conversation) => {
-      if(getHyphaProfile(_conversation).address === getHyphaProfile(conversation).address){
+      if(getConversationProfile(_conversation).address === getConversationProfile(conversation).address){
         conversation.streamId = validStream.id;
       }
       return conversation;
@@ -210,7 +217,7 @@ function App({ data }) {
 
   async function addConversations(_address: string){
     //Check if conversation exists already
-    if(!ceramicConversations?.some(conversation => getHyphaProfile(conversation).address === _address)){
+    if(!ceramicConversations?.some(conversation => getConversationProfile(conversation).address === _address)){
       const validStream = await getValidStream({ profile: [{ address: _address }], streamId: undefined, selected: false, type: ConversationType.Hypha });
       console.log(validStream);
       const newConversation: Conversations = {
@@ -266,7 +273,7 @@ function App({ data }) {
   }
 
   const inviteConversation = async (_conversation: Conversations) => {
-    console.log(`Invite ${getHyphaProfile(_conversation).address}`);
+    console.log(`Invite ${getConversationProfile(_conversation).address}`);
     setInvitedConversation(_conversation);
   }
 
@@ -347,16 +354,74 @@ function App({ data }) {
   }
 
   async function createHyphae(){
-    const id = Math.random().toString();
+    const id = Math.floor(Math.random()*16777215).toString(16);
     console.log('Create Hyphae ' + id);
-    const stream = await getOrCreateMessageStream(streamr, id, ConversationType.Hyphae, false);
-    dispatch({type: Actions.ADD_CONVERSATION, payload: { profile: [{ address: 'hyphae' }], selected: false, streamId: stream.id, type: ConversationType.Hyphae }});
+
+    //Check if conversation exists already
+    if(!ceramicConversations?.some(conversation => conversation.streamId.includes(id))){
+      const stream = await getOrCreateMessageStream(streamr, id, ConversationType.Hyphae, false);
+      const newConversation: Conversations = {
+        profile: [{ address: id }],
+        streamId: stream.id,
+        selected: false,
+        type: ConversationType.Hyphae,
+      }
+      //Create a new conversations stream if there are no previously existing streams & pin it
+      if(ceramicConversations){
+        await ceramicStream.update({conversations: [...ceramicConversations, newConversation]})
+      }
+      else{
+        const stream = await selfId.client.tileLoader.create(
+          {
+            conversations: [newConversation]
+          },
+          {
+            tags: ['conversations'],
+          },
+          {
+            pin: true,
+          }
+        );
+        //Add a new local storage record of the stream ID
+        window.localStorage.setItem(`${ownAddress}-${localStreamKey}`, stream.id.toString());
+      }
+      dispatch({type: Actions.ADD_CONVERSATION, payload: newConversation});
+    }
   }
 
   async function createMycelium(name: string){
     console.log('Create Mycelium ' + name);
-    const stream = await getOrCreateMessageStream(streamr, name, ConversationType.Mycelium, false);
-    dispatch({type: Actions.ADD_CONVERSATION, payload: { profile: [{ address: 'mycelium' }], selected: false, streamId: stream.id, type: ConversationType.Mycelium }});
+
+    //Check if conversation exists already
+    if(!ceramicConversations?.some(conversation => conversation.streamId.includes(name))){
+      const stream = await getOrCreateMessageStream(streamr, name, ConversationType.Mycelium, false);
+      const newConversation: Conversations = {
+        profile: [{ address: name }],
+        streamId: stream.id,
+        selected: false,
+        type: ConversationType.Mycelium,
+      }
+      //Create a new conversations stream if there are no previously existing streams & pin it
+      if(ceramicConversations){
+        await ceramicStream.update({conversations: [...ceramicConversations, newConversation]})
+      }
+      else{
+        const stream = await selfId.client.tileLoader.create(
+          {
+            conversations: [newConversation]
+          },
+          {
+            tags: ['conversations'],
+          },
+          {
+            pin: true,
+          }
+        );
+        //Add a new local storage record of the stream ID
+        window.localStorage.setItem(`${ownAddress}-${localStreamKey}`, stream.id.toString());
+      }
+      dispatch({type: Actions.ADD_CONVERSATION, payload: newConversation});
+    }
   }
 
   const testStreamr = async () => {
@@ -381,7 +446,7 @@ function App({ data }) {
             </a>
           </Link>
         <div>
-          <p>{selectedConversation.streamId !== '' ? selectedConversation.type === ConversationType.Hypha ? getHyphaProfile(selectedConversation)?.name : selectedConversation.streamId : 'Select A Conversation'}</p>
+          <p>{selectedConversation.streamId !== '' ? selectedConversation.type === ConversationType.Hypha ? getConversationProfile(selectedConversation)?.name : selectedConversation.streamId : 'Select A Conversation'}</p>
         </div>
         <div>
           <input

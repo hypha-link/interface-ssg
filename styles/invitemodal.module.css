@@ -51,13 +51,17 @@
   flex-direction: column;
   flex: 1;
   align-items: center;
-  overflow-y: scroll;
 }
 
 .inviteContainer > div > h1 {
   font-size: 1.2em;
   text-align: center;
   padding: 5% 0;
+}
+
+.inviteContainer > div > :not(h1){
+  word-break: break-all;
+  text-align: left;
 }
 
 #inviteButton {
@@ -76,6 +80,9 @@
   flex-direction: column;
   padding: 2%;
   flex: .25;
+  background-Color: var(--uiBGColor2);
+  background-image: url(/patterns/HyphaPattern.svg);
+  background-size: contain;
 }
 
 #create > div {
@@ -94,17 +101,12 @@
   font-size: 1rem;
   font-weight: 900;
   margin: 1%;
-}
-
-#createNew > button:not(#mycelium) {
   border: var(--uiColor) 2px solid;
 }
 
-#createNew > #mycelium{
-  background-Color: var(--uiBGColor2);
-  background-image: url(/patterns/HyphaPattern.svg);
-  background-size: contain;
-  border: var(--uiColor) 2px solid;
+#createNew > button:hover {
+  opacity: 1;
+  background-color: var(--uiBGColor2);
 }
 
 #cancel {

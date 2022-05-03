@@ -105,7 +105,7 @@ export const InviteModal = ({invitedConversation, createHyphae, openMyceliumModa
                 createHyphae();
                 closeWindow();
               }}
-              >Hyphae</button>
+              >Hyphae<br></br>(up to 10 members)</button>
               <button
               className="hypha-button"
               id={styles.mycelium}
@@ -113,7 +113,7 @@ export const InviteModal = ({invitedConversation, createHyphae, openMyceliumModa
                 openMyceliumModal();
                 closeWindow();
               }}
-              >Mycelium</button>
+              >Mycelium<br></br>(for large groups)</button>
             </>
         </div>
       </section>

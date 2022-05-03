@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { Conversations, Metadata } from '../utils/Types';
-import getHyphaProfile from '../../get/getHyphaProfile';
+import getConversationProfile from '../../get/getConversationProfile';
 import { StateContext } from '../context/AppState';
 import { StreamPermission } from 'streamr-client';
 
@@ -15,7 +15,7 @@ export default function useMetadata(_conversation: Conversations){
         const loadMetadata = async () => {
           const subs = await streamr.getSubscriptions({ streamId: _conversation.streamId });
           if(subs.length !== 0){
-              console.log(`Subscribing to ${getHyphaProfile(_conversation)?.name || getHyphaProfile(_conversation)?.address} metadata`);
+              console.log(`Subscribing to ${getConversationProfile(_conversation)?.name || getConversationProfile(_conversation)?.address} metadata`);
               await streamr.subscribe({ streamId: _conversation.streamId, partition: 1 },
                   (data: Metadata) => {
                       if(data.address !== ownProfile.address){
