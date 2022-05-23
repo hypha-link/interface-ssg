@@ -4,7 +4,7 @@ declare global {
   }
 }
 
-import { ExternalProvider } from "ethers/node_modules/@ethersproject/providers";
+import { ExternalProvider } from "@ethersproject/providers";
 import React, { useContext, useEffect, useState } from "react";
 import styles from '../styles/app.module.css'
 import Link from "next/link";
@@ -23,9 +23,9 @@ import { Tooltip } from "../components/utils/Tooltip";
 
 import { EthereumAuthProvider, SelfID } from '@self.id/web';
 import getOrCreateMessageStream, { ConversationType } from "../services/Streamr_API"
-import { Conversations, MessagePayload } from "../components/utils/Types";
+import { Conversations, MessagePayload, Metadata } from "../components/utils/Types";
 import { GetStaticProps } from "next";
-import useMetadata from "../components/hooks/useMetadata";
+import usePublishMetadata from "../components/hooks/usePublishMetadata";
 import { Stream, StreamPermission } from "streamr-client";
 import useConversationStorage, { localStreamKey } from "../components/hooks/useConversationStorage"
 
@@ -48,14 +48,14 @@ function App({ data }) {
   const dispatch = useContext(DispatchContext);
 
   //Component Constructors
-  const [conversationModal, setConversationModal] = useState(false);
+  const [conversationModal, setConversationModal] = useState<string>(undefined);
   const [invitedConversation, setInvitedConversation] = useState<Conversations>(undefined);
   const [showMyceliumCreationModal, setShowMyceliumCreationModal] = useState(false);
   const [settingsModal, setSettingsModal] = useState(false);
   const [searchKey, setSearchKey] = useState<string>('');
 
   const selectedConversation = useSelectedConversation();
-  const [metadata, setMetadata] = useMetadata(selectedConversation);
+  const [setMetadata] = usePublishMetadata(selectedConversation);
   const { ceramicConversations, ceramicStream } = useConversationStorage();
 
   useStreamrSession();
@@ -90,7 +90,7 @@ function App({ data }) {
       activateBrowserWallet();
       dispatch({ type: Actions.SET_WEB3_PROVIDER, payload: provider });
       dispatch({ type: Actions.SET_ACCOUNT, payload: await signer.getAddress() });
-      console.log("The client attempted to connect");
+      console.info("The client attempted to connect");
     }
     catch(e){
       alert('Please enable your wallet to connect to Hypha.');
@@ -100,7 +100,7 @@ function App({ data }) {
 
   //Disconnects wallet and removes all data from window
   const disconnect = async () => {
-    console.log("The client has been disconnected");
+    console.info("The client has been disconnected");
     notifications.forEach(notification => {
       notification.close();
     });
@@ -111,18 +111,22 @@ function App({ data }) {
 
   useEffect(() => {
     async function loadConversations(){
-      //Add conversation profiles to object
+      //Add conversation profiles & initial metadata to object
       const newConversations = await Promise.all(ceramicConversations.map(async (conversation) => {
         const newProfile = await Promise.all(conversation.profile.map(async (profile) => {
           try{
-            return {address: profile.address, ...await selfId.client.get('basicProfile', `${profile.address}@eip155:${web3Provider.network.chainId}`)}
+            //Retrieve the DID address associated with this ethereum address
+            const didAddress = await selfId.client.getAccountDID(`${profile.address}@eip155:${web3Provider.network.chainId}`);
+            //Return the basicProfile associated with this DID address
+            return {address: profile.address, ...await selfId.client.get('basicProfile', didAddress)}
           }
           catch(e){
             console.warn(`There is no DID that exists for ${profile.address}`);
+            console.log(e);
           }
         }))
-        //Returns the conversation with a profile
-        return {...conversation, profile: newProfile};
+        //Returns the conversation with a profile & initial metadata
+        return {...conversation, profile: newProfile, metadata: {address: '', typing: false, online: false, receipt: false, invite: ''}};
       }));
       //Set valid streams if any conversations don't have one
       if(newConversations.some(conversation => conversation.streamId === '' || conversation.streamId === undefined)) await setAllValidStreams(newConversations);
@@ -141,10 +145,9 @@ function App({ data }) {
     //Subscribe to stream after messages were resent
     await Promise.all(_conversations.map(async (conversation) => {
       console.log(subs);
-      console.log(subs.filter(sub => sub.streamPartId.substring(0, sub.streamPartId.indexOf('#')) === conversation.streamId).length === 0);
       //Check if conversation streamId is empty & check if we are already subscribed
       if(conversation.streamId !== "" && subs.filter(sub => sub.streamPartId.substring(0, sub.streamPartId.indexOf('#')) === conversation.streamId).length === 0){
-        console.log('SUBSCRIBED' + conversation.streamId);
+        console.info('Subscribed to ' + conversation.streamId);
         await streamr.subscribe(
           {
             stream: conversation.streamId,
@@ -160,6 +163,20 @@ function App({ data }) {
               dispatch({ type: Actions.ADD_NOTIFICATION, payload: notification });
             }
             dispatch({ type: Actions.ADD_MESSAGE, payload: {conversation: conversation, message: data}});
+          }
+        )
+        await streamr.subscribe(
+          {
+            stream: conversation.streamId,
+            partition: 1,
+          }, (data: Metadata) => {
+            if(data.address !== ownProfile.address){
+              dispatch({ type: Actions.SET_METADATA, payload: {conversation: conversation, metadata: data}});
+              console.log(data.invite);
+              if(data?.invite){
+                setConversationModal(data.invite);
+              }
+            }
           }
         )
       }
@@ -270,11 +287,6 @@ function App({ data }) {
         })
       }
     }
-  }
-
-  const inviteConversation = async (_conversation: Conversations) => {
-    console.log(`Invite ${getConversationProfile(_conversation).address}`);
-    setInvitedConversation(_conversation);
   }
 
   // Load messages on startup
@@ -466,12 +478,16 @@ function App({ data }) {
             <ConversationModal
               show={conversationModal}
               addConversation={(address: string) => {
-                setConversationModal(false);
+                setConversationModal(undefined);
                 addConversations(address);
               }}
-              cancel={() => setConversationModal(false)}
+              cancel={() => setConversationModal(undefined)}
             />
-            <button className="hypha-button" onClick={() => {setConversationModal(!conversationModal)}} disabled={!selfId}>Add Conversations</button>
+            <button 
+              className="hypha-button" 
+              onClick={() => {setConversationModal('')}} 
+              disabled={!selfId}
+            >Add Conversations</button>
           </section>
           <section id={styles.conversationsList}>
             <div>
@@ -481,8 +497,7 @@ function App({ data }) {
                     <Conversation
                       key={Math.random()}
                       conversation={_conversation}
-                      metadata={metadata}
-                      inviteConversation={(_conversation: Conversations) => inviteConversation(_conversation)}
+                      inviteConversation={(_conversation: Conversations) => setInvitedConversation(_conversation)}
                       selectConversation={(_conversation: Conversations) => selectConversation(_conversation)}
                       deleteConversation={(_conversation: Conversations) => deleteConversation(_conversation)}
                     />

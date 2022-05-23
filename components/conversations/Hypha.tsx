@@ -1,23 +1,22 @@
 import styles from '../../styles/conversation.module.css'
 import { useSendTransaction } from '@usedapp/core';
 import React, { useState } from 'react'
-import { Conversations, Metadata } from '../utils/Types';
+import { Conversations } from '../utils/Types';
 import ProfilePicture from '../ProfilePicture';
 import { Tooltip } from '../utils/Tooltip';
 import ContextMenu from '../ContextMenu';
 import { utils } from 'ethers';
 import getConversationProfile from '../../get/getConversationProfile';
-import getShortAddress from '../../get/getShortAddress';
+import getConversationName from '../../get/getConversationName';
 
 type HyphaProps = {
   conversation: Conversations
-  metadata?: Metadata
   inviteConversation?: (conversation: Conversations) => void
   selectConversation: (conversation: Conversations) => void
   deleteConversation?: (conversation: Conversations) => void
 }
 
-export default function Hypha({conversation, metadata, inviteConversation, selectConversation, deleteConversation}: HyphaProps) {
+export default function Hypha({conversation, inviteConversation, selectConversation, deleteConversation}: HyphaProps) {
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
   const { sendTransaction } = useSendTransaction();
   const profile = getConversationProfile(conversation);
@@ -35,9 +34,9 @@ export default function Hypha({conversation, metadata, inviteConversation, selec
       }}
     >
       <Tooltip key={Math.random()} content={profile?.address}>
-        <ProfilePicture profile={profile} metadata={metadata}/>
+        <ProfilePicture profile={profile} metadata={conversation.metadata}/>
         <p>
-          {profile?.name ? profile.name : getShortAddress(profile?.address)}
+          {getConversationName(conversation)}
         </p>
       </Tooltip>
       <ContextMenu

@@ -2,11 +2,7 @@ import React from 'react'
 import styles from '../../styles/typing.module.css'
 import { Metadata } from './Types';
 
-export default function Typing(props) {
-    const { metadata }: 
-    {
-        metadata: Metadata,
-    } = props;
+export default function Typing({metadata}: {metadata: Metadata}) {
   return (
     <span className={`dot ${styles.background} ${metadata.online ? styles.online : ''} ${metadata.typing ? styles.typing : ''}`}>
         <div className={`${styles.typingContainer} ${metadata.typing ? '' : styles.typingHidden}`}>

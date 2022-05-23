@@ -56,7 +56,7 @@ const roadmap = () => {
                     <h3>January 2022</h3>
                 </div>
                 <div className={styles.circle}/>
-                <ul>
+                <ul className={styles.checked}>
                     <li>Hyphae (Group Messaging)</li>
                     <li>Message Query</li>
                     <li>Multi-Conversation Subscriptions</li>
@@ -90,7 +90,7 @@ const roadmap = () => {
                     <h3>March 2022</h3>
                 </div>
                 <div className={styles.circle}/>
-                <ul>
+                <ul className={styles.checked}>
                     <li>Mycelium (Guilds)</li>
                     <li>Markdown</li>
                 </ul>

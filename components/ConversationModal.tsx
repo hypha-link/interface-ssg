@@ -1,12 +1,14 @@
 import { utils } from 'ethers';
-import React, {useContext, useState} from 'react'
+import React, {useContext, useMemo, useState} from 'react'
 import styles from '../styles/conversationmodal.module.css'
 import { StateContext } from './context/AppState';
 
-export const ConversationModal = ({show, addConversation, cancel}: { show: boolean, addConversation: (inputValue: string) => void, cancel: () => void}) => {
+export const ConversationModal = ({show, addConversation, cancel}: { show: string, addConversation: (inputValue: string) => void, cancel: () => void}) => {
     const [inputValue, setInputValue] = useState('');
     const [placeholderText, setPlaceholderText] = useState('Enter an Ethereum address');
     const {ownProfile} = useContext(StateContext);
+
+    useMemo(() => {setInputValue(show)}, [show]);
 
     const keyHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
@@ -33,7 +35,7 @@ export const ConversationModal = ({show, addConversation, cancel}: { show: boole
     }
 
     return (
-        show ?
+        show !== undefined ?
         <div id={styles.conversationModal}>
             <p>Add conversation?</p>
             <input

@@ -1,20 +1,20 @@
 import styles from '../../styles/conversation.module.css'
 import React, { useState } from 'react'
-import { Conversations, Metadata } from '../utils/Types';
+import { Conversations } from '../utils/Types';
 import ProfilePicture from '../ProfilePicture';
 import { Tooltip } from '../utils/Tooltip';
 import ContextMenu from '../ContextMenu';
 import getConversationProfile from '../../get/getConversationProfile';
+import getConversationName from '../../get/getConversationName';
 
 type MyceliumProps = {
   conversation: Conversations
-  metadata?: Metadata
   inviteConversation?: (conversation: Conversations) => void
   selectConversation: (conversation: Conversations) => void
   deleteConversation?: (conversation: Conversations) => void
 }
 
-export default function Mycelium({conversation, metadata, inviteConversation, selectConversation, deleteConversation}: MyceliumProps) {
+export default function Mycelium({conversation, inviteConversation, selectConversation, deleteConversation}: MyceliumProps) {
     const [anchorPoint, setAnchorPoint] = useState({x: 0, y: 0});
 
   return (
@@ -30,8 +30,10 @@ export default function Mycelium({conversation, metadata, inviteConversation, se
       }}
     >
       <Tooltip key={Math.random()} content={conversation.streamId}>
-        <ProfilePicture profile={getConversationProfile(conversation)} metadata={metadata}/>
-        <p>{conversation.streamId.substring(conversation.streamId.lastIndexOf('/') + 1)}</p>
+        <ProfilePicture profile={getConversationProfile(conversation)} metadata={conversation.metadata}/>
+        <p>
+          {getConversationName(conversation)}
+        </p>
       </Tooltip>
       <ContextMenu 
         anchorPoint={{x: anchorPoint.x, y: anchorPoint.y}} 

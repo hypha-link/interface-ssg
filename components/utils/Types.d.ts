@@ -8,7 +8,6 @@ export interface Conversations {
     type: ConversationType,
     metadata?: Metadata,
     messages?: MessageData[],
-    metadata?: Metadata[],
 };
 
 interface Profile extends BasicProfile{
@@ -26,4 +25,5 @@ export interface Metadata{
     typing: boolean,
     online?: boolean,
     receipt?: boolean,
+    invite?: string,
 }

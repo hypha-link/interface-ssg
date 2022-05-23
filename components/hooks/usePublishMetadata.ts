@@ -1,33 +1,35 @@
 import { useContext, useEffect, useState } from 'react';
 import { Conversations, Metadata } from '../utils/Types';
-import getConversationProfile from '../../get/getConversationProfile';
 import { StateContext } from '../context/AppState';
 import { StreamPermission } from 'streamr-client';
+import useMountEffect from './useMountEffect';
 
-export default function useMetadata(_conversation: Conversations){
+export default function usePublishMetadata(_conversation: Conversations){
     const { ownProfile, streamr, streamrDelegate } = useContext(StateContext);
     const [sendMetadata, setSendMetadata] = useState<Metadata>();
     const [lastSentMetadata, setLastSentMetadata] = useState<Metadata>();
-    const [receiveMetadata, setReceiveMetadata] = useState<Metadata>({address: '', typing: false, online: false, receipt: false});
+    const [timeRemaining, setTimeRemaining] = useState(10);
 
-    //Receive metadata from partner
-    useEffect(() => {
-        const loadMetadata = async () => {
-          const subs = await streamr.getSubscriptions({ streamId: _conversation.streamId });
-          if(subs.length !== 0){
-              console.log(`Subscribing to ${getConversationProfile(_conversation)?.name || getConversationProfile(_conversation)?.address} metadata`);
-              await streamr.subscribe({ streamId: _conversation.streamId, partition: 1 },
-                  (data: Metadata) => {
-                      if(data.address !== ownProfile.address){
-                      setReceiveMetadata({ address: data.address, typing: data.typing, online: data.online });
-                      }
-                  });
+    useMountEffect(() => {
+      if(lastSentMetadata?.invite !== ''){
+        //Stop user from inviting a friend more than once every 10 seconds
+        let timeleft = 10;
+        let timer = setInterval(() => {
+          if(timeleft <= 1){
+            setLastSentMetadata(oldMetadata => ({...oldMetadata, invite: ''}));
+            setTimeRemaining(10);
+            clearInterval(timer);
           }
+          else{
+            timeleft -= 1;
+            setTimeRemaining(timeleft);
+          }
+        }, 1000)
+        return () => {
+          clearInterval(timer);
         }
-        if(_conversation.streamId !== ""){
-          loadMetadata();
-        }
-    }, [_conversation]);
+      }
+    }, [lastSentMetadata?.invite])
 
     //Send metadata to partner
     useEffect(() => {
@@ -35,6 +37,9 @@ export default function useMetadata(_conversation: Conversations){
           try{
             //Grant publish permissions to the delegate if it doesn't have them already
             if(!await streamr.isStreamPublisher(_conversation.streamId, streamrDelegate?.wallet.address)){
+              console.log(streamrDelegate?.wallet.address);
+              console.log(await streamr.getAddress())
+              console.log(_conversation.streamId)
               await streamr.grantPermissions(_conversation.streamId, 
                 {
                   user: streamrDelegate?.wallet.address,
@@ -49,6 +54,8 @@ export default function useMetadata(_conversation: Conversations){
                 address: ownProfile.address,
                 typing: sendMetadata.typing,
                 online: sendMetadata.online,
+                receipt: sendMetadata.receipt,
+                invite: sendMetadata.invite,
               },
             )
           }
@@ -58,11 +65,12 @@ export default function useMetadata(_conversation: Conversations){
           }
         }
         //Only send new metadata
-        if(_conversation.streamId !== "" && JSON.stringify(lastSentMetadata) !== JSON.stringify(sendMetadata)){
+        if(_conversation?.streamId && _conversation?.streamId !== "" && JSON.stringify(lastSentMetadata) !== JSON.stringify(sendMetadata)){
+          console.info('Published Metadata');
           setLastSentMetadata(sendMetadata);
           publishMetadata();
         }
-        }, [sendMetadata]);
+    }, [sendMetadata]);
 
-  return [receiveMetadata, setSendMetadata] as const;
+  return [setSendMetadata, timeRemaining] as const;
 };

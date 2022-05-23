@@ -8,13 +8,12 @@ import Mycelium from './conversations/Mycelium'
 
 type ConversationProps = {
     conversation: Conversations
-    metadata?: Metadata
     inviteConversation?: (conversation: Conversations) => void
     selectConversation: (conversation: Conversations) => void
     deleteConversation?: (conversation: Conversations) => void
 }
 
-export const Conversation = ({conversation, metadata, inviteConversation, selectConversation, deleteConversation}: ConversationProps) => {
+export const Conversation = ({conversation, inviteConversation, selectConversation, deleteConversation}: ConversationProps) => {
     return (
         <div
         className = {conversation.selected ? `${styles.conversationContainer} ${styles.selectedConversation}` : styles.conversationContainer}
@@ -24,7 +23,6 @@ export const Conversation = ({conversation, metadata, inviteConversation, select
                 conversation.type === ConversationType.Hypha ? 
                 <Hypha 
                 conversation={conversation} 
-                metadata={metadata} 
                 inviteConversation={inviteConversation} 
                 selectConversation={selectConversation} 
                 deleteConversation={deleteConversation}
@@ -32,7 +30,6 @@ export const Conversation = ({conversation, metadata, inviteConversation, select
                 : conversation.type === ConversationType.Hyphae ? 
                 <Hyphae 
                 conversation={conversation} 
-                metadata={metadata} 
                 inviteConversation={inviteConversation} 
                 selectConversation={selectConversation} 
                 deleteConversation={deleteConversation}
@@ -40,7 +37,6 @@ export const Conversation = ({conversation, metadata, inviteConversation, select
                 : conversation.type === ConversationType.Mycelium ? 
                 <Mycelium 
                 conversation={conversation} 
-                metadata={metadata} 
                 inviteConversation={inviteConversation} 
                 selectConversation={selectConversation} 
                 deleteConversation={deleteConversation}
