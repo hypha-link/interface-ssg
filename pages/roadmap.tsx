@@ -91,7 +91,21 @@ const roadmap = () => {
                 <div className={styles.circle}/>
                 <ul className={styles.checked}>
                     <li>Mycelium (Guilds)</li>
+                    <li>Invitation UI</li>
+                </ul>
+            </div>
+            {/* UX Improvements */}
+            <div>
+                <div className={styles.milestone}>
+                    <h1>UX Improvements</h1>
+                    <h3>Spring 2022</h3>
+                </div>
+                <div className={styles.circle}/>
+                <ul>
                     <li>Markdown</li>
+                    <li>Network Activity</li>
+                    <li>Message Context Menu</li>
+                    <li>Improved IPFS Integration</li>
                 </ul>
             </div>
             {/* Data Unions */}
@@ -103,19 +117,30 @@ const roadmap = () => {
                 <div className={styles.circle}/>
                 <ul>
                     <li>Data Unions for Mycelium</li>
-                    <li>Audio Chat</li>
                     <li>Android / IOS App</li>
                 </ul>
             </div>
+            {/* Audio Chat & Extensions */}
             <div>
                 <div className={styles.milestone}>
-                    <h1>Video Chat & Integrations</h1>
+                    <h1>Audio Chat & Extensions</h1>
                     <h3>Fall 2022</h3>
                 </div>
                 <div className={styles.circle}/>
                 <ul>
-                    <li>Video Chat</li>
+                    <li>Audio Chat</li>
                     <li>Browser Extension</li>
+                </ul>
+            </div>
+            {/* Video Chat & Integrations */}
+            <div>
+                <div className={styles.milestone}>
+                    <h1>Video Chat & Integrations</h1>
+                    <h3>Winter 2022</h3>
+                </div>
+                <div className={styles.circle}/>
+                <ul>
+                    <li>Video Chat</li>
                     <li>Integrations API</li>
                 </ul>
             </div>

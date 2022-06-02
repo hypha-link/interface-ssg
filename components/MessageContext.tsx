@@ -70,11 +70,11 @@ export const MessageContext = ({ show, value, cancel } : MessageContextProps ) =
                                 <button
                                     key={Math.random()}
                                     onClick={() => {
-                                        value(user?.name || user.address);
+                                        value(user.address);
                                         cancel();
                                     }}
                                 >
-                                {user?.name || user.address}
+                                {(user?.name || user.address).replaceAll(' ', '')}
                                 </button>
                             )
                         })}
@@ -85,7 +85,7 @@ export const MessageContext = ({ show, value, cancel } : MessageContextProps ) =
                     <div>
                         <button 
                             onClick={() => {
-                                value("Command 1");
+                                value("Example-Command");
                                 cancel();
                             }}
                         >
