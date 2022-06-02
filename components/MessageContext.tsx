@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styles from '../styles/MessageContext.module.css'
-import getSelectedConversation from "./hooks/useSelectedConversation";
+import useSelectedConversation from "./hooks/useSelectedConversation";
 import emoji from 'node-emoji';
 
 type MessageContextProps = {
@@ -16,7 +16,7 @@ enum ContextType {
 }
 
 export const MessageContext = ({ show, value, cancel } : MessageContextProps ) => {
-    const selectedConversation = getSelectedConversation();
+    const selectedConversation = useSelectedConversation();
     const [context, setContext] = useState<ContextType>(undefined);
 
     const users = selectedConversation.profile.filter((profile) => profile.address.includes(show.substring(1, show.length)));
@@ -51,6 +51,7 @@ export const MessageContext = ({ show, value, cancel } : MessageContextProps ) =
                         {emoji.search(show).map((item) => {
                             return(
                                 <button 
+                                    key={Math.random()}
                                     onClick={() => {
                                         value(item.emoji);
                                         cancel();

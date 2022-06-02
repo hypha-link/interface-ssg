@@ -29,7 +29,7 @@ export function Message({payload, selectMessage, deleteMessage}: MessageProps) {
   //Set to owner profile, otherwise set to address that matches profile
   const profile = sender === ownProfile.address ? ownProfile : selectedConversation.profile.find(_profile => _profile.address === sender);
   //Regex that finds all price feeds in the message
-  const priceFeedRegex = /\[[a-zA-Z]+,[0-9]*\.[0-9]+\]/g;
+  const priceFeedRegex = /\[[a-zA-Z0-9]+,[0-9]*\.[0-9]+\]/g;
   //Price feeds array
   const tokenFeedArr: JSX.Element[] = [];
 
@@ -47,9 +47,10 @@ export function Message({payload, selectMessage, deleteMessage}: MessageProps) {
         />
       )
     });
-    //Remove feed shortcode from the message
-    useMemo(() => setEditedMessage(message.replaceAll(priceFeedRegex, '')), [message]);
   }
+
+  //Remove feed shortcode from the message
+  useEffect(() => setEditedMessage(message.replaceAll(priceFeedRegex, '')), [tokenFeedArr]);
 
   return (
     <div
@@ -75,10 +76,11 @@ export function Message({payload, selectMessage, deleteMessage}: MessageProps) {
         {/* Message Content */}
         {tokenFeedArr}
         <ReactMarkdown
-          children={editedMessage}
           remarkPlugins={[[remarkGfm], [emoji, {emoticon: true}], [remarkImages]]}
           linkTarget={"_blank"}
-        />
+        >
+          {editedMessage}
+        </ReactMarkdown>
       </div>
     </div>
   );

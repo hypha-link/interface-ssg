@@ -19,10 +19,10 @@ export default function Index() {
         <section className={`${styles.hero} svgBackground svgWaveV`}>
           <div className={`${styles.desc}`}>
             <div>
-              <h2>Decentralized communication where you're the owner</h2>
+              <h2>Decentralized communication where you&apos;re the owner</h2>
             </div>
             <p>We believe that private communication is the primary building block for making great connections with others. 
-              Unfortunately, there aren't many options to choose from without watchful eyes on your data.
+              Unfortunately, there aren&apos;t many options to choose from without watchful eyes on your data.
               The only way that we can change this is by challenging the status quo. 
               Hypha is taking on this difficult challenge by decentralizing communication as we know it.</p>
           </div>

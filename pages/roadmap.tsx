@@ -11,7 +11,7 @@ const roadmap = () => {
             <div>
                 <h1>Roadmap</h1>
                 <p>
-                    Follow along Hypha's development with this handy roadmap! View our current progress, or the planned direction of the project below.
+                    Follow along Hypha&apos;s development with this handy roadmap! View our current progress, or the planned direction of the project below.
                 </p>
             </div>
         </section>
