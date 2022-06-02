@@ -6,12 +6,10 @@ import { StateContext } from '../context/AppState'
 import getProfileImage from '../../get/getProfileImage'
 import getShortAddress from '../../get/getShortAddress'
 
-const IPFS = require('ipfs');
-
 export const Profile = () => {
-    const { selfId, ownProfile } = useContext(StateContext);
+    const { selfId, ownProfile, ipfs } = useContext(StateContext);
 
-    const changeImage = async (newImage) => {
+    const changeImage = async (newImage: string) => {
         await selfId.merge('basicProfile', {
             image: {
                 original: {
@@ -22,18 +20,26 @@ export const Profile = () => {
         });
     }
 
-    async function onChange(e) {
+    async function onChange(currentTarget: EventTarget & HTMLInputElement) {
+        console.log(currentTarget.files[0].name);
         try {
-            const ipfs = await IPFS.create({ repo: "uploaded-files"});
-            const file = e.target.files[0]
-            const uploadedFile = ipfs.add(file);
-            uploadedFile.then((res) => {
-                changeImage("ipfs://" + res.path);
-            });
+          //Upload file, wait until completed, then send message
+          ipfs.add(
+            {
+              path: currentTarget.files[0].name,
+              content: currentTarget.files[0]
+            }, 
+            {
+              wrapWithDirectory: true
+            }
+          ).then((res) => {
+            changeImage(`https://ipfs.io/ipfs/${res.cid.toString()}/${currentTarget.files[0].name}`);
+            console.log(res);
+          });
         } catch (error) {
-            console.log('Error uploading file: ', error)
+          console.log('Error uploading file: ', error)
         }
-    }
+      }
 
     return (
         <div id={styles.profile}>

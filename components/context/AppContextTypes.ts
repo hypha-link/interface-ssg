@@ -1,5 +1,6 @@
 import { SelfID } from "@self.id/web";
 import { providers, Wallet } from "ethers";
+import { IPFS } from "ipfs-core"
 import StreamrClient from "streamr-client";
 import { Conversations, MessagePayload, Metadata, Profile } from "../utils/Types";
 
@@ -8,6 +9,7 @@ export interface GlobalState{
     streamr: StreamrClient,
     streamrDelegate: { client: StreamrClient, wallet: Wallet }
     selfId: SelfID,
+    ipfs: IPFS,
     ownProfile: Profile,
     notifications: Notification[],
     conversations: Conversations[],
@@ -21,6 +23,7 @@ export enum Actions{
     SET_ACCOUNT = 'SET_ACCOUNT',
     SET_STREAMR = 'SET_STREAMR',
     SET_SELFID = 'SET_SELFID',
+    SET_IPFS = 'SET_IPFS',
     SET_PROFILE = 'SET_PROFILE',
     ADD_NOTIFICATION = 'ADD_NOTIFICATION',
     SET_CONVERSATIONS = 'SET_CONVERSATIONS',
@@ -45,6 +48,7 @@ type SetWeb3Provider = Action<Actions.SET_WEB3_PROVIDER, providers.Web3Provider>
 type SetAccount = Action<Actions.SET_ACCOUNT, string>
 type SetStreamr = Action<Actions.SET_STREAMR, Wallet>
 type SetSelfId = Action<Actions.SET_SELFID, SelfID>
+type SetIpfs = Action<Actions.SET_IPFS, IPFS>
 type SetProfile = Action<Actions.SET_PROFILE, Profile>
 type AddNotification = Action<Actions.ADD_NOTIFICATION, Notification>
 type SetConversations = Action<Actions.SET_CONVERSATIONS, Conversations[]>
@@ -64,6 +68,7 @@ export type ActionType =
 | SetAccount
 | SetStreamr
 | SetSelfId
+| SetIpfs
 | SetProfile
 | AddNotification
 | SetConversations

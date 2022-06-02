@@ -4,7 +4,12 @@ import { ManageData } from './settings/ManageData';
 import { Experimental } from './settings/Experimental';
 import styles from '../styles/settings.module.css'
 
-export const Settings = (props) => {
+type SettingsProps = {
+    show: boolean
+    cancel: () => void
+}
+
+export const Settings = ({ show, cancel } : SettingsProps ) => {
     const [tab, setTab] = useState('profile');
 
     const selectedTab = () => {
@@ -25,7 +30,7 @@ export const Settings = (props) => {
     }
 
     return (
-        props.show ?
+        show ?
         <div id={styles.settings}>
             <nav>
                 <h3>User Settings</h3>
@@ -44,7 +49,7 @@ export const Settings = (props) => {
                 <button
                 className={`${styles.cancel} hypha-button`}
                 onClick={() => {
-                    props.cancel();
+                    cancel();
                 }}
                 >
                 X

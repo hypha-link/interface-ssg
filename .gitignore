@@ -35,3 +35,6 @@ yarn-error.log*
 
 # local vscode folder
 .vscode
+
+# ipfs files
+uploaded-files/

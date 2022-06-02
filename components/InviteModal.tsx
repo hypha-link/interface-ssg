@@ -1,6 +1,5 @@
 import React, {useContext, useEffect, useMemo, useState} from 'react'
 import getConversationName from '../get/getConversationName';
-import getConversationProfile from '../get/getConversationProfile';
 import { ConversationType } from '../services/Streamr_API';
 import styles from '../styles/invitemodal.module.css'
 import { StateContext } from './context/AppState'
@@ -8,7 +7,14 @@ import { Conversation } from './Conversation';
 import usePublishMetadata from './hooks/usePublishMetadata';
 import { Conversations } from './utils/Types';
 
-export const InviteModal = ({invitedConversation, createHyphae, openMyceliumModal, cancel}: { invitedConversation: Conversations, createHyphae: () => void, openMyceliumModal: () => void, cancel: () => void}) => {
+type InviteModalProps = {
+  invitedConversation: Conversations
+  createHyphae: () => void
+  openMyceliumModal: () => void
+  cancel: () => void
+}
+
+export const InviteModal = ({ invitedConversation, createHyphae, openMyceliumModal, cancel }: InviteModalProps) => {
   const { conversations } = useContext(StateContext);
   const [localConversations, setLocalConversations] = useState<Conversations[]>(conversations);
   const invitee = useMemo(() => localConversations.find((_conversation) => _conversation.selected === true && _conversation.type !== ConversationType.Hypha), [localConversations]);

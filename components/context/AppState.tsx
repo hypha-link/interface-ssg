@@ -8,6 +8,7 @@ export const initialState: GlobalState = {
     streamr: undefined,
     streamrDelegate: undefined,
     selfId: undefined,
+    ipfs: undefined,
     ownProfile: undefined,
     notifications: [],
     conversations: [],

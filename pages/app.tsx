@@ -12,6 +12,7 @@ import HyphaLogo from "../public/logo/hypha-01.svg"
 import Cog from "../public/fa/cog.svg"
 
 import { useEthers } from "@usedapp/core";
+import { create } from "ipfs-core";
 
 import { ConnectButton } from "../components/ConnectButton";
 import { Message } from "../components/Message";
@@ -70,6 +71,7 @@ function App({ data }) {
         })
         dispatch({ type: Actions.SET_SELFID, payload: selfIdClient });
         dispatch({ type: Actions.SET_PROFILE, payload: {address: ownAddress, ...await selfIdClient.get('basicProfile')} });
+        dispatch({ type: Actions.SET_IPFS, payload: await create({ repo: "uploaded-files"})});
       }
       catch{
         console.log("User needs an Ethereum wallet to connect to Hypha.");

@@ -1,16 +1,111 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from '../styles/MessageContext.module.css'
+import getSelectedConversation from "./hooks/useSelectedConversation";
+import emoji from 'node-emoji';
 
-export const MessageContext = (props) => {
+type MessageContextProps = {
+    show: string
+    value: (value: string) => void
+    cancel: () => void
+}
+
+enum ContextType {
+    Emoji,
+    User,
+    Command,
+}
+
+export const MessageContext = ({ show, value, cancel } : MessageContextProps ) => {
+    const selectedConversation = getSelectedConversation();
+    const [context, setContext] = useState<ContextType>(undefined);
+
+    const users = selectedConversation.profile.filter((profile) => profile.address.includes(show.substring(1, show.length)));
+
+    useEffect(() => {
+        //Display if user is trying to type an emoji
+        if(show.length >= 3 && show.startsWith(':')){
+            setContext(ContextType.Emoji);
+        }
+        //Display if user is trying to @ someone
+        else if(show.startsWith('@')){
+            //Check if any users match query
+            if(users.length > 0){
+                setContext(ContextType.User);
+            }
+        }
+        //Display if user is trying to use a built in command
+        else if(show.startsWith('/')){
+            setContext(ContextType.Command);
+        }
+        //Show nothing
+        else{
+            setContext(undefined);
+        }
+    }, [show])
+    
+    const selectedContext = () => {
+        switch(context){
+            case ContextType.Emoji:
+                return (
+                    <div>
+                        {emoji.search(show).map((item) => {
+                            return(
+                                <button 
+                                    onClick={() => {
+                                        value(item.emoji);
+                                        cancel();
+                                    }}
+                                >
+                                {item.emoji}
+                                </button>
+                            )
+                        })}
+                    </div>
+                );
+            case ContextType.User:
+                return (
+                    <div>
+                        {users.map((user) => {
+                            return(
+                                <button
+                                    key={Math.random()}
+                                    onClick={() => {
+                                        value(user?.name || user.address);
+                                        cancel();
+                                    }}
+                                >
+                                {user?.name || user.address}
+                                </button>
+                            )
+                        })}
+                    </div>
+                );
+            case ContextType.Command:
+                return (
+                    <div>
+                        <button 
+                            onClick={() => {
+                                value("Command 1");
+                                cancel();
+                            }}
+                        >
+                        Command 1
+                        </button>
+                    </div>
+                );
+        }
+    }
+
     return (
-        <section className="overlay" id={styles.messageContext} onBlur={(e) => props.onBlur(e)}>
-            <div>
-                <button onClick={() => props.value("😃")}>&#x1F603;</button>
-                <button onClick={() => props.value("👋")}>&#x1F44B;</button>
-                <button onClick={() => props.value("🤣")}>&#x1F923;</button>
-                <button onClick={() => props.value("🤗")}>&#x1F917;</button>
-                <button onClick={() => props.value("🤠")}>&#x1F920;</button>
-            </div>
+        context !== undefined ?
+        <section 
+            className="overlay" 
+            id={styles.messageContext} 
+            onBlur={() => cancel()}
+        >
+            {selectedContext()}
         </section>
+        :
+        <></>
     )
 }

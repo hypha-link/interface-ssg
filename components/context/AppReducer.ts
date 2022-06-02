@@ -39,6 +39,11 @@ export default function AppReducer(state: GlobalState, action: ActionType): Glob
                 ...state,
                 selfId: action.payload
             };
+        case Actions.SET_IPFS:
+            return {
+                ...state,
+                ipfs: action.payload
+            }
         case Actions.SET_PROFILE:
             return {
                 ...state,

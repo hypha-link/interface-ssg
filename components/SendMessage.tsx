@@ -1,102 +1,63 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import styles from '../styles/SendMessage.module.css'
 import { MessageContext } from "./MessageContext";
 import { ChainlinkFeeds } from "./ChainlinkFeeds";
 import { EmojiMenu } from "./EmojiMenu";
+import { StateContext } from "./context/AppState";
 
-const IPFS = require('ipfs');
+type SendMessageProps = {
+  disable: boolean
+  typing: (typing: boolean) => void
+  sendMessage: (messageText: string) => void
+}
 
-export const SendMessage = ( props ) => {
-  const { disable } :
-  {
-    disable: boolean,
-  } = props;
+export const SendMessage = ( {disable, typing, sendMessage} : SendMessageProps ) => {
+  const { ipfs } = useContext(StateContext);
   const [inputValue, setInputValue] = useState("");
-  const [showContext, setShowContext] = useState<any>();
-  const [showEmojiMenu, setShowEmojiMenu] = useState<any>();
-  const [showChainlinkFeeds, setShowChainlinkFeeds] = useState<any>();
+  const [showMessageContext, setShowMessageContext] = useState<string>('');
+  const [showEmojiMenu, setShowEmojiMenu] = useState<boolean>(false);
+  const [showChainlinkFeeds, setShowChainlinkFeeds] = useState<boolean>(false);
 
-  const keyHandler = (e) => {
-    if (e.key === "Enter" && inputValue.trim() !== "") {
+  const keyHandler = (keyEvent: React.KeyboardEvent<HTMLInputElement>) => {
+    if (keyEvent.key === "Enter" && inputValue.trim() !== "") {
 
       //createMessage();
-      props.sendMessage(inputValue);
+      sendMessage(inputValue);
       setInputValue("");
-      props.typing(false);
+      typing(false);
     }
   };
 
-  const buttonHandler = (e) => {
+  const buttonHandler = () => {
     if (inputValue.trim() !== ""){
 
       //createMessage();
-      props.sendMessage(inputValue);
+      sendMessage(inputValue);
       setInputValue("");
-      props.typing(false);
+      typing(false);
     }
   };
 
-  const inputChangeHandler = (e) => {
-    setInputValue(e.target.value);
-    props.typing(e.target.value !== "");
+  const inputChangeHandler = (value: string) => {
+    setInputValue(value);
+    typing(value !== '' && !value.startsWith('@') && !value.startsWith(':') && !value.startsWith('/'));
   }
 
-  function createChainlinkFeeds(e){
-    if(e._reactName === 'onClick' && showChainlinkFeeds === undefined){
-      setShowChainlinkFeeds(
-        <ChainlinkFeeds
-          value={(val) => {
-            setInputValue(inputValue + val);
-            createChainlinkFeeds("");
-            }}
-          onBlur={(e) => createChainlinkFeeds(e)}
-        />
-      )
-    }
-    else{
-      setShowChainlinkFeeds(undefined);
-    }
-  }
-
-  function createEmojiMenu(e){
-    if(e._reactName === 'onClick' && showEmojiMenu === undefined){
-      setShowEmojiMenu(
-        <EmojiMenu
-          value={(val) => {
-            setInputValue(inputValue + val);
-            createEmojiMenu("");
-          }}
-          onBlur={(e) => createEmojiMenu(e)}
-        />
-      )
-    }
-    else{
-      setShowEmojiMenu(undefined);
-    }
-  }
-
-  function createMessageContext(e){
-    if(e.target.value.length >= 3 && (e.target.value[0] === ":" || e.target.value[0] === "/")){
-      console.log("Open message context");
-      setShowContext(
-      <MessageContext
-        value={(val) => setInputValue(inputValue + val)}
-        onBlur={(e) => createMessageContext(e)}
-      />
-      );
-    }
-    else{
-      setShowContext(undefined);
-    }
-  }
-
-  async function onChange(e) {
+  async function onChange(currentTarget: EventTarget & HTMLInputElement) {
+    console.log(currentTarget.files[0].name);
     try {
-      const ipfs = await IPFS.create({ repo: "uploaded-files"});
-      const file = e.target.files[0]
-      const uploadedFile = ipfs.add(file);
-      uploadedFile.then((res) => {
-        props.sendMessage("https://ipfs.io/ipfs/" + res.path);
+      //Upload file, wait until completed, then send message
+      ipfs.add(
+        {
+          path: currentTarget.files[0].name,
+          content: currentTarget.files[0]
+        }, 
+        {
+          wrapWithDirectory: true
+        }
+      ).then((res) => {
+        sendMessage(`https://ipfs.io/ipfs/${res.cid.toString()}/${currentTarget.files[0].name}`);
+        console.log(res);
       });
     } catch (error) {
       console.log('Error uploading file: ', error)
@@ -107,7 +68,7 @@ export const SendMessage = ( props ) => {
     <section id={styles.sendMessage}>
       <div>
         <label id={styles.addFileLabel} htmlFor={styles.addFile}>+</label>
-        <input id={styles.addFile} type="file" onChange={onChange} disabled={disable}></input>
+        <input id={styles.addFile} type="file" onChange={({currentTarget}) => onChange(currentTarget)} disabled={disable}></input>
       </div>
       <input
         id={styles.messageText}
@@ -116,27 +77,43 @@ export const SendMessage = ( props ) => {
         placeholder="Message"
         autoComplete="off"
         value={inputValue}
-        onChange={(e) => inputChangeHandler(e)}
-        onInput={(e) => createMessageContext(e)}
-        onKeyPress={(e) => keyHandler(e)}
+        onChange={({currentTarget}) => inputChangeHandler(currentTarget.value)}
+        onInput={({currentTarget}) => setShowMessageContext(currentTarget.value)}
+        onKeyPress={(keyEvent) => keyHandler(keyEvent)}
         disabled={disable}
       />
-      {showContext}
+      <MessageContext
+        show={showMessageContext}
+        value={(value: string) => setInputValue(inputValue + value)}
+        cancel={() => setShowMessageContext('')}
+      />
       <button
         id={styles.chainlinkFeed}
-        onClick={(e) => createChainlinkFeeds(e)}
+        onClick={() => setShowChainlinkFeeds(!showChainlinkFeeds)}
         disabled={disable}
       >&#x2B21;</button>
-      {showChainlinkFeeds}
+      <ChainlinkFeeds
+        show={showChainlinkFeeds}
+        value={(value: string) => {
+          setInputValue(inputValue + value);
+        }}
+        cancel={() => setShowChainlinkFeeds(!showChainlinkFeeds)}
+      />
       <button
         id={styles.pickEmoji}
-        onClick={(e) => createEmojiMenu(e)}
+        onClick={() => setShowEmojiMenu(!showEmojiMenu)}
         disabled={disable}
       >&#x1F60A;</button>
-      {showEmojiMenu}
+      <EmojiMenu
+        show={showEmojiMenu}
+        value={(value: string) => {
+          setInputValue(inputValue + value);
+        }}
+        cancel={() => setShowEmojiMenu(!showEmojiMenu)}
+      />
       <button
         id={styles.messageSubmit} 
-        onClick={(e) => buttonHandler(e)}
+        onClick={() => buttonHandler()}
         disabled={disable}
       >Submit</button>
     </section>

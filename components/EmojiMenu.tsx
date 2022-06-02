@@ -2,7 +2,13 @@ import React from 'react'
 import styles from '../styles/emojimenu.module.css'
 import emojis from 'emojis-list';
 
-export const EmojiMenu = (props) => {
+type EmojiMenuProps = {
+    show: boolean
+    value: (value: string) => void
+    cancel: () => void
+}
+
+export const EmojiMenu = ({ show, value, cancel } : EmojiMenuProps) => {
     const emojiArr = [];
     for(let i = 1749; i < 1817; i++){
         emojiArr.push(emojis[i]);
@@ -22,12 +28,23 @@ export const EmojiMenu = (props) => {
     emojiArr.push(emojis[2601]);
     emojiArr.push(emojis[2910]);
     return (
-        <section className="overlay" id={styles.emojiMenu} onBlur={(e) => props.onBlur(e)}>
+        show ?
+        <section className="overlay" id={styles.emojiMenu} onBlur={() => cancel()}>
             {emojiArr.map((emoji) => {
                 return(
-                    <button key={emoji} onClick={() => props.value(emoji)}>{emoji}</button>
+                    <button 
+                        key={emoji} 
+                        onClick={() => {
+                            value(emoji);
+                            cancel();
+                        }}
+                    >
+                    {emoji}
+                    </button>
                 )
             })}
         </section>
+        :
+        <></>
     )
 }

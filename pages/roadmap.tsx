@@ -2,7 +2,6 @@ import styles from '../styles/roadmap.module.css'
 import React from 'react'
 import NavigationBar from '../components/NavigationBar'
 import Footer from '../components/Footer'
-import HyphaLogo from "../public/logo/hypha-01.svg"
 
 const roadmap = () => {
   return (
