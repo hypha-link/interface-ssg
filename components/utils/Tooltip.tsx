@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import styles from "../../styles/tooltip.module.css"
 
+type TooltipProps = {
+  children: React.ReactNode
+  content: string
+  direction?: Direction
+  delay?: number
+}
+
 export enum Direction{
     top = "top",
     right = "right",
@@ -8,13 +15,7 @@ export enum Direction{
     bottom = "bottom",
 }
 
-export const Tooltip = (props) => {
-const { content, direction, delay }: 
-{
-    content: string,
-    direction: Direction,
-    delay: number,
-} = props;
+export const Tooltip = ({ children, content, direction, delay } : TooltipProps) => {
 //Tracks mouse entering/leaving container
 const [active, setActive] = useState(false);
 //Whether we display the tooltip
@@ -41,7 +42,7 @@ const [display, setDisplay] = useState(false);
       onMouseLeave={() => setActive(false)}
     >
       {/* Wrapping */}
-      {props.children}
+      {children}
       {display && (
         <div className={`${styles.tooltip} ${styles[direction] || styles[Direction.top]}`}>
           {content}

@@ -34,7 +34,7 @@ export default function Hypha({conversation, inviteConversation, selectConversat
       }}
     >
       <Tooltip key={Math.random()} content={profile?.address}>
-        <ProfilePicture profile={profile} metadata={conversation.metadata}/>
+        <ProfilePicture profile={profile} metadata={conversation.metadata} disableClick={false}/>
         <p>
           {getConversationName(conversation)}
         </p>

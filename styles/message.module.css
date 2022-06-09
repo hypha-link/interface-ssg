@@ -15,11 +15,10 @@
   margin: 0;
 }
 
-.message img {
+.message div img {
   border-radius: 5px;
   max-height: 20vh;
   max-width: 20vw;
-  margin: 0 1em 0 0;
 }
 
 /*The div that holds message profile*/
@@ -37,10 +36,6 @@
   align-items: center;
   margin-bottom: 1em;
   white-space: nowrap;
-}
-
-.message > div > img {
-  object-fit: contain;
 }
 
 #messageID {

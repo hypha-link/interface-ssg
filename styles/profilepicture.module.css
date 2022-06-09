@@ -1,7 +1,6 @@
 .profilePictureContainer{
     width: fit-content;
     position: relative;
-    cursor: pointer;
 }
 
 .profilePictureContainer img {

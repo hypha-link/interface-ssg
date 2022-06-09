@@ -1,16 +1,15 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
-import styles from '../styles/Message.module.css';
-import Image from "next/image";
+import React, { useContext, useEffect, useState } from "react";
+import styles from '../styles/message.module.css';
 import { TokenFeed } from "./TokenFeed";
 import ContextMenu from "./ContextMenu";
 import { MessagePayload } from "./utils/Types";
-import getProfileImage from "../get/getProfileImage";
 import { StateContext } from "./context/AppState";
 import useSelectedConversation from "./hooks/useSelectedConversation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import emoji from "remark-emoji";
 import remarkImages from "remark-images";
+import ProfilePicture from "./ProfilePicture";
 
 type MessageProps = {
   payload: MessagePayload
@@ -64,10 +63,10 @@ export function Message({payload, selectMessage, deleteMessage}: MessageProps) {
       <ContextMenu 
       anchorPoint={{x: anchorPoint.x, y: anchorPoint.y}}
       localAnchorPoint={(ap) => setAnchorPoint(ap)}
-      copy={() => {navigator.clipboard.writeText(message)}}
+      copy={async () => {navigator.clipboard.writeText(message)}}
       delete={() => {deleteMessage(payload)}}
       />
-      <Image src={getProfileImage(profile)} alt="User" height="100%" width="100%" objectFit="contain" />
+      <ProfilePicture profile={profile} sizePx={75}/>
       <div>
         <div>
           <p id={styles.messageID}>{profile?.name ? profile.name : sender}</p>

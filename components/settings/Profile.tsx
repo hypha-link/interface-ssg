@@ -1,10 +1,9 @@
 import React, { useContext } from 'react'
-import Image from 'next/image'
 import styles from '../../styles/settings.module.css'
 import { Edit, EditType } from '../utils/Edit'
 import { StateContext } from '../context/AppState'
-import getProfileImage from '../../get/getProfileImage'
 import getShortAddress from '../../get/getShortAddress'
+import ProfilePicture from '../ProfilePicture'
 
 export const Profile = () => {
     const { selfId, ownProfile, ipfs } = useContext(StateContext);
@@ -45,18 +44,20 @@ export const Profile = () => {
         <div id={styles.profile}>
             <h2>Profile</h2>
             <div>
-                <div>
-                    <p>{ownProfile?.name ? ownProfile.name : getShortAddress(ownProfile?.address)}</p>
-                    <Edit type={EditType.Name}/>
-                </div>
-                <div>
-                    <p>{ownProfile && ownProfile?.description ? ownProfile.description : ''}</p>
-                    <Edit type={EditType.Description}/>
-                </div>
-            </div>
-            <div>
+              <h3>Username:</h3>
+              <div>
+                  <p>{ownProfile?.name ? ownProfile.name : getShortAddress(ownProfile?.address)}</p>
+                  <Edit type={EditType.Name}/>
+              </div>
+              <h3>Description:</h3>
+              <div>
+                  <p>{ownProfile && ownProfile?.description ? ownProfile.description : ''}</p>
+                  <Edit type={EditType.Description}/>
+              </div>
+              <h3>Picture</h3>
+              <div>
                 <label id={styles.addFileLabel} htmlFor={styles.addFile}>
-                    <Image src={getProfileImage(ownProfile)} alt="Profile Image" height={"100%"} width={"100%"}/>
+                    <ProfilePicture profile={ownProfile} sizePx={150}/>
                     <div className={styles.imageOverlay}>Change</div>
                 </label>
                 <input 
@@ -64,7 +65,8 @@ export const Profile = () => {
                 type="file" 
                 onChange={() => window.open("https://clay.self.id/me/profile/edit")} 
                 disabled={selfId === undefined}
-                ></input>
+                />
+              </div>
             </div>
         </div>
     )
