@@ -5,6 +5,7 @@ import "@fontsource/montserrat-alternates"
 import "@fontsource/montserrat"
 import Head from 'next/head'
 import AppState from '../components/context/AppState'
+import 'nextra-theme-docs/style.css'
 
 const config: Config = {
   networks: [Polygon],

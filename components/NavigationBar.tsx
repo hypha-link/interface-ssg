@@ -16,7 +16,7 @@ export default function NavigationBar (){
             </Link>
             <div className={hideMobileMenu ? styles.hideMobileMenu : undefined}>
                 <ul>
-                    <li><a href='#learn'>Learn</a></li>
+                    <li><Link href='/docs/welcome'><a>Learn</a></Link></li>
                     <li><Link href='/network'><a>Network Activity</a></Link></li>
                     <li><Link href="/roadmap"><a>Roadmap</a></Link></li>
                 </ul>
