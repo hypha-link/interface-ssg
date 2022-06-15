@@ -9,6 +9,7 @@ import useMountEffect from '../../components/hooks/useMountEffect';
 import NavigationBar from '../../components/NavigationBar';
 import Footer from '../../components/Footer';
 import ProfileCard from '../../components/ProfileCard';
+import Head from 'next/head';
 
 export default function Address() {
   const router = useRouter();
@@ -47,6 +48,9 @@ export default function Address() {
   return (
     isAddress(sAddress) ?
     <>
+      <Head>
+        <title>{profile?.name || sAddress} | Hypha</title>
+      </Head>
       <NavigationBar/>
       <div className={styles.address}>
         <ProfileCard profile={profile}/>

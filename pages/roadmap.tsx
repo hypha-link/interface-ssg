@@ -2,10 +2,14 @@ import styles from '../styles/roadmap.module.css'
 import React from 'react'
 import NavigationBar from '../components/NavigationBar'
 import Footer from '../components/Footer'
+import Head from 'next/head'
 
 const roadmap = () => {
   return (
     <>
+        <Head>
+            <title>Roadmap | Hypha</title>
+        </Head>
         <NavigationBar/>
         <section id={styles.title}>
             <div>

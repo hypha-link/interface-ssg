@@ -39,6 +39,7 @@ import useStreamrSession from '../components/hooks/useStreamrSession';
 import { InviteModal } from "../components/InviteModal";
 import { MyceliumCreationModal } from "../components/MyceliumCreationModal";
 import useSelectedConversation from "../components/hooks/useSelectedConversation";
+import Head from "next/head";
 
 function App({ data }) {
   const { activateBrowserWallet } = useEthers();
@@ -452,6 +453,9 @@ function App({ data }) {
 
   return (
     <>
+      <Head>
+        <title>App | Hypha</title>
+      </Head>
       {/* Top Bar */}
       <section id={styles.topBar}>
           <Link href="/">
