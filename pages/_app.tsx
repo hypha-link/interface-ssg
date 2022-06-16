@@ -1,3 +1,5 @@
+// import 'nextra-theme-docs/style.css'
+import '../styles/globalnextra.css'
 import '../styles/global.css'
 import { Config, DAppProvider, Polygon} from '@usedapp/core'
 import { AppProps } from 'next/dist/shared/lib/router/router'

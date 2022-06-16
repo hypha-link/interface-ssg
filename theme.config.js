@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import 'nextra-theme-docs/style.css'
 
 export default {
   projectLink: 'https://gitlab.com/hypha-link/interface', // GitHub link in the navbar
