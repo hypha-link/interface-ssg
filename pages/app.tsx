@@ -562,8 +562,4 @@ function App({ data }) {
   );
 }
 
-export const getServerSideProps: GetStaticProps = async () => { 
-  return { props: {} }
-}
-
 export default App;

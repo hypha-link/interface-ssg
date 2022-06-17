@@ -6,8 +6,10 @@ const withNextra = require("nextra")({
   // optional: add `unstable_staticImage: true` to enable Nextra's auto image import
 });
 
+const withExportImages = require('next-export-optimize-images');
+
 //Plugins go inside array, & configurations after
-module.exports = withPlugins([withNextra], {
+module.exports = withPlugins([withNextra, withExportImages], {
   trailingSlash: true,
   reactStrictMode: true,
   exportPathMap: async function (

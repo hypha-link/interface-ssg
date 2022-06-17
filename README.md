@@ -1,6 +1,6 @@
 #Interface
 
-This is the interface for Hypha. Visit https://hypha.link for a live demo. Work in-progress.
+This is the SSG (Static Site Generation) version of the interface for Hypha. Visit https://hypha.link for a live demo. Work in-progress.
 
 ## Getting Started
 
