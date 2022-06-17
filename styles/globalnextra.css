@@ -341,8 +341,8 @@ body {
 .nextra-container article a {
   --tw-text-opacity: 1;
   color: rgba(66, 153, 225, var(--tw-text-opacity));
-  text-decoration: underline;
-  text-underline-position: under;
+  /* text-decoration: underline; */
+  /* text-underline-position: under; */
 }
 .nextra-container p {
   line-height: 1.75rem;
@@ -949,8 +949,11 @@ body {
   --tw-text-opacity: 1;
   color: rgba(74, 85, 104, var(--tw-text-opacity));
 }
-.nextra-container h2 a {
+/* Added h3 and removed blue color */
+.nextra-container h2 a,
+.nextra-container h3 a {
   text-decoration: none;
+  color: inherit;
 }
 .nextra-container nav {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);

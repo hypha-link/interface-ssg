@@ -1,11 +1,12 @@
+/* eslint-disable import/no-anonymous-default-export */
 import Image from 'next/image'
 
 export default {
   projectLink: 'https://gitlab.com/hypha-link/interface', // GitHub link in the navbar
   docsRepositoryBase: 'https://gitlab.com/hypha-link/interface/pages/docs', // base URL for the docs repository
   titleSuffix: ' | Hypha Docs',
-  nextLinks: true,
-  prevLinks: true,
+  nextLinks: false,
+  prevLinks: false,
   search: true,
   customSearch: null, // customizable, you can use algolia for example
   darkMode: true,
