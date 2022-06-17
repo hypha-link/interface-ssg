@@ -111,6 +111,7 @@ const roadmap = () => {
                     <li>Message Context Menu</li>
                     <li>Improved IPFS Integration</li>
                     <li>Dedicated Profile Pages</li>
+                    <li>Documentation</li>
                 </ul>
             </div>
             {/* Data Unions */}
