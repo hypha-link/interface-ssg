@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import styles from '../styles/TokenFeed.module.css'
+import styles from '../styles/tokenfeed.module.css'
 import Image from 'next/image';
 import {priceTwoDec, tokenAddr} from '../services/Chainlink_API';
 import cryptoManifest from '../node_modules/crypto-icons-plus/manifest.min.json'

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import styles from '../styles/ChainlinkFeeds.module.css'
+import styles from '../styles/chainlinkfeeds.module.css'
 import { TokenFeed } from './TokenFeed'
 import priceFeed, { tokenAddr, tokenAddrArr } from '../services/Chainlink_API'
 import { ethers } from "ethers"
