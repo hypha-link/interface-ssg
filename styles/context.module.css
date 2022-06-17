@@ -1,0 +1,42 @@
+/*CONTEXT MENU*/
+
+#contextMenu {
+  display: none;
+  flex-direction: column;
+  position: fixed;
+  list-style: none;
+  background-color: var(--uiBGColor);
+  border-radius: 0.2em;
+  padding: 0.4em 0 0.4em 0;
+  z-index: 10;
+}
+
+#contextMenu li button {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  color: var(--inputColor);
+  background-color: transparent;
+  border: none;
+}
+
+#contextMenu li button:hover {
+  color: var(--inputHoverColor);
+  background-color: var(--inputHoverBGColor);
+  cursor: pointer;
+}
+
+#contextMenu li button p {
+  margin: 0;
+  padding: 0;
+  padding: 0.5em 2em 0.5em 2em;
+}
+
+#contextMenu li button #context-icon {
+  padding: 0.5em 0 0.5em 0.5em;
+  width: 16px;
+}
+
+.showContextMenu {
+  display: flex !important;
+}
