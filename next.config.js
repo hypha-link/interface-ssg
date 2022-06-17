@@ -8,13 +8,17 @@ const withNextra = require("nextra")({
 
 //Plugins go inside array, & configurations after
 module.exports = withPlugins([withNextra], {
+  trailingSlash: true,
   reactStrictMode: true,
   exportPathMap: async function (
     defaultPathMap,
     { dev, dir, outDir, distDir, buildId }
   ) {
     return {
-      "/": { page: "/" },
+      '/': { page: '/' },
+      '/app': { page: '/app' },
+      '/network': { page: '/network' },
+      '/roadmap': { page: '/roadmap' },
     };
   },
   images: {
