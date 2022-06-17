@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import styles from '../styles/MessageContext.module.css'
+import styles from '../styles/messagecontext.module.css'
 import useSelectedConversation from "./hooks/useSelectedConversation";
 import emoji from 'node-emoji';
 

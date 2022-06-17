@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import styles from '../styles/SendMessage.module.css'
+import styles from '../styles/sendmessage.module.css'
 import { MessageContext } from "./MessageContext";
 import { ChainlinkFeeds } from "./ChainlinkFeeds";
 import { EmojiMenu } from "./EmojiMenu";

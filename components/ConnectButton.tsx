@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import styles from '../styles/ConnectButton.module.css'
+import styles from '../styles/connectbutton.module.css'
 import { StateContext } from './context/AppState';
 import ProfilePicture from './ProfilePicture';
 import getShortAddress from '../get/getShortAddress';
