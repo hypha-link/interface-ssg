@@ -2,7 +2,7 @@ import styles from '../../styles/conversation.module.css'
 import { useSendTransaction } from '@usedapp/core';
 import React, { useState } from 'react'
 import { Conversations } from '../utils/Types';
-import ProfilePicture from '../ProfilePicture';
+import ProfileImage from '../ProfileImage';
 import { Tooltip } from '../utils/Tooltip';
 import ContextMenu from '../ContextMenu';
 import { utils } from 'ethers';
@@ -34,7 +34,7 @@ export default function Hypha({conversation, inviteConversation, selectConversat
       }}
     >
       <Tooltip key={Math.random()} content={profile?.address}>
-        <ProfilePicture profile={profile} metadata={conversation.metadata} disableClick={false}/>
+        <ProfileImage profile={profile} metadata={conversation.metadata} disableClick={false}/>
         <p>
           {getConversationName(conversation)}
         </p>

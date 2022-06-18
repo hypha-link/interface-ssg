@@ -1,20 +1,20 @@
 import React, { useState } from 'react'
 import Image from 'next/image';
-import styles from '../styles/profilepicture.module.css'
+import styles from '../styles/profileimage.module.css'
 import { Metadata, Profile } from './utils/Types';
 import { Direction, Tooltip } from './utils/Tooltip';
 import Typing from './utils/Typing';
-import getProfileImage from '../get/getProfileImage';
+import getProfilePicture from '../get/getProfilePicture';
 import ProfileCard from './ProfileCard';
 
-type ProfilePictureProps = {
+type ProfileImageProps = {
     profile: Profile
     metadata?: Metadata
     disableClick?: boolean
     sizePx?: number
 }
 
-export default function ProfilePicture({profile, metadata, disableClick = true, sizePx = 50}: ProfilePictureProps) {
+export default function ProfileImage({profile, metadata, disableClick = true, sizePx = 50}: ProfileImageProps) {
     const [showProfileCard, setShowProfileCard] = useState(false);
     return (
         <a 
@@ -27,7 +27,7 @@ export default function ProfilePicture({profile, metadata, disableClick = true, 
             }
         }}
         >
-            <Image src={getProfileImage(profile).image} alt="Conversation" height="100%" width="100%" layout="raw" />
+            <Image src={getProfilePicture(profile).image} alt="Conversation" height="100%" width="100%" layout="raw" />
             {/* Show metadata if valid */}
             {
                 metadata 

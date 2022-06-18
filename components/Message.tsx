@@ -9,7 +9,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import emoji from "remark-emoji";
 import remarkImages from "remark-images";
-import ProfilePicture from "./ProfilePicture";
+import ProfileImage from "./ProfileImage";
 
 type MessageProps = {
   payload: MessagePayload
@@ -66,7 +66,7 @@ export function Message({payload, selectMessage, deleteMessage}: MessageProps) {
       copy={async () => {navigator.clipboard.writeText(message)}}
       delete={() => {deleteMessage(payload)}}
       />
-      <ProfilePicture profile={profile} sizePx={75}/>
+      <ProfileImage profile={profile} sizePx={75}/>
       <div>
         <div>
           <p id={styles.messageID}>{profile?.name ? profile.name : sender}</p>

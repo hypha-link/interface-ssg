@@ -1,6 +1,6 @@
 import { Profile } from "../components/utils/Types";
 
-export default function getProfileImage(profile: Profile): { image: string, background: string} {
+export default function getProfilePicture(profile: Profile): { image: string, background: string} {
   return (
     {
       image:

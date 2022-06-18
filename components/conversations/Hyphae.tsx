@@ -1,7 +1,7 @@
 import styles from '../../styles/conversation.module.css'
 import React, { useState } from 'react'
 import { Conversations } from '../utils/Types';
-import ProfilePicture from '../ProfilePicture';
+import ProfileImage from '../ProfileImage';
 import { Tooltip } from '../utils/Tooltip';
 import ContextMenu from '../ContextMenu';
 import getConversationProfile from '../../get/getConversationProfile';
@@ -30,7 +30,7 @@ export default function Hyphae({conversation, inviteConversation, selectConversa
       }}
     >
       <Tooltip key={Math.random()} content={conversation.streamId}>
-        <ProfilePicture profile={getConversationProfile(conversation)} metadata={conversation.metadata}/>
+        <ProfileImage profile={getConversationProfile(conversation)} metadata={conversation.metadata}/>
         <p>
           {getConversationName(conversation)}
         </p>
