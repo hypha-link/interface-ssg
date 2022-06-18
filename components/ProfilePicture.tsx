@@ -27,7 +27,7 @@ export default function ProfilePicture({profile, metadata, disableClick = true, 
             }
         }}
         >
-            <Image src={getProfileImage(profile)} alt="Conversation" height="100%" width="100%" layout="raw" />
+            <Image src={getProfileImage(profile).image} alt="Conversation" height="100%" width="100%" layout="raw" />
             {/* Show metadata if valid */}
             {
                 metadata 

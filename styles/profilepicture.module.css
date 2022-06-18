@@ -9,6 +9,7 @@
     width: inherit;
     max-height: inherit;
     max-width: inherit;
+    z-index: 1;
 }
 
 /* Typing positioning & Tooltip container */

@@ -161,7 +161,7 @@ function App({ data }) {
               //Get the profile of the user that sent the message
               const senderProfile = conversation.profile.find(_profile => _profile.address === data.sender);
               const name = senderProfile?.name ? senderProfile?.name : data.sender;
-              const image = getProfileImage(senderProfile);
+              const image = getProfileImage(senderProfile).image;
               const notification = new Notification(`${name} sent you a message!`, {body: data.message, icon: image});
               dispatch({ type: Actions.ADD_NOTIFICATION, payload: notification });
             }
