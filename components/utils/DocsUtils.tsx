@@ -23,7 +23,7 @@ export function Feature({ links }: { links: links[] }) {
                         <div>
                             <p className={styles.docsUtilsArrow}>🡵</p>
                             <h6>{link.name}</h6>
-                            <LightText text={link.description}/>
+                            <LightText>{link.description}</LightText>
                         </div>
                     </a>
                 </Link>
@@ -33,10 +33,8 @@ export function Feature({ links }: { links: links[] }) {
   )
 }
 
-export function LightText({ text }: { text: string }){
+export function LightText({ children }: {children: React.ReactNode }){
     return(
-        <p className={styles.lightText}>
-            {text}
-        </p>
+        React.createElement('p', { className: styles.lightText }, children)
     )
 }

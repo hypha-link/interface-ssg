@@ -20,8 +20,6 @@ export const SendMessage = ( {disable, typing, sendMessage} : SendMessageProps )
 
   const keyHandler = (keyEvent: React.KeyboardEvent<HTMLInputElement>) => {
     if (keyEvent.key === "Enter" && inputValue.trim() !== "") {
-
-      //createMessage();
       sendMessage(inputValue);
       setInputValue("");
       typing(false);
@@ -30,8 +28,6 @@ export const SendMessage = ( {disable, typing, sendMessage} : SendMessageProps )
 
   const buttonHandler = () => {
     if (inputValue.trim() !== ""){
-
-      //createMessage();
       sendMessage(inputValue);
       setInputValue("");
       typing(false);

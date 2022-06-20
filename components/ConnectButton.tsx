@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import styles from '../styles/connectbutton.module.css'
 import { StateContext } from './context/AppState';
-import ProfilePicture from './ProfilePicture';
+import ProfileImage from './ProfileImage';
 import getShortAddress from '../get/getShortAddress';
 
 export const ConnectButton = ({connect, disconnect}: {connect: () => void, disconnect: () => void}) => {
@@ -12,7 +12,7 @@ export const ConnectButton = ({connect, disconnect}: {connect: () => void, disco
     <div>
       {isConnected ? (
         <button className={styles.connectProfile} onClick={() => disconnect()}>
-          <ProfilePicture profile={ownProfile}/>
+          <ProfileImage profile={ownProfile}/>
           <p>{ownProfile?.name ? ownProfile.name : getShortAddress(ownProfile.address)}</p>
         </button>
       ) : (

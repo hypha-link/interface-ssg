@@ -7,7 +7,7 @@ export const localStreamKey = "conversations";
 
 export default function useConversationStorage() {
     const { selfId, ownProfile, conversations } = useContext(StateContext);
-    const [ceramicConversations, setCeramicConversations] = useState<Conversations[]>(undefined);
+    const [ceramicConversations, setCeramicConversations] = useState<Conversations[]>([]);
     const [ceramicStream, setCeramicStream] = useState<TileDocument>(undefined);
 
     useEffect(() => {

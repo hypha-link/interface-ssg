@@ -69,6 +69,40 @@
   }
 }
 
+.profile{
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  background-color: var(--appBGColor);
+  height: 50vh;
+  width: 75%;
+  margin: auto;
+  padding: 3%;
+}
+
+.profile > .search{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 33%;
+  color: var(--appColor);
+}
+
+.profile > .search > h1{
+  font-size: 2em;
+}
+
+.profile > .search > input{
+  border-radius: 5px;
+  border: none;
+  outline: var(--appColor) .2rem solid;
+  color: var(--appColor);
+  height: 2rem;
+  width: 90%;
+  font-size: 1rem;
+}
+
 .features {
   display: flex;
   flex-direction: column;
@@ -152,6 +186,23 @@
   .hero .desc > p {
     font-size: 0.9rem;
     line-height: 1.4;
+  }
+
+  .profile{
+    flex-direction: column;
+    height: 50vh;
+    width: 100%;
+    padding: 0;
+  }
+
+  .profile > .search{
+    padding: 5% 0;
+  }
+
+  .profile > .search > h1{
+    font-size: 1.5em;
+    text-align: center;
+    padding-bottom: 5%;
   }
 
   .features > h1 {

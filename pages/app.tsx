@@ -33,13 +33,14 @@ import useConversationStorage, { localStreamKey } from "../components/hooks/useC
 import { DispatchContext, StateContext } from "../components/context/AppState";
 import { Actions } from "../components/context/AppContextTypes";
 import getConversationProfile from "../get/getConversationProfile";
-import getProfileImage from "../get/getProfileImage";
+import getProfilePicture from "../get/getProfilePicture";
 import { ethers } from "ethers";
 import useStreamrSession from '../components/hooks/useStreamrSession';
 import { InviteModal } from "../components/InviteModal";
 import { MyceliumCreationModal } from "../components/MyceliumCreationModal";
 import useSelectedConversation from "../components/hooks/useSelectedConversation";
 import Head from "next/head";
+import Occlusion, { OcclusionContext } from "../components/utils/Occlusion";
 
 function App({ data }) {
   const { activateBrowserWallet } = useEthers();
@@ -48,6 +49,7 @@ function App({ data }) {
   const { selfId, notifications, conversations, streamr, streamrDelegate, ownProfile, web3Provider } = useContext(StateContext);
   const { address: ownAddress } = ownProfile || {};
   const dispatch = useContext(DispatchContext);
+  const occludedElements = useContext(OcclusionContext);
 
   //Component Constructors
   const [conversationModal, setConversationModal] = useState<string>(undefined);
@@ -161,7 +163,7 @@ function App({ data }) {
               //Get the profile of the user that sent the message
               const senderProfile = conversation.profile.find(_profile => _profile.address === data.sender);
               const name = senderProfile?.name ? senderProfile?.name : data.sender;
-              const image = getProfileImage(senderProfile);
+              const image = getProfilePicture(senderProfile).image;
               const notification = new Notification(`${name} sent you a message!`, {body: data.message, icon: image});
               dispatch({ type: Actions.ADD_NOTIFICATION, payload: notification });
             }
@@ -456,6 +458,15 @@ function App({ data }) {
       <Head>
         <title>App | Hypha</title>
       </Head>
+      {/* Occluded Elements */}
+      {
+        occludedElements ?
+        <Occlusion>
+          {occludedElements}
+        </Occlusion>
+        :
+        <></>
+      }
       {/* Top Bar */}
       <section id={styles.topBar}>
           <Link href="/">

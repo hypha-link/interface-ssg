@@ -3,7 +3,7 @@ import styles from '../../styles/settings.module.css'
 import { Edit, EditType } from '../utils/Edit'
 import { StateContext } from '../context/AppState'
 import getShortAddress from '../../get/getShortAddress'
-import ProfilePicture from '../ProfilePicture'
+import ProfileImage from '../ProfileImage'
 
 export const Profile = () => {
     const { selfId, ownProfile, ipfs } = useContext(StateContext);
@@ -57,7 +57,7 @@ export const Profile = () => {
               <h3>Picture</h3>
               <div>
                 <label id={styles.addFileLabel} htmlFor={styles.addFile}>
-                    <ProfilePicture profile={ownProfile} sizePx={150}/>
+                    <ProfileImage profile={ownProfile} sizePx={150}/>
                     <div className={styles.imageOverlay}>Change</div>
                 </label>
                 <input 
