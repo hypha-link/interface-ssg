@@ -1,54 +1,62 @@
-import { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import styles from '../styles/context.module.css';
 
-const ContextMenu = (props) => {
-  const [anchorPoint, setAnchorPoint] = useState(props.anchorPoint);
-  const [validProps, setValidProps] = useState<any[]>();
-  const display = anchorPoint.x !== 0 && anchorPoint.y !== 0;
+type ContextMenuProps = {
+  children: React.ReactNode
+  options: {name: string , fn: (() => void)}[]
+}
 
-  const handleClick = useCallback(() => {
-    setAnchorPoint({ x: 0, y: 0 });
+export default function ContextMenu({ children, options } : ContextMenuProps){
+  const [anchorPoint, setAnchorPoint] = useState({x: 0, y: 0});
+  const display = anchorPoint.x !== 0 && anchorPoint.y !== 0;
+  const mouseCoords = useRef({x: 0, y: 0});
+  const childRef = useRef<Element>();
+
+  const childElements = React.Children.map(children, child => {
+    if(React.isValidElement(child)) return React.cloneElement(child, { ref: childRef })
+  })
+
+  const handleClick = useCallback((e: Event) => {
     if(display)
-    props.localAnchorPoint({ x: 0, y: 0 });
-  }, [props, display]);
-  const handleContext = useCallback(() => {
-    setAnchorPoint({ x: 0, y: 0 });
-    if(display){
-        props.localAnchorPoint({ x: 0, y: 0 });
+      setAnchorPoint({ x: 0, y: 0 });
+  }, [display]);
+
+  const handleContext = useCallback((e: Event) => {
+    const childBounds = childRef.current.getBoundingClientRect();
+    const mouseInsideChild = mouseCoords.current.x > childBounds.left && mouseCoords.current.x < childBounds.right && mouseCoords.current.y > childBounds.top && mouseCoords.current.y < childBounds.bottom;
+    if(display && !mouseInsideChild){
+      e.preventDefault();
+      setAnchorPoint({ x: 0, y: 0 });
     }
-  }, [props, display]);
+    else{
+      if(mouseInsideChild){
+        e.preventDefault();
+        setAnchorPoint(mouseCoords.current);
+      }
+      else{
+        console.log(childBounds)
+        console.log(mouseCoords.current)
+      }
+    }
+  }, [display]);
+
+  const handleMouseMove = (e: MouseEvent) => {
+    mouseCoords.current = {
+       x: e.clientX, 
+       y: e.clientY 
+      }
+  }
 
   useEffect(() => {
     document.addEventListener("click", handleClick);
     document.addEventListener("contextmenu", handleContext);
+    document.addEventListener("mousemove", handleMouseMove);
     return () => {
       document.removeEventListener("click", handleClick);
       document.removeEventListener("contextmenu", handleContext);
+      document.removeEventListener("mousemove", handleMouseMove);
     };
   });
-
-  useEffect(() => {
-      setAnchorPoint(props.anchorPoint);
-  }, [props.anchorPoint])
-
-  useEffect(() => {
-      const validProps = [];
-      let count = 0;
-      Object.values(props).forEach((prop) => {
-          if(typeof(prop) === 'function' && Object.keys(props)[count] !== "localAnchorPoint"){
-              validProps.push(Object.keys(props)[count]);
-          }
-          count++;
-      })
-      setValidProps(validProps);
-  }, [setValidProps, props])
-
-  const style = () => {
-    return {
-      left: anchorPoint.x,
-      top: anchorPoint.y,
-    };
-  };
 
   const optionIcons = new Map();
   optionIcons.set("select", "➢");
@@ -58,38 +66,41 @@ const ContextMenu = (props) => {
   optionIcons.set("copy", "❐");
   optionIcons.set("delete", "X");
 
-  if (display) {
-    return (
+  return(
+    display ?
+    <>
       <ul
-        style={style()}
+        style={{
+          left: anchorPoint.x,
+          top: anchorPoint.y,
+        }}
         id={styles.contextMenu}
         className={styles.showContextMenu}
         onClick={(e) => e.stopPropagation()}
       >
-        {validProps.map((prop) => {
-            return (
-                <li key={prop}>
-                <button
-                    key={prop}
-                    onClick={(e) => {
+        {
+          options.map(option => {
+            return(
+              <li key={option.name}>
+                <button 
+                  key={option.name}
+                  onClick={(e) => {
                     e.stopPropagation();
-                    //This is not a error, silly typescript
-                    props[prop]();
+                    option.fn();
                     setAnchorPoint({ x: 0, y: 0 });
-                    props.localAnchorPoint({ x: 0, y: 0 });
-                    }}
+                  }}
                 >
-                    <p>{optionIcons.get(prop)}</p>
-                    <p>{prop}</p>
+                  <p>{optionIcons.get(option.name)}</p>
+                  <p>{option.name}</p>
                 </button>
-                </li>
-            );
-        })}
+              </li>
+            )
+          })
+        }
       </ul>
-    );
-  }
-
-  return <></>;
+      {childElements}
+    </>
+    :
+    <>{childElements}</>
+  )
 };
-
-export default ContextMenu;

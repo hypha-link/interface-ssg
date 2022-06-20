@@ -19,7 +19,6 @@ type MessageProps = {
 
 export function Message({payload, selectMessage, deleteMessage}: MessageProps) {
   const { message, sender, date } = payload;
-  const [anchorPoint, setAnchorPoint] = useState({x: 0, y: 0});
   const selectedConversation = useSelectedConversation();
   const { ownProfile } = useContext(StateContext);
   //Message that has been edited prior to markdown modification
@@ -52,35 +51,32 @@ export function Message({payload, selectMessage, deleteMessage}: MessageProps) {
   useEffect(() => setEditedMessage(message.replaceAll(priceFeedRegex, '')), [tokenFeedArr]);
 
   return (
-    <div
-      className={sender === profile.address ? `${styles.message} ${styles.own}` : styles.message}
-      onClick={() => selectMessage(payload)}
-      onContextMenu={(e) => {
-            setTimeout(() => setAnchorPoint({x: e.pageX, y: e.pageY}), 1);
-            e.preventDefault();
-      }}
+    <ContextMenu
+      options={[
+        {name: 'copy', fn: async () => navigator.clipboard.writeText(message)},
+        {name: 'delete', fn: () => deleteMessage(payload)},
+      ]}
     >
-      <ContextMenu 
-      anchorPoint={{x: anchorPoint.x, y: anchorPoint.y}}
-      localAnchorPoint={(ap) => setAnchorPoint(ap)}
-      copy={async () => {navigator.clipboard.writeText(message)}}
-      delete={() => {deleteMessage(payload)}}
-      />
-      <ProfileImage profile={profile} sizePx={75}/>
-      <div>
+      <div
+        className={sender === profile.address ? `${styles.message} ${styles.own}` : styles.message}
+        onClick={() => selectMessage(payload)}
+      >
+        <ProfileImage profile={profile} sizePx={75}/>
         <div>
-          <p id={styles.messageID}>{profile?.name ? profile.name : sender}</p>
-          <p id={styles.messageDate}>{date}</p>
+          <div>
+            <p id={styles.messageID}>{profile?.name ? profile.name : sender}</p>
+            <p id={styles.messageDate}>{date}</p>
+          </div>
+          {/* Message Content */}
+          {tokenFeedArr}
+          <ReactMarkdown
+            remarkPlugins={[[remarkGfm], [emoji, {emoticon: true}], [remarkImages]]}
+            linkTarget={"_blank"}
+          >
+            {editedMessage}
+          </ReactMarkdown>
         </div>
-        {/* Message Content */}
-        {tokenFeedArr}
-        <ReactMarkdown
-          remarkPlugins={[[remarkGfm], [emoji, {emoticon: true}], [remarkImages]]}
-          linkTarget={"_blank"}
-        >
-          {editedMessage}
-        </ReactMarkdown>
       </div>
-    </div>
+    </ContextMenu>
   );
 }

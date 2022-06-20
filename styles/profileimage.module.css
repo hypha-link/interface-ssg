@@ -1,9 +1,10 @@
-.profilePictureContainer{
+.container{
+    display: inline-block;
     width: fit-content;
     position: relative;
 }
 
-.profilePictureContainer img {
+.container img {
     border-radius: 314px;
     height: inherit;
     width: inherit;
@@ -13,7 +14,7 @@
 }
 
 /* Typing positioning & Tooltip container */
-.profilePictureContainer > div{
+.container > div{
     position: absolute;
     bottom: 0;
     right: 0;

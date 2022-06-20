@@ -10,8 +10,20 @@ import LayeredWaves from "../public/patterns/LayeredWaves.svg"
 import BlobScene from "../public/patterns/BlobScene.svg"
 import NavigationBar from '../components/NavigationBar'
 import Footer from '../components/Footer'
+import { KeyboardEvent, useState } from 'react'
+import { ethers } from 'ethers'
+import ProfileCard from '../components/ProfileCard'
+import useProfile from '../components/hooks/useProfile'
 
 export default function Index() {
+  const [inputValue, setInputValue] = useState("");
+  const profile = useProfile(inputValue);
+
+  function keyHandler(keyEvent: KeyboardEvent<HTMLInputElement>){
+    if (keyEvent.key === "Enter" && inputValue !== "" && ethers.utils.isAddress(inputValue.trim())) {
+      // window.open(`/profile/${inputValue.trim()}`);
+    }
+  }
   return (
     <>
       <NavigationBar/>
@@ -31,6 +43,28 @@ export default function Index() {
               <HyphaLogo/>
             </div>
           </div>
+        </section>
+        <section className={styles.profile}>
+          <div className={styles.search}>
+            <h1>Have your friends arrived yet?</h1>
+            <input
+              name="message"
+              type="text"
+              placeholder="Enter an Ethereum Address"
+              value={inputValue}
+              onInput={({currentTarget}) => {
+                setInputValue(currentTarget.value);
+              }}
+              onKeyPress={(keyEvent) => keyHandler(keyEvent)}
+              style={
+                ethers.utils.isAddress(inputValue.trim()) || inputValue.trim() === "" ? 
+                {textDecoration: 'none'} 
+                : 
+                {textDecoration: 'red wavy underline'}
+              }
+            ></input>
+          </div>
+          <ProfileCard profile={profile} portrait={false} />
         </section>
         <section className={styles.features}>
           <h1>The Future of Communication</h1>

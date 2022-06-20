@@ -40,6 +40,7 @@ import { InviteModal } from "../components/InviteModal";
 import { MyceliumCreationModal } from "../components/MyceliumCreationModal";
 import useSelectedConversation from "../components/hooks/useSelectedConversation";
 import Head from "next/head";
+import Occlusion, { OcclusionContext } from "../components/utils/Occlusion";
 
 function App({ data }) {
   const { activateBrowserWallet } = useEthers();
@@ -48,6 +49,7 @@ function App({ data }) {
   const { selfId, notifications, conversations, streamr, streamrDelegate, ownProfile, web3Provider } = useContext(StateContext);
   const { address: ownAddress } = ownProfile || {};
   const dispatch = useContext(DispatchContext);
+  const occludedElements = useContext(OcclusionContext);
 
   //Component Constructors
   const [conversationModal, setConversationModal] = useState<string>(undefined);
@@ -456,6 +458,15 @@ function App({ data }) {
       <Head>
         <title>App | Hypha</title>
       </Head>
+      {/* Occluded Elements */}
+      {
+        occludedElements ?
+        <Occlusion>
+          {occludedElements}
+        </Occlusion>
+        :
+        <></>
+      }
       {/* Top Bar */}
       <section id={styles.topBar}>
           <Link href="/">

@@ -1,52 +1,145 @@
-.cardWrapper{
-    position: relative;
-    z-index: -1;
-}
-
 .card{
     display: flex;
     position: relative;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 40vh;
-    width: 20vw;
     background-color: var(--appBGColor2);
     border-radius: 5%;
+    color: var(--appColor);
+    --h3-font-size: 1.5rem;
+    --h5-font-size: 1rem;
 }
 
 .card h3{
-    font-size: 2rem;
+    font-size: var(--h3-font-size);
     margin: 5% 0;
 }
 
 .card h5{
-    font-size: 1.2rem;
+    font-size: var(--h5-font-size);
     font-weight: lighter;
     margin: 5% 0;
 }
 
-.float{
-    position: fixed;
-    z-index: 1;
+.card > .contentContainer > a{
+    outline: var(--appBGColor2) .5rem solid;
+    border-radius: 314px;
+}
+
+.portrait{
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: 20vw;
+    aspect-ratio: 2/3;
+}
+
+.portrait > .profileBackground{
+    aspect-ratio: 4/3;
+}
+
+.portrait > .contentContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: fit-content;
+    width: calc(100% - 10%);
+    padding-left: 5%;
+    padding-right: 5%;
+    padding-top: 50%;
+}
+
+.portrait > .contentContainer > .content{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    padding-left: calc(.5rem + 2%);
+}
+
+.landscape{
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    width: 30vw;
+    aspect-ratio: 3/2;
+}
+
+.landscape > *:not(div){
+    padding-left: 5%;
+}
+
+.landscape > .profileBackground{
+    aspect-ratio: 3/1;
+}
+
+.landscape > .contentContainer{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    /* Half container height - half image size */
+    height: calc(50% - 64px);
+    width: 100%;
+}
+
+.landscape > .contentContainer > .content{
+    padding-bottom: 10%;
+    padding-left: 5%;
+}
+
+.landscape > .contentContainer > .content > h5{
+    margin: 0;
+}
+
+/* This is the profile picture */
+.landscape > .contentContainer > a{
+    position: absolute;
     top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    left: 5%;
+    transform: translate(0, -50%);
+}
+
+.landscape > .contentContainer > .content{
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    flex-direction: column;
+    z-index: 1;
+    height: 100%;
+    width: 100%;
 }
 
 .profileBackground{
     position: absolute;
-    border-radius: inherit;
+    border-radius: 5% 5% 0 0;
     left: 0;
     top: 0;
     width: 100%;
-    height: 33%;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--cannon);
 }
 
 @media only screen and (max-width: 670px) {
     .card{
         height: 100%;
         width: 100%;
+        border-radius: 0;
         border-radius: unset;
+    }
+
+    .landscape h3{
+        font-size: calc(var(--h3-font-size) * .75);
+        margin: 5% 0;
+    }
+    
+    .landscape h5{
+        font-size: calc(var(--h5-font-size) * .75);
+        font-weight: lighter;
+        margin: 5% 0;
+    }
+
+    .profileBackground{
+        border-radius: 0;
     }
 }

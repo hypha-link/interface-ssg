@@ -32,7 +32,7 @@ const [display, setDisplay] = useState(false);
       clearInterval(timeout);
       setDisplay(false);
     }
-  }, [active])
+  }, [active, content, delay])
 
   return (
     <div
