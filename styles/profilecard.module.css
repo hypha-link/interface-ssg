@@ -83,7 +83,13 @@
 }
 
 .landscape > .contentContainer > .content{
-    padding-bottom: 10%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    flex-direction: column;
+    z-index: 1;
+    width: 100%;
+    padding-bottom: 5%;
     padding-left: 5%;
 }
 
@@ -97,16 +103,6 @@
     top: 50%;
     left: 5%;
     transform: translate(0, -50%);
-}
-
-.landscape > .contentContainer > .content{
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-start;
-    flex-direction: column;
-    z-index: 1;
-    height: 100%;
-    width: 100%;
 }
 
 .profileBackground{

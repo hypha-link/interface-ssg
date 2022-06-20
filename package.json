@@ -13,6 +13,7 @@
     "@datamodels/identity-profile-basic": "^0.2.0",
     "@fontsource/montserrat": "^4.5.10",
     "@fontsource/montserrat-alternates": "^4.5.8",
+    "@self.id/core": "^0.4.1",
     "@self.id/web": "^0.4.0",
     "@svgr/webpack": "^6.2.1",
     "@types/node-emoji": "^1.8.1",
