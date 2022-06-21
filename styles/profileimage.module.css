@@ -11,6 +11,7 @@
     max-height: inherit;
     max-width: inherit;
     z-index: 1;
+    background-image: url(/UserPlaceholder.svg);
 }
 
 /* Typing positioning & Tooltip container */
