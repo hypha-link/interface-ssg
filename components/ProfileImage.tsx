@@ -1,5 +1,4 @@
 import React from 'react'
-import Image from 'next/image';
 import styles from '../styles/profileimage.module.css'
 import { Metadata, Profile } from './utils/Types';
 import { Direction, Tooltip } from './utils/Tooltip';
@@ -23,7 +22,7 @@ export default function ProfileImage({profile, metadata, sizePx = 50, clickFn}: 
             e.stopPropagation();
         }}
         >
-            <Image src={getProfilePicture(profile).image} alt="Conversation" height="100%" width="100%" layout="raw" />
+            <img src={getProfilePicture(profile).image} alt="Conversation" height="100%" width="100%" />
             {/* Show metadata if valid */}
             {
                 metadata 
