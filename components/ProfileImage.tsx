@@ -22,7 +22,7 @@ export default function ProfileImage({profile, metadata, sizePx = 50, clickFn}: 
             e.stopPropagation();
         }}
         >
-            <img src={getProfilePicture(profile).image} alt="Conversation" height="100%" width="100%" />
+            <img src={getProfilePicture(profile).image} alt="Profile Image" height="100%" width="100%" />
             {/* Show metadata if valid */}
             {
                 metadata 
