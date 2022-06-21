@@ -12,9 +12,13 @@ export default function useProfile( address: string ) {
     useMountEffect(() => {
         const getProfile = async () => {
             try{
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                // const provider = new ethers.providers.Web3Provider(window.ethereum);
+                // provider?.network?.chainId
+
+                //Polygon is default for now. Leaving provider for future chains.
+                const chainId = '137';
                 //Retrieve the DID address associated with this ethereum address
-                const didAddress = await core.getAccountDID(`${address}@eip155:${provider?.network?.chainId || '137'}`);
+                const didAddress = await core.getAccountDID(`${address}@eip155:${chainId}`);
                 //Return the basicProfile associated with this DID address
                 setProfile({address: address, ...await core.get('basicProfile', didAddress)});
             }
