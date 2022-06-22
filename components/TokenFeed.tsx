@@ -42,7 +42,7 @@ export const TokenFeed = ({ tokenName, tokenPrice, hideLiveFeedCheckbox, onClick
     //Get the full name of the token to reference the correct .png file in crypto=icons-plus
     const tokenFullName = cryptoManifest.filter(obj => {
       return obj.symbol === tokenName;
-    })[0].slug;
+    });
 
   return (
     <section id={styles.tokenFeed} onClick={(e) => {onClick(); e.stopPropagation()}}>
@@ -53,7 +53,7 @@ export const TokenFeed = ({ tokenName, tokenPrice, hideLiveFeedCheckbox, onClick
     <input className={hideLiveFeedCheckbox ? styles.hideLiveFeedCheckbox : ""} type="checkbox" onChange={(e) => setLiveFeed(e.target.checked)}></input>
       <div>
         {/* Toggle Live Feed */}
-        <Image src={require(`../node_modules/crypto-icons-plus-128/src/${tokenFullName.toLowerCase()}.png`)} height="33%" width="33%" alt="cryptocurrency-icon" />
+        <Image src={tokenFullName[0] ? require(`../node_modules/crypto-icons-plus-128/src/${tokenFullName[0].slug.toLowerCase()}.png`) : '/QuestionMark.svg'} height="33%" width="33%" alt="cryptocurrency-icon" loading="lazy" />
         <h1>{tokenName}</h1>
       </div>
       <p>{liveFeed ? liveTokenPrice : tokenPrice}</p>

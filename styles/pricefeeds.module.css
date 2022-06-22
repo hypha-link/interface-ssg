@@ -14,26 +14,6 @@
   background-color: var(--uiBGColor);
 }
 
-#priceFeeds > *{
-  margin: 5px;
-}
-
-#priceFeeds.loading{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 6px dotted var(--uiColor);
-  border-radius: 314px;
-  animation: spin 3s linear infinite;
-  overflow-y: unset;
-}
-
-#priceFeeds.loading p{
-  animation: spin 3s linear reverse infinite, blink 5s linear infinite;
-  font-size: 1em;
-  color: var(--uiColor);
-}
-
 @keyframes blink {
   50% {
     opacity: 0;

@@ -7,12 +7,14 @@
   min-width: 53vw;
   right: 15%;
   z-index: 2;
+  border-radius: 50px;
 }
 
 #messageContext > div {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  padding: 5% 0 0 5%;
 }
 
 #messageContext > div button {
@@ -21,4 +23,45 @@
 
 #messageContext > div button:hover {
   color: var(--inputHoverColor);
+}
+
+/* Selected Contexts */
+
+#selectedContext{
+  overflow-y: hidden;
+  max-height: 75vh;
+}
+
+#selectedContext #emoji{
+  display: grid;
+  grid-template-columns: auto auto auto;
+}
+
+#selectedContext #emoji > button{
+  filter: opacity(0.8);
+}
+
+#selectedContext #emoji > button:hover{
+  filter: none;
+  transform: scale(1.2);
+}
+
+#selectedContext #user{
+
+}
+
+#selectedContext #user > button:hover{
+  color: var(--uiColor);
+}
+
+#selectedContext #command{
+
+}
+
+#selectedContext #priceFeed{
+  display: grid;
+  grid-template-columns: auto auto auto;
+  max-height: 75vh;
+  justify-content: space-around;
+  padding: 5px;
 }

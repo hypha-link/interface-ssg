@@ -37,6 +37,10 @@
   display: none;
 }
 
+#sendMessage .plugins > *:not(button){
+  border-radius: 50px;
+}
+
 #sendMessage #priceFeed {
   font-size: 2em;
   font-weight: 900;

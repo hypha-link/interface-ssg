@@ -1,9 +1,8 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styles from '../styles/pricefeeds.module.css'
 import { TokenFeed } from './TokenFeed'
-import redstone from 'redstone-api';
-import { PriceData } from 'redstone-api/lib/types'
-import useMountEffect from './hooks/useMountEffect'
+import usePriceData from './hooks/usePriceData';
+import LoadingIcons from 'react-loading-icons'
 
 type PriceFeedsProps = {
     show: boolean
@@ -12,38 +11,29 @@ type PriceFeedsProps = {
 }
 
 export const PriceFeeds = ({ show, onClick, cancel } : PriceFeedsProps) => {
-    const [priceData, setPriceData] = useState<PriceData[]>([]);
-
-    useMountEffect(() => {
-        const getPriceData = async () => {
-            const allPrices = await redstone.getAllPrices({ provider: 'redstone-rapid' });
-            setPriceData(Object.values(allPrices).reverse());
-        }
-        if(show) getPriceData();
-    }, [show])
+    const priceData = usePriceData({ update: show, updateFrequency: 10000, provider: 'redstone-rapid' });
 
     return (
         show ?
         <section className={priceData.length !== 0 ? "overlay" : `overlay ${styles.loading}`} id={styles.priceFeeds} onBlur={() => cancel()}>
-            {priceData.length !== 0 ? 
-                priceData.map(({symbol, value}) => {
-                    return(
-                        <TokenFeed 
-                            key={symbol}
-                            tokenName={symbol}
-                            tokenPrice={value}
-                            hideLiveFeedCheckbox={true}
-                            onClick={() => {
-                                onClick(`[${symbol},${value}]`);
-                                cancel();
-                            }}
-                        />
-                    )
-                })
+            {
+                priceData.length !== 0 ? 
+                    priceData.map(({symbol, value}) => {
+                        return(
+                            <TokenFeed 
+                                key={symbol}
+                                tokenName={symbol}
+                                tokenPrice={value}
+                                hideLiveFeedCheckbox={true}
+                                onClick={() => {
+                                    onClick(`[${symbol},${value}]`);
+                                    cancel();
+                                }}
+                            />
+                        )
+                    })
                 :
-                <p>
-                    Loading...
-                </p>
+                <LoadingIcons.Puff style={{ minWidth: '100px', minHeight: '100px' }} stroke="var(--appColor)" speed={2}/>
             }
         </section>
         :

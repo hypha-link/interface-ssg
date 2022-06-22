@@ -78,46 +78,55 @@ export const SendMessage = ( {disable, typing, sendMessage} : SendMessageProps )
         onKeyPress={(keyEvent) => keyHandler(keyEvent)}
         disabled={disable}
       />
-      <MessageContext
-        show={showMessageContext}
-        value={(value: string) => setInputValue(inputValue + value)}
-        cancel={() => setShowMessageContext('')}
-      />
-      <button
-        id={styles.priceFeed}
-        onClick={() => setShowPriceFeeds(!showPriceFeeds)}
-        disabled={disable}
-      >
-        &#x2B21;
-      </button>
-      <PriceFeeds
-        show={showPriceFeeds}
-        onClick={(value: string) => {
-          setInputValue(inputValue + value);
-        }}
-        cancel={() => setShowPriceFeeds(!showPriceFeeds)}
-      />
-      <button
-        id={styles.pickEmoji}
-        onClick={() => setShowEmojiMenu(!showEmojiMenu)}
-        disabled={disable}
-      >
-        &#x1F60A;
-      </button>
-      <EmojiMenu
-        show={showEmojiMenu}
-        value={(value: string) => {
-          setInputValue(inputValue + value);
-        }}
-        cancel={() => setShowEmojiMenu(!showEmojiMenu)}
-      />
-      <button
-        id={styles.messageSubmit} 
-        onClick={() => buttonHandler()}
-        disabled={disable}
-      >
-        Send
-      </button>
+      {/* Message Context */}
+      <div className={styles.plugins}>
+        <MessageContext
+          show={showMessageContext}
+          value={(value: string) => setInputValue(inputValue + value)}
+          cancel={() => setShowMessageContext('')}
+        />
+        <button
+          id={styles.priceFeed}
+          onClick={() => setShowPriceFeeds(!showPriceFeeds)}
+          disabled={disable}
+        >
+          &#x2B21;
+        </button>
+      </div>
+      {/* Price Feeds */}
+      <div className={styles.plugins}>
+        <PriceFeeds
+          show={showPriceFeeds}
+          onClick={(value: string) => {
+            setInputValue(inputValue + value);
+          }}
+          cancel={() => setShowPriceFeeds(!showPriceFeeds)}
+        />
+        <button
+          id={styles.pickEmoji}
+          onClick={() => setShowEmojiMenu(!showEmojiMenu)}
+          disabled={disable}
+        >
+          &#x1F60A;
+        </button>
+      </div>
+      {/* Emoji Menu */}
+      <div className={styles.plugins}>
+        <EmojiMenu
+          show={showEmojiMenu}
+          value={(value: string) => {
+            setInputValue(inputValue + value);
+          }}
+          cancel={() => setShowEmojiMenu(!showEmojiMenu)}
+        />
+        <button
+          id={styles.messageSubmit} 
+          onClick={() => buttonHandler()}
+          disabled={disable}
+        >
+          Send
+        </button>
+      </div>
     </section>
   );
 };
