@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useState } from "react";
 import styles from '../styles/sendmessage.module.css'
 import { MessageContext } from "./MessageContext";
-import { ChainlinkFeeds } from "./ChainlinkFeeds";
+import { PriceFeeds } from "./PriceFeeds";
 import { EmojiMenu } from "./EmojiMenu";
 import { StateContext } from "./context/AppState";
 
@@ -16,7 +16,7 @@ export const SendMessage = ( {disable, typing, sendMessage} : SendMessageProps )
   const [inputValue, setInputValue] = useState("");
   const [showMessageContext, setShowMessageContext] = useState<string>('');
   const [showEmojiMenu, setShowEmojiMenu] = useState<boolean>(false);
-  const [showChainlinkFeeds, setShowChainlinkFeeds] = useState<boolean>(false);
+  const [showPriceFeeds, setShowPriceFeeds] = useState<boolean>(false);
 
   const keyHandler = (keyEvent: React.KeyboardEvent<HTMLInputElement>) => {
     if (keyEvent.key === "Enter" && inputValue.trim() !== "") {
@@ -78,40 +78,55 @@ export const SendMessage = ( {disable, typing, sendMessage} : SendMessageProps )
         onKeyPress={(keyEvent) => keyHandler(keyEvent)}
         disabled={disable}
       />
-      <MessageContext
-        show={showMessageContext}
-        value={(value: string) => setInputValue(inputValue + value)}
-        cancel={() => setShowMessageContext('')}
-      />
-      <button
-        id={styles.chainlinkFeed}
-        onClick={() => setShowChainlinkFeeds(!showChainlinkFeeds)}
-        disabled={disable}
-      >&#x2B21;</button>
-      <ChainlinkFeeds
-        show={showChainlinkFeeds}
-        value={(value: string) => {
-          setInputValue(inputValue + value);
-        }}
-        cancel={() => setShowChainlinkFeeds(!showChainlinkFeeds)}
-      />
-      <button
-        id={styles.pickEmoji}
-        onClick={() => setShowEmojiMenu(!showEmojiMenu)}
-        disabled={disable}
-      >&#x1F60A;</button>
-      <EmojiMenu
-        show={showEmojiMenu}
-        value={(value: string) => {
-          setInputValue(inputValue + value);
-        }}
-        cancel={() => setShowEmojiMenu(!showEmojiMenu)}
-      />
-      <button
-        id={styles.messageSubmit} 
-        onClick={() => buttonHandler()}
-        disabled={disable}
-      >Submit</button>
+      {/* Message Context */}
+      <div className={styles.plugins}>
+        <MessageContext
+          show={showMessageContext}
+          value={(value: string) => setInputValue(inputValue + value)}
+          cancel={() => setShowMessageContext('')}
+        />
+        <button
+          id={styles.priceFeed}
+          onClick={() => setShowPriceFeeds(!showPriceFeeds)}
+          disabled={disable}
+        >
+          &#x2B21;
+        </button>
+      </div>
+      {/* Price Feeds */}
+      <div className={styles.plugins}>
+        <PriceFeeds
+          show={showPriceFeeds}
+          onClick={(value: string) => {
+            setInputValue(inputValue + value);
+          }}
+          cancel={() => setShowPriceFeeds(!showPriceFeeds)}
+        />
+        <button
+          id={styles.pickEmoji}
+          onClick={() => setShowEmojiMenu(!showEmojiMenu)}
+          disabled={disable}
+        >
+          &#x1F60A;
+        </button>
+      </div>
+      {/* Emoji Menu */}
+      <div className={styles.plugins}>
+        <EmojiMenu
+          show={showEmojiMenu}
+          value={(value: string) => {
+            setInputValue(inputValue + value);
+          }}
+          cancel={() => setShowEmojiMenu(!showEmojiMenu)}
+        />
+        <button
+          id={styles.messageSubmit} 
+          onClick={() => buttonHandler()}
+          disabled={disable}
+        >
+          Send
+        </button>
+      </div>
     </section>
   );
 };

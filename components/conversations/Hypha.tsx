@@ -46,7 +46,7 @@ export default function Hypha({conversation, inviteConversation, selectConversat
         }}
       >
         <Tooltip key={Math.random()} content={profile?.address}>
-          <ProfileImage profile={profile} metadata={conversation.metadata} clickFn={() => setOcclusionState(<ProfileCard profile={profile}/>)}/>
+          <ProfileImage profile={profile} metadata={conversation.metadata} onClick={() => setOcclusionState(<ProfileCard profile={profile}/>)}/>
           <p>
             {getConversationName(conversation)}
           </p>

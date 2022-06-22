@@ -9,16 +9,16 @@ type ProfileImageProps = {
     profile: Profile
     metadata?: Metadata
     sizePx?: number
-    clickFn?: () => void
+    onClick?: () => void
 }
 
-export default function ProfileImage({profile, metadata, sizePx = 50, clickFn}: ProfileImageProps) {
+export default function ProfileImage({profile, metadata, sizePx = 50, onClick}: ProfileImageProps) {
     return (
         <a 
         className={styles.container} 
-        style={{maxHeight:sizePx, maxWidth:sizePx, height:sizePx, width: sizePx, cursor: clickFn ? 'pointer' : 'unset'}} 
+        style={{maxHeight:sizePx, maxWidth:sizePx, height:sizePx, width: sizePx, cursor: onClick ? 'pointer' : 'unset'}} 
         onClick={(e) => {
-            clickFn();
+            onClick();
             e.stopPropagation();
         }}
         >

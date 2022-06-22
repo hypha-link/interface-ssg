@@ -1,0 +1,27 @@
+/*PRICE FEEDS*/
+
+#priceFeeds {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  right: 10%;
+  min-height: 100px;
+  min-width: 100px;
+  max-height: 75vh;
+  padding: 5px;
+  overflow-y: auto;
+  border-radius: 50px;
+  z-index: 2;
+  background-color: var(--uiBGColor);
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
