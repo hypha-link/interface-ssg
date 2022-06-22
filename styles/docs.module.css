@@ -1,0 +1,9 @@
+.hexagon{
+    display: 'inline-block';
+    transform: rotate(30deg);
+    max-width: fit-content;
+    font-weight: 900;
+    font-size: 1.5rem;
+    color: var(--redstone1);
+    user-select: none;
+}

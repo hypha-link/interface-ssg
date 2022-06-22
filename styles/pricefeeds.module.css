@@ -1,6 +1,6 @@
-/*CHAINLINK FEEDS*/
+/*PRICE FEEDS*/
 
-#chainlinkFeeds {
+#priceFeeds {
   display: grid;
   grid-template-columns: auto auto auto;
   right: 10%;
@@ -14,11 +14,11 @@
   background-color: var(--uiBGColor);
 }
 
-#chainlinkFeeds > *{
+#priceFeeds > *{
   margin: 5px;
 }
 
-#chainlinkFeeds.loadingCLFeeds {
+#priceFeeds.loading{
   display: flex;
   align-items: center;
   justify-content: center;
@@ -28,7 +28,7 @@
   overflow-y: unset;
 }
 
-#chainlinkFeeds.loadingCLFeeds p {
+#priceFeeds.loading p{
   animation: spin 3s linear reverse infinite, blink 5s linear infinite;
   font-size: 1em;
   color: var(--uiColor);

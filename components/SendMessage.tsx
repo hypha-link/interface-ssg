@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import styles from '../styles/sendmessage.module.css'
 import { MessageContext } from "./MessageContext";
-import { ChainlinkFeeds } from "./ChainlinkFeeds";
+import { PriceFeeds } from "./PriceFeeds";
 import { EmojiMenu } from "./EmojiMenu";
 import { StateContext } from "./context/AppState";
 
@@ -16,7 +16,7 @@ export const SendMessage = ( {disable, typing, sendMessage} : SendMessageProps )
   const [inputValue, setInputValue] = useState("");
   const [showMessageContext, setShowMessageContext] = useState<string>('');
   const [showEmojiMenu, setShowEmojiMenu] = useState<boolean>(false);
-  const [showChainlinkFeeds, setShowChainlinkFeeds] = useState<boolean>(false);
+  const [showPriceFeeds, setShowPriceFeeds] = useState<boolean>(false);
 
   const keyHandler = (keyEvent: React.KeyboardEvent<HTMLInputElement>) => {
     if (keyEvent.key === "Enter" && inputValue.trim() !== "") {
@@ -84,18 +84,18 @@ export const SendMessage = ( {disable, typing, sendMessage} : SendMessageProps )
         cancel={() => setShowMessageContext('')}
       />
       <button
-        id={styles.chainlinkFeed}
-        onClick={() => setShowChainlinkFeeds(!showChainlinkFeeds)}
+        id={styles.priceFeed}
+        onClick={() => setShowPriceFeeds(!showPriceFeeds)}
         disabled={disable}
       >
         &#x2B21;
       </button>
-      <ChainlinkFeeds
-        show={showChainlinkFeeds}
+      <PriceFeeds
+        show={showPriceFeeds}
         onClick={(value: string) => {
           setInputValue(inputValue + value);
         }}
-        cancel={() => setShowChainlinkFeeds(!showChainlinkFeeds)}
+        cancel={() => setShowPriceFeeds(!showPriceFeeds)}
       />
       <button
         id={styles.pickEmoji}

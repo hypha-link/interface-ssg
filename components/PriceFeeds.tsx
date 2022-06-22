@@ -1,17 +1,17 @@
 import React, { useState } from 'react'
-import styles from '../styles/chainlinkfeeds.module.css'
+import styles from '../styles/pricefeeds.module.css'
 import { TokenFeed } from './TokenFeed'
 import redstone from 'redstone-api';
 import { PriceData } from 'redstone-api/lib/types'
 import useMountEffect from './hooks/useMountEffect'
 
-type ChainlinkFeedsProps = {
+type PriceFeedsProps = {
     show: boolean
     onClick: (value: string) => void
     cancel: () => void
 }
 
-export const ChainlinkFeeds = ({ show, onClick, cancel } : ChainlinkFeedsProps) => {
+export const PriceFeeds = ({ show, onClick, cancel } : PriceFeedsProps) => {
     const [priceData, setPriceData] = useState<PriceData[]>([]);
 
     useMountEffect(() => {
@@ -24,7 +24,7 @@ export const ChainlinkFeeds = ({ show, onClick, cancel } : ChainlinkFeedsProps) 
 
     return (
         show ?
-        <section className={priceData.length !== 0 ? "overlay" : `overlay ${styles.loadingCLFeeds}`} id={styles.chainlinkFeeds} onBlur={() => cancel()}>
+        <section className={priceData.length !== 0 ? "overlay" : `overlay ${styles.loading}`} id={styles.priceFeeds} onBlur={() => cancel()}>
             {priceData.length !== 0 ? 
                 priceData.map(({symbol, value}) => {
                     return(
