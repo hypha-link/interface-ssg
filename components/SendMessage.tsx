@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useState } from "react";
 import styles from '../styles/sendmessage.module.css'
 import { MessageContext } from "./MessageContext";
 import { ChainlinkFeeds } from "./ChainlinkFeeds";
@@ -87,10 +87,12 @@ export const SendMessage = ( {disable, typing, sendMessage} : SendMessageProps )
         id={styles.chainlinkFeed}
         onClick={() => setShowChainlinkFeeds(!showChainlinkFeeds)}
         disabled={disable}
-      >&#x2B21;</button>
+      >
+        &#x2B21;
+      </button>
       <ChainlinkFeeds
         show={showChainlinkFeeds}
-        value={(value: string) => {
+        onClick={(value: string) => {
           setInputValue(inputValue + value);
         }}
         cancel={() => setShowChainlinkFeeds(!showChainlinkFeeds)}
@@ -99,7 +101,9 @@ export const SendMessage = ( {disable, typing, sendMessage} : SendMessageProps )
         id={styles.pickEmoji}
         onClick={() => setShowEmojiMenu(!showEmojiMenu)}
         disabled={disable}
-      >&#x1F60A;</button>
+      >
+        &#x1F60A;
+      </button>
       <EmojiMenu
         show={showEmojiMenu}
         value={(value: string) => {
@@ -111,7 +115,9 @@ export const SendMessage = ( {disable, typing, sendMessage} : SendMessageProps )
         id={styles.messageSubmit} 
         onClick={() => buttonHandler()}
         disabled={disable}
-      >Submit</button>
+      >
+        Send
+      </button>
     </section>
   );
 };

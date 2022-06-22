@@ -1,7 +1,7 @@
 /*TOKEN FEED*/
 #tokenFeed {
   position: relative;
-  background-color: var(--inputBGColor);
+  background-color: transparent;
   color: var(--inputColor);
   border: var(--inputColor) 5px outset;
   display: flex;
@@ -11,6 +11,8 @@
   border-radius: 50px;
   overflow: hidden;
   z-index: 1;
+  user-select: none;
+  cursor: pointer;
 }
 
 #tokenFeed .staticFeed {
@@ -113,11 +115,11 @@
   width: 50%;
 }
 
-#tokenFeed:hover #creditDiv {
+#tokenFeed:hover #creditContainer {
   display: flex;
 }
 
-#tokenFeed #creditDiv {
+#tokenFeed #creditContainer {
   display: none;
   flex-direction: column;
   align-items: flex-end;
@@ -126,22 +128,30 @@
   bottom: 5%;
 }
 
-#tokenFeed #creditDiv p {
+#tokenFeed #creditContainer > *{
   display: flex;
+  margin: 0 15% 0 1%;
+  width: 100%;
+}
+
+/* Powered By */
+#tokenFeed #creditContainer > p {
   flex-direction: column;
   align-items: flex-end;
-  width: 100%;
-  margin: 0 15% 0 1%;
-}
-
-#tokenFeed #creditDiv #credit {
-  font-size: 0.75em;
-  color: var(--chainlink);
-}
-
-#tokenFeed #creditDiv :not(#credit) {
   font-size: 0.5em;
   font-style: italic;
+}
+
+/* Credit */
+#tokenFeed #creditContainer > div{
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+#tokenFeed #creditContainer > div > p {
+  margin: 0;
+  font-size: 0.75em;
+  font-weight: 900;
 }
 
 #tokenFeed input {

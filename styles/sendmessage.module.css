@@ -41,13 +41,14 @@
   font-size: 2em;
   font-weight: 900;
   letter-spacing: 1px;
+  transform: rotate(30deg);
 }
 
 #sendMessage #chainlinkFeed:hover {
   font-size: 2em;
   font-weight: 900;
-  color: var(--chainlink);
-  text-shadow: 1px 0 var(--chainlink);
+  color: var(--redstone1);
+  text-shadow: 1px 0 var(--redstone2);
   letter-spacing: 1px;
 }
 

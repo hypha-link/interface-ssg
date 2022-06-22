@@ -2,13 +2,20 @@
 
 #chainlinkFeeds {
   display: grid;
-  grid-template-columns: auto auto auto auto;
+  grid-template-columns: auto auto auto;
   right: 10%;
   min-height: 100px;
   min-width: 100px;
+  max-height: 75vh;
+  padding: 5px;
+  overflow-y: auto;
   border-radius: 50px;
   z-index: 2;
   background-color: var(--uiBGColor);
+}
+
+#chainlinkFeeds > *{
+  margin: 5px;
 }
 
 #chainlinkFeeds.loadingCLFeeds {
@@ -18,6 +25,7 @@
   border: 6px dotted var(--uiColor);
   border-radius: 314px;
   animation: spin 3s linear infinite;
+  overflow-y: unset;
 }
 
 #chainlinkFeeds.loadingCLFeeds p {

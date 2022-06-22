@@ -38,10 +38,11 @@ export function Message({payload, selectMessage, deleteMessage}: MessageProps) {
       tokenFeedArr.push(
         <TokenFeed
           key={Math.random()}
-          onClick={() => console.log(message)}
           tokenName={feed.substring(1, feed.indexOf(","))}
-          tokenPrice={feed.substring(feed.indexOf(",") + 1, feed.indexOf("]"))}
+          //+ Converts string to number
+          tokenPrice={+feed.substring(feed.indexOf(",") + 1, feed.indexOf("]"))}
           hideLiveFeedCheckbox={false}
+          onClick={() => console.log(message)}
         />
       )
     });

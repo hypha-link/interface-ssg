@@ -13,7 +13,7 @@ export default function ProfileCard({ profile, portrait = true } : { profile: Pr
         >
             <div className={styles.profileBackground} style={{backgroundImage: `url(${getProfilePicture(profile).background})`}}/>
             <div className={styles.contentContainer}>
-                <ProfileImage profile={profile} sizePx={128} clickFn={() => window.open(`/profile/${profile?.address}`)}/>
+                <ProfileImage profile={profile} sizePx={128} onClick={() => window.open(`/profile/${profile?.address}`)}/>
                 <div className={styles.content}>
                     <Tooltip content={profile?.address}>
                         <h3><a onClick={async () => navigator.clipboard.writeText(profile?.address)}>{profile?.name || profile?.address}</a></h3>

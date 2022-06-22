@@ -1,52 +1,46 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import styles from '../styles/chainlinkfeeds.module.css'
 import { TokenFeed } from './TokenFeed'
-import priceFeed, { tokenAddr, tokenAddrArr } from '../services/Chainlink_API'
-import { ethers } from "ethers"
+import redstone from 'redstone-api';
+import { PriceData } from 'redstone-api/lib/types'
+import useMountEffect from './hooks/useMountEffect'
 
 type ChainlinkFeedsProps = {
     show: boolean
-    value: (value: string) => void
+    onClick: (value: string) => void
     cancel: () => void
 }
 
-export const ChainlinkFeeds = ({ show, value, cancel } : ChainlinkFeedsProps) => {
-    const [tokenFeed, setTokenFeed] = useState([]);
+export const ChainlinkFeeds = ({ show, onClick, cancel } : ChainlinkFeedsProps) => {
+    const [priceData, setPriceData] = useState<PriceData[]>([]);
 
-    useEffect(() => {
-        let promises = [];
-        tokenAddr.forEach((val) => {
-            promises.push(priceFeed(val));
-        })
-    
-        Promise.all(promises)
-        .then((roundDataArr) => {
-            let i = 0;
-            let tokenFeedArr = [];
-            roundDataArr.forEach(roundData => {
-                const name = tokenAddrArr[i].key;
-                tokenFeedArr.push(
-                    <TokenFeed
-                    key={roundData}
-                    onClick={() => {
-                        value("[" + name + "," + (ethers.BigNumber.from(roundData.answer._hex).toNumber() / 100000000).toFixed(2).toString() + "]");
-                        cancel();
-                    }}
-                    tokenName={name}
-                    tokenPrice={(ethers.BigNumber.from(roundData.answer._hex).toNumber() / 100000000).toFixed(2).toString()}
-                    hideLiveFeedCheckbox={true}
-                    />
-                );
-                i++;
-            });
-            setTokenFeed(tokenFeedArr);
-        })
+    useMountEffect(() => {
+        const getPriceData = async () => {
+            const allPrices = await redstone.getAllPrices({ provider: 'redstone-rapid' });
+            setPriceData(Object.values(allPrices).reverse());
+        }
+        if(show) getPriceData();
     }, [show])
 
     return (
         show ?
-        <section className={tokenFeed.length !== 0 ? "overlay" : `overlay ${styles.loadingCLFeeds}`} id={styles.chainlinkFeeds} onBlur={() => cancel()}>
-            {tokenFeed.length !== 0 ? tokenFeed :
+        <section className={priceData.length !== 0 ? "overlay" : `overlay ${styles.loadingCLFeeds}`} id={styles.chainlinkFeeds} onBlur={() => cancel()}>
+            {priceData.length !== 0 ? 
+                priceData.map(({symbol, value}) => {
+                    return(
+                        <TokenFeed 
+                            key={symbol}
+                            tokenName={symbol}
+                            tokenPrice={value}
+                            hideLiveFeedCheckbox={true}
+                            onClick={() => {
+                                onClick(`[${symbol},${value}]`);
+                                cancel();
+                            }}
+                        />
+                    )
+                })
+                :
                 <p>
                     Loading...
                 </p>
