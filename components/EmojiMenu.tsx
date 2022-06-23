@@ -4,11 +4,11 @@ import emojis from 'emojis-list';
 
 type EmojiMenuProps = {
     show: boolean
-    value: (value: string) => void
+    onClick: (value: string) => void
     cancel: () => void
 }
 
-export const EmojiMenu = ({ show, value, cancel } : EmojiMenuProps) => {
+export const EmojiMenu = ({ show, onClick, cancel } : EmojiMenuProps) => {
     const emojiArr = [];
     for(let i = 1749; i < 1817; i++){
         emojiArr.push(emojis[i]);
@@ -35,7 +35,7 @@ export const EmojiMenu = ({ show, value, cancel } : EmojiMenuProps) => {
                     <button 
                         key={emoji} 
                         onClick={() => {
-                            value(emoji);
+                            onClick(emoji);
                             cancel();
                         }}
                     >

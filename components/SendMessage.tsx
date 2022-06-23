@@ -81,8 +81,8 @@ export const SendMessage = ( {disable, typing, sendMessage} : SendMessageProps )
       {/* Message Context */}
       <div className={styles.plugins}>
         <MessageContext
-          show={showMessageContext}
-          value={(value: string) => setInputValue(inputValue + value)}
+          inputValue={showMessageContext}
+          onClick={(value: string) => setInputValue(inputValue + value)}
           cancel={() => setShowMessageContext('')}
         />
         <button
@@ -114,7 +114,7 @@ export const SendMessage = ( {disable, typing, sendMessage} : SendMessageProps )
       <div className={styles.plugins}>
         <EmojiMenu
           show={showEmojiMenu}
-          value={(value: string) => {
+          onClick={(value: string) => {
             setInputValue(inputValue + value);
           }}
           cancel={() => setShowEmojiMenu(!showEmojiMenu)}

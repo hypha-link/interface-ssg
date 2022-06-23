@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import styles from '../styles/tokenfeed.module.css'
 import Image from 'next/image';
 import cryptoManifest from '../node_modules/crypto-icons-plus/manifest.min.json'
-import redstone from 'redstone-api';
+import { usePriceData } from "./hooks/usePriceData";
 
 type TokenFeedProps = {
   tokenName: string,
@@ -13,31 +13,7 @@ type TokenFeedProps = {
 
 export const TokenFeed = ({ tokenName, tokenPrice, hideLiveFeedCheckbox, onClick } : TokenFeedProps) => {
     const [liveFeed, setLiveFeed] = useState(false);
-    const priceTimer = useRef<NodeJS.Timer>();
-
-    const [liveTokenPrice, setliveTokenPrice] = useState("Loading...");
-    useEffect(() => {
-
-        if(liveFeed === true){
-            priceTimer.current = setInterval(() => getPrice(), 60000);
-        }
-        else{
-            clearInterval(priceTimer.current);
-        }
-
-        const getPrice = () =>{
-            if(liveFeed === true){
-                console.log("Updated Live Price");
-                redstone.getPrice(tokenName).then((token) => setliveTokenPrice(token.value.toString()));
-            }
-        }
-        getPrice();
-
-        return () => {
-            clearInterval(priceTimer.current);
-        }
-
-    }, [liveFeed, tokenName])
+    const priceData = usePriceData(liveFeed, 10000, tokenName);
 
     //Get the full name of the token to reference the correct .png file in crypto=icons-plus
     const tokenFullName = cryptoManifest.filter(obj => {
@@ -56,7 +32,7 @@ export const TokenFeed = ({ tokenName, tokenPrice, hideLiveFeedCheckbox, onClick
         <Image src={tokenFullName[0] ? require(`../node_modules/crypto-icons-plus-128/src/${tokenFullName[0].slug.toLowerCase()}.png`) : '/QuestionMark.svg'} height="33%" width="33%" alt="cryptocurrency-icon" loading="lazy" />
         <h1>{tokenName}</h1>
       </div>
-      <p>{liveFeed ? liveTokenPrice : tokenPrice}</p>
+      <p>{liveFeed && priceData ? priceData.value : tokenPrice}</p>
       <div id={styles.creditContainer}>
         <p>Powered by</p>
         <div>

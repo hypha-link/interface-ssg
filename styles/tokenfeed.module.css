@@ -1,7 +1,7 @@
 /*TOKEN FEED*/
 #tokenFeed {
   position: relative;
-  background-color: transparent;
+  background-color: var(--uiBGColor);
   color: var(--inputColor);
   border: var(--inputColor) 5px outset;
   display: flex;
