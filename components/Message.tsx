@@ -7,7 +7,7 @@ import { StateContext } from "./context/AppState";
 import useSelectedConversation from "./hooks/useSelectedConversation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import emoji from "remark-emoji";
+import remarkEmoji from "remark-emoji";
 import remarkImages from "remark-images";
 import ProfileImage from "./ProfileImage";
 
@@ -71,7 +71,7 @@ export function Message({payload, selectMessage, deleteMessage}: MessageProps) {
           {/* Message Content */}
           {tokenFeedArr}
           <ReactMarkdown
-            remarkPlugins={[[remarkGfm], [emoji, {emoticon: true}], [remarkImages]]}
+            remarkPlugins={[[remarkGfm], [remarkEmoji, {emoticon: true}], [remarkImages]]}
             linkTarget={"_blank"}
           >
             {editedMessage}

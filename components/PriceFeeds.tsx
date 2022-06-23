@@ -1,7 +1,7 @@
 import React from 'react'
 import styles from '../styles/pricefeeds.module.css'
 import { TokenFeed } from './TokenFeed'
-import usePriceData from './hooks/usePriceData';
+import { useAllPriceData } from './hooks/usePriceData';
 import LoadingIcons from 'react-loading-icons'
 
 type PriceFeedsProps = {
@@ -11,7 +11,7 @@ type PriceFeedsProps = {
 }
 
 export const PriceFeeds = ({ show, onClick, cancel } : PriceFeedsProps) => {
-    const priceData = usePriceData({ update: show, updateFrequency: 10000, provider: 'redstone-rapid' });
+    const priceData = useAllPriceData(show, 30000, 'redstone-rapid');
 
     return (
         show ?

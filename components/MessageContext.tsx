@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 import styles from '../styles/messagecontext.module.css'
 import useSelectedConversation from "./hooks/useSelectedConversation";
 import emoji from 'node-emoji';
 import { TokenFeed } from './TokenFeed';
-import usePriceData from './hooks/usePriceData';
+import { useAllPriceData } from './hooks/usePriceData';
 import LoadingIcons from 'react-loading-icons';
 
 type MessageContextProps = {
-    show: string
-    value: (value: string) => void
+    inputValue: string
+    onClick: (value: string) => void
     cancel: () => void
 }
 
@@ -19,53 +19,81 @@ enum ContextType {
     PriceFeed,
 }
 
-export const MessageContext = ({ show, value, cancel } : MessageContextProps ) => {
+export const MessageContext = ({ inputValue, onClick, cancel } : MessageContextProps ) => {
     const selectedConversation = useSelectedConversation();
     const [context, setContext] = useState<ContextType>(undefined);
-    const priceData = usePriceData({ update: show.length > 0, updateFrequency: 10000 });
+    const priceData = useAllPriceData(inputValue.startsWith('['), 30000);
 
-    const users = selectedConversation.profile.filter((profile) => profile.address.includes(show.substring(1, show.length)));
-    const showSymbol = show.toUpperCase().substring(1, show.indexOf(',') !== -1 ? show.indexOf(',') : show.length);
+    // Emojis
+    const emojis = emoji.search(inputValue);
+    // Users
+    const users = selectedConversation.profile.filter(user => (user?.name || user.address).includes(inputValue.substring(1, inputValue.length)));
+    // PriceFeeds
+    const showSymbol = inputValue.toUpperCase().substring(1, inputValue.indexOf(',') !== -1 ? inputValue.indexOf(',') : inputValue.length);
+    const prices = priceData.filter(item => item.symbol.includes(showSymbol));
 
     useEffect(() => {
         //Display if user is trying to type an emoji
-        if(show.length >= 3 && show.startsWith(':')){
-            setContext(ContextType.Emoji);
+        if(inputValue.length >= 3 && inputValue.startsWith(':')){
+            //Check if any emojis match query
+            if(emojis.length > 0){
+                setContext(ContextType.Emoji);
+            }
         }
         //Display if user is trying to @ someone
-        else if(show.startsWith('@')){
+        else if(inputValue.startsWith('@')){
             //Check if any users match query
             if(users.length > 0){
                 setContext(ContextType.User);
             }
         }
         //Display if user is trying to use a built in command
-        else if(show.startsWith('/')){
+        else if(inputValue.startsWith('/')){
             setContext(ContextType.Command);
         }
         //Display if user is trying to create a price feed
-        else if(show.startsWith('[')){
-            setContext(ContextType.PriceFeed)
+        else if(inputValue.startsWith('[')){
+            //Check if any price feeds match query
+            if(prices.length > 0){
+                setContext(ContextType.PriceFeed);
+            }
         }
         //Show nothing
         else{
             setContext(undefined);
         }
-    }, [show])
+    }, [inputValue, emojis.length, users.length, prices.length])
     
     const selectedContext = () => {
         switch(context){
             case ContextType.Emoji:
                 return (
                     <>
-                        <p>EMOJI MATCHING {show}</p>
+                        <InfoBar 
+                            title={
+                                <span>
+                                    EMOJI MATCHING 
+                                    <span>
+                                        {inputValue}
+                                    </span>
+                                </span>
+                            }
+                            results={
+                                <span>
+                                    Results: 
+                                    <span>
+                                        {emojis.length}
+                                    </span>
+                                </span>
+                            }
+                        />
                         <div id={styles.emoji}>
-                            {emoji.search(show).map((item) => {
+                            {emojis.splice(0, 18).map((item) => {
                                 return(
                                     <button 
-                                        key={Math.random()}
+                                        key={item.emoji}
                                         onClick={() => {
-                                            value(item.emoji);
+                                            onClick(item.emoji);
                                             cancel();
                                         }}
                                     >
@@ -79,14 +107,31 @@ export const MessageContext = ({ show, value, cancel } : MessageContextProps ) =
             case ContextType.User:
                 return (
                     <>
-                        <p>USERS</p>
+                        <InfoBar 
+                            title={
+                                <span>
+                                    USERS MATCHING
+                                    <span>
+                                        {inputValue}
+                                    </span>
+                                </span>
+                            }
+                            results={
+                                <span>
+                                    Results:
+                                    <span>
+                                        {users.length}
+                                    </span>
+                                </span>
+                            }
+                        />
                         <div id={styles.user}>
                             {users.map((user) => {
                                 return(
                                     <button
                                         key={Math.random()}
                                         onClick={() => {
-                                            value(user.address);
+                                            onClick(user.address);
                                             cancel();
                                         }}
                                     >
@@ -100,15 +145,15 @@ export const MessageContext = ({ show, value, cancel } : MessageContextProps ) =
             case ContextType.Command:
                 return (
                     <>
-                        <p>COMMANDS</p>
+                        <InfoBar title={<span>COMMANDS</span>}/>
                         <div id={styles.command}>
                             <button 
                                 onClick={() => {
-                                    value("Example-Command");
+                                    onClick("Example-Command");
                                     cancel();
                                 }}
                             >
-                            Command 1
+                                Example-Command  
                             </button>
                         </div>
                     </>
@@ -116,18 +161,35 @@ export const MessageContext = ({ show, value, cancel } : MessageContextProps ) =
             case ContextType.PriceFeed:
                 return (
                     <>
-                        <p>PRICE FEEDS MATCHING {show}</p>
+                        <InfoBar 
+                            title={
+                                <span>
+                                    PRICE FEEDS MATCHING 
+                                    <span>
+                                        {inputValue.toUpperCase()}
+                                    </span>
+                                </span>
+                            } 
+                            results={
+                                <span>
+                                    Results:
+                                    <span>
+                                        {prices.length}
+                                    </span>
+                                </span>
+                            }
+                        />
                         <div id={styles.priceFeed}>
                             {
                                 priceData.length !== 0 ?
-                                priceData.filter(item => item.symbol.includes(showSymbol)).splice(0, 12).map((feed) => {
+                                prices.splice(0, 12).map((feed) => {
                                     return(
                                         <TokenFeed 
                                             key={feed.symbol} 
                                             tokenName={feed.symbol} 
                                             tokenPrice={feed.value} 
                                             onClick={() => {
-                                                value(`${feed.symbol},${feed.value}]`);
+                                                onClick(`${feed.symbol},${feed.value}]`);
                                                 cancel();
                                             }} 
                                             hideLiveFeedCheckbox={true}/>
@@ -156,4 +218,13 @@ export const MessageContext = ({ show, value, cancel } : MessageContextProps ) =
         :
         <></>
     )
+}
+
+function InfoBar({ title, results } : { title: ReactElement, results?: ReactElement }) {
+  return (
+    <div className={styles.infoBar}>
+        <p id={styles.title}>{title}</p>
+        <p id={styles.results}>{results}</p>
+    </div>
+  )
 }
