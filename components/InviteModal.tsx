@@ -18,7 +18,7 @@ export const InviteModal = ({ invitedConversation, createHyphae, openMyceliumMod
   const { conversations } = useContext(StateContext);
   const [localConversations, setLocalConversations] = useState<Conversations[]>(conversations);
   const invitee = useMemo(() => localConversations.find((_conversation) => _conversation.selected === true && _conversation.type !== ConversationType.Hypha), [localConversations]);
-  const [setMetadata, timeleft] = usePublishMetadata(invitedConversation);
+  const [setMetadata, timeRemaining] = usePublishMetadata(invitedConversation);
 
   useEffect(() => {
     setLocalConversations(conversations);
@@ -92,8 +92,8 @@ export const InviteModal = ({ invitedConversation, createHyphae, openMyceliumMod
               inviteConversation(invitee);
             }
           }}
-          disabled={timeleft !== 10}
-          >{invitedConversation?.metadata?.online === true ? timeleft === 10 ? 'Invite' : `Please wait ${timeleft} seconds before inviting again` : `${getConversationName(invitedConversation)} is offline`}</button>
+          disabled={timeRemaining !== 10000}
+          >{invitedConversation?.metadata?.online === true ? timeRemaining === 10000 ? 'Invite' : `Please wait ${Math.ceil(timeRemaining / 1000)} seconds before inviting again` : `${getConversationName(invitedConversation)} is offline`}</button>
         </div>
       </section>
       <section id={styles.create}>

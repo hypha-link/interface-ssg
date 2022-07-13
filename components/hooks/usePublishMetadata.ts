@@ -4,18 +4,20 @@ import { StateContext } from '../context/AppState';
 import { StreamPermission } from 'streamr-client';
 import useInterval from './useInterval';
 
+/**
+ * A hook to publish metadata to the Streanr Network
+ * @param _conversation The conversation to publish metadata to.
+ * @returns Returns a dispatch to set the metadata to publish & the time remaining in milliseconds until metadata can be sent again.
+ */
 export default function usePublishMetadata(_conversation: Conversations){
     const { ownProfile, streamr, streamrDelegate } = useContext(StateContext);
     const [sendMetadata, setSendMetadata] = useState<Metadata>();
-    const [lastSentMetadata, setLastSentMetadata] = useState<Metadata>();
-    const timeRemaining = Math.ceil(
-      useInterval(
+    const [lastSentMetadata, setLastSentMetadata] = useState<Metadata>({address: '', typing: false, invite: ''});
+    const timeRemaining = useInterval(
         () => setLastSentMetadata(oldMetadata => ({...oldMetadata, invite: ''})), 
         10000, 
-        lastSentMetadata?.invite !== undefined && lastSentMetadata?.invite?.length !== 0, 
-        false, 
-        1
-      ) / 1000
+        lastSentMetadata?.invite?.length !== 0,
+        { loops: 1 }
     );
 
     //Send metadata to partner
