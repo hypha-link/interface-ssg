@@ -33,10 +33,6 @@ export default function ContextMenu({ children, options } : ContextMenuProps){
         e.preventDefault();
         setAnchorPoint(mouseCoords.current);
       }
-      else{
-        console.log(childBounds)
-        console.log(mouseCoords.current)
-      }
     }
   }, [display]);
 
