@@ -1,5 +1,5 @@
 import React from 'react'
-import Image from 'next/image';
+import Image from 'next/future/image';
 import styles from '../styles/profileimage.module.css'
 import { Metadata, Profile } from './utils/Types';
 import { Direction, Tooltip } from './utils/Tooltip';
@@ -17,13 +17,20 @@ export default function ProfileImage({profile, metadata, sizePx = 50, onClick}: 
     return (
         <a 
         className={styles.container} 
-        style={{maxHeight:sizePx, maxWidth:sizePx, height:sizePx, width: sizePx, cursor: onClick ? 'pointer' : 'unset'}} 
+        style={{
+            maxHeight:sizePx, 
+            maxWidth:sizePx, 
+            height:sizePx, 
+            width: sizePx, 
+            cursor: onClick ? 'pointer' : 'unset'
+        }} 
         onClick={(e) => {
-            onClick();
+            //Confirm that onClick is valid
+            onClick && onClick();
             e.stopPropagation();
         }}
         >
-            <Image src={getProfilePicture(profile).image} alt="Profile Image" height="100%" width="100%" layout="raw" />
+            <Image src={getProfilePicture(profile).image} alt="Profile Image" height={100} width={100} />
             {/* Show metadata if valid */}
             {
                 metadata 

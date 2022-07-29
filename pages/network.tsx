@@ -4,7 +4,7 @@ import NavigationBar from '../components/NavigationBar'
 import Footer from '../components/Footer'
 import Head from 'next/head'
 
-const roadmap = () => {
+export default function Network(){
   return (
     <>
         <Head>
@@ -21,5 +21,3 @@ const roadmap = () => {
     </>
   )
 }
-
-export default roadmap

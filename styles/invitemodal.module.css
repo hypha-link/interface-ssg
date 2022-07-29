@@ -81,7 +81,7 @@
   padding: 2%;
   flex: .25;
   background-Color: var(--uiBGColor2);
-  background-image: url(/patterns/HyphaPattern.svg);
+  background-image: url(/svg/patterns/HyphaPattern.svg);
   background-size: contain;
 }
 

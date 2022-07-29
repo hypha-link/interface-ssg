@@ -55,7 +55,7 @@
     text-align: center;
     color: var(--uiColor);
     background-Color: var(--uiBGColor);
-    background-image: url(/patterns/HyphaPattern.svg);
+    background-image: url(/svg/patterns/HyphaPattern.svg);
     background-size: contain;
     outline: var(--uiColor) 5px solid;
     border-radius: 314px;

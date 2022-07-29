@@ -1,13 +1,8 @@
 import styles from '../styles/index.module.css'
 import navStyles from '../styles/navigationbar.module.css'
 import Link from 'next/link'
-import HyphaLogo from "../public/logo/hypha-01.svg"
-import LayeredSteps from "../public/patterns/LayeredSteps.svg"
-import CircleScatter from "../public/patterns/CircleScatter.svg"
-import LowPolyGrid from "../public/patterns/LowPolyGrid.svg"
-import SymbolScatter from "../public/patterns/SymbolScatter.svg"
-import LayeredWaves from "../public/patterns/LayeredWaves.svg"
-import BlobScene from "../public/patterns/BlobScene.svg"
+import Logo, { LogoTypes } from '../components/svg/Logo'
+import Patterns, { PatternTypes } from '../components/svg/Patterns'
 import NavigationBar from '../components/NavigationBar'
 import Footer from '../components/Footer'
 import { KeyboardEvent, useState } from 'react'
@@ -40,7 +35,7 @@ export default function Index() {
           </div>
           <div className={styles.animation}>
             <div>
-              <HyphaLogo/>
+              <Logo LogoType={LogoTypes.Hypha01}/>
             </div>
           </div>
         </section>
@@ -70,27 +65,27 @@ export default function Index() {
           <h1>The Future of Communication</h1>
           <ul>
             <li>
-              <LayeredSteps/>
+              <Patterns PatternType={PatternTypes.LayeredSteps}/>
               <p>Private</p>
             </li>
             <li>
-              <CircleScatter/>
+              <Patterns PatternType={PatternTypes.CircleScatter}/>
               <p>Decentralized</p>
             </li>
             <li>
-              <LowPolyGrid/>
+              <Patterns PatternType={PatternTypes.LowPolyGrid}/>
               <p>Data Ownership</p>
             </li>
             <li>
-              <SymbolScatter/>
+              <Patterns PatternType={PatternTypes.SymbolScatter}/>
               <p>IPFS Storage</p>
             </li>
             <li>
-              <LayeredWaves/>
+              <Patterns PatternType={PatternTypes.LayeredWaves}/>
               <p>Profiles</p>
             </li>
             <li>
-              <BlobScene/>
+              <Patterns PatternType={PatternTypes.BlobScene}/>
               <p>Ethereum Login</p>
             </li>
           </ul>

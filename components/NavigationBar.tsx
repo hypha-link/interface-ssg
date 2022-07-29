@@ -1,7 +1,7 @@
 import styles from '../styles/navigationbar.module.css'
 import Link from 'next/link'
 import { useState } from 'react'
-import HyphaLogo from "../public/logo/hypha-01.svg"
+import Logo, { LogoTypes } from './svg/Logo';
 
 export default function NavigationBar (){
     const [hideMobileMenu, setHideMobileMenu] = useState(true);
@@ -10,7 +10,7 @@ export default function NavigationBar (){
         <nav className={styles.nav}>
             <Link href="/">
                 <a className={`logoContainer`}>
-                    <HyphaLogo/>
+                    <Logo LogoType={ LogoTypes.Hypha01 }/>
                     <h1>HYPHA</h1>
                 </a>
             </Link>

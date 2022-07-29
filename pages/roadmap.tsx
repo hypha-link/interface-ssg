@@ -4,7 +4,7 @@ import NavigationBar from '../components/NavigationBar'
 import Footer from '../components/Footer'
 import Head from 'next/head'
 
-const roadmap = () => {
+export default function Roadmap(){
   return (
     <>
         <Head>
@@ -105,7 +105,7 @@ const roadmap = () => {
                     <h3>Spring 2022</h3>
                 </div>
                 <div className={styles.circle}/>
-                <ul>
+                <ul className={styles.checked}>
                     <li>Markdown</li>
                     <li>Network Activity</li>
                     <li>Message Context Menu</li>
@@ -155,5 +155,3 @@ const roadmap = () => {
     </>
   )
 }
-
-export default roadmap

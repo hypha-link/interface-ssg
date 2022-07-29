@@ -150,7 +150,7 @@ p{
 /*SVG*/
 
 .hyphaPattern{
-  background-image: url(/patterns/HyphaPattern.svg);
+  background-image: url(/svg/patterns/HyphaPattern.svg);
   background-attachment: fixed;
   background-blend-mode: overlay;
 }
@@ -163,11 +163,11 @@ p{
 }
 
 .svgWaveV{
-  background-image: url(/patterns/WaveVerticalBrown.svg);
+  background-image: url(/svg/patterns/WaveVerticalBrown.svg);
 }
 
 .svgWaveH{
-  background-image: url(/patterns/WaveHorizontalBrown.svg);
+  background-image: url(/svg/patterns/WaveHorizontalBrown.svg);
 }
 
 .dot{
@@ -204,6 +204,6 @@ p{
   }
 
   .svgWaveV{
-    background-image: url(/patterns/WaveHorizontalBrown.svg);
+    background-image: url(/svg/patterns/WaveHorizontalBrown.svg);
   }
 }
