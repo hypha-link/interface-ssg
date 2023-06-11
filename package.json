@@ -15,7 +15,6 @@
     "@fontsource/montserrat-alternates": "^4.5.8",
     "@self.id/core": "^0.4.1",
     "@self.id/web": "^0.4.0",
-    "@svgr/webpack": "^6.3.1",
     "@usedapp/core": "^1.0.2",
     "crypto-icons-plus": "^1.0.1",
     "crypto-icons-plus-128": "^1.0.1",
