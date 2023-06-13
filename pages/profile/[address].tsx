@@ -21,7 +21,7 @@ export default function Address() {
       <Head>
         <title>{profile?.name || sAddress} | Hypha</title>
         <meta name="description" content="Hypha Messaging" />
-        <link rel="icon" href="../favicon.ico" />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
       <NavigationBar/>
       <div className={styles.address}>

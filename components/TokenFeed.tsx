@@ -29,7 +29,7 @@ export const TokenFeed = ({ tokenName, tokenPrice, hideLiveFeedCheckbox, onClick
     <input className={hideLiveFeedCheckbox ? styles.hideLiveFeedCheckbox : ""} type="checkbox" onChange={(e) => setLiveFeed(e.target.checked)}></input>
       <div>
         {/* Toggle Live Feed */}
-        <Image src={tokenFullName[0] ? require(`../node_modules/crypto-icons-plus-128/src/${tokenFullName[0].slug.toLowerCase()}.png`) : '/QuestionMark.svg'} height="33%" width="33%" alt="cryptocurrency-icon" loading="lazy" />
+        <Image src={tokenFullName[0] ? require(`../node_modules/crypto-icons-plus-128/src/${tokenFullName[0].slug.toLowerCase()}.png`) : '/svg/QuestionMark.svg'} height="33%" width="33%" alt="cryptocurrency-icon" loading="lazy" />
         <h1>{tokenName}</h1>
       </div>
       <p>{liveFeed && priceData ? priceData.value : tokenPrice}</p>

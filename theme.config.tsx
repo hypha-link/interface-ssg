@@ -1,5 +1,5 @@
 /* eslint-disable import/no-anonymous-default-export */
-import Image from 'next/image'
+import Logo, { LogoTypes } from './components/svg/Logo'
 
 export default {
   projectLink: 'https://gitlab.com/hypha-link/interface', // GitHub link in the navbar
@@ -15,7 +15,7 @@ export default {
   footerText: `MIT ${new Date().getFullYear()} © Hypha.`,
   footerEditLink: `Edit this page on GitLab`,
   logo: (
-    <Image src="/logo/hypha-01.svg" alt="Logo" height="50" width="50" layout="raw"/>
+    <Logo LogoType={LogoTypes.Hypha01} style={{height: 50, width: 50}} />
   ),
   head: (
     <>

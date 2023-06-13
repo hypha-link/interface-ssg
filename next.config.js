@@ -1,42 +1,29 @@
-const withPlugins = require("next-compose-plugins");
+/**
+ * @type {import('next').NextConfig}
+ */
 
-const withNextra = require("nextra")({
-  theme: "nextra-theme-docs",
-  themeConfig: "./theme.config.js",
-  // optional: add `unstable_staticImage: true` to enable Nextra's auto image import
-});
-
+const withPlugins = require('next-compose-plugins');
 const withExportImages = require('next-export-optimize-images');
 
-//Plugins go inside array, & configurations after
-module.exports = withPlugins([withNextra, withExportImages], {
-  trailingSlash: true,
-  reactStrictMode: true,
-  exportPathMap: async function (
-    defaultPathMap,
-    { dev, dir, outDir, distDir, buildId }
-  ) {
-    return {
-      '/': { page: '/' },
-      '/app': { page: '/app' },
-      '/network': { page: '/network' },
-      '/roadmap': { page: '/roadmap' },
-    };
-  },
-  images: {
-    domains: ["robohash.org", "ipfs.io"],
-  },
-  webpack(config) {
-    config.module.rules.push({
-      test: /\.svg$/,
-      use: ["@svgr/webpack"],
-    });
+const nextConfig = {
+	trailingSlash: true,
+	reactStrictMode: true,
+	images: {
+		domains: ['robohash.org', 'ipfs.io'],
+	},
+	experimental: {
+		images: {
+			allowFutureImage: true,
+		},
+	},
+};
 
-    return config;
-  },
-  experimental: {
-    images: {
-      layoutRaw: true,
-    },
-  },
+const withNextra = require('nextra')({
+	theme: 'nextra-theme-docs',
+	themeConfig: './theme.config.tsx',
 });
+
+//Plugins go inside array, & configurations after
+module.exports = withPlugins([withNextra, withExportImages],
+  nextConfig
+);

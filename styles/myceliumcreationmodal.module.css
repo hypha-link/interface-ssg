@@ -6,7 +6,7 @@
   justify-content: space-between;
   position: absolute;
   background-color: var(--uiBGColor);
-  background-image: url(/patterns/HyphaPattern.svg);
+  background-image: url(/svg/patterns/HyphaPattern.svg);
   background-size: contain;
   border: var(--uiColor) 2px solid;
   z-index: 1;

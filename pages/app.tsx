@@ -8,8 +8,8 @@ import { ExternalProvider } from "@ethersproject/providers";
 import React, { useContext, useEffect, useState } from "react";
 import styles from '../styles/app.module.css'
 import Link from "next/link";
-import HyphaLogo from "../public/logo/hypha-01.svg"
-import Cog from "../public/fa/cog.svg"
+import Logo, { LogoTypes } from "../components/svg/Logo";
+import FA, { FATypes } from "../components/svg/FA";
 
 import { useEthers } from "@usedapp/core";
 import { create } from "ipfs-core";
@@ -471,7 +471,7 @@ function App({ data }) {
       <section id={styles.topBar}>
           <Link href="/">
             <a className="logoContainer">
-              <HyphaLogo/>
+              <Logo LogoType={ LogoTypes.Hypha01 }/>
             </a>
           </Link>
         <div>
@@ -538,7 +538,7 @@ function App({ data }) {
               show={settingsModal}
               cancel={() => setSettingsModal(false)}
             />
-            <button className={`hypha-button ${styles.settings}`} onClick={() => {setSettingsModal(!settingsModal)}}><Cog/></button>
+            <button className={`hypha-button ${styles.settings}`} onClick={() => {setSettingsModal(!settingsModal)}}><FA FAType={FATypes.Cog}/></button>
             <Tooltip content={ownAddress}>
               <ConnectButton
                 connect={connect}

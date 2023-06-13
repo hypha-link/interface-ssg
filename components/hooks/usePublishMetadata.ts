@@ -2,34 +2,23 @@ import { useContext, useEffect, useState } from 'react';
 import { Conversations, Metadata } from '../utils/Types';
 import { StateContext } from '../context/AppState';
 import { StreamPermission } from 'streamr-client';
-import useMountEffect from './useMountEffect';
+import useInterval from './useInterval';
 
+/**
+ * A hook to publish metadata to the Streanr Network
+ * @param _conversation The conversation to publish metadata to.
+ * @returns Returns a dispatch to set the metadata to publish & the time remaining in milliseconds until metadata can be sent again.
+ */
 export default function usePublishMetadata(_conversation: Conversations){
     const { ownProfile, streamr, streamrDelegate } = useContext(StateContext);
     const [sendMetadata, setSendMetadata] = useState<Metadata>();
-    const [lastSentMetadata, setLastSentMetadata] = useState<Metadata>();
-    const [timeRemaining, setTimeRemaining] = useState(10);
-
-    useMountEffect(() => {
-      if(lastSentMetadata?.invite !== ''){
-        //Stop user from inviting a friend more than once every 10 seconds
-        let timeleft = 10;
-        let timer = setInterval(() => {
-          if(timeleft <= 1){
-            setLastSentMetadata(oldMetadata => ({...oldMetadata, invite: ''}));
-            setTimeRemaining(10);
-            clearInterval(timer);
-          }
-          else{
-            timeleft -= 1;
-            setTimeRemaining(timeleft);
-          }
-        }, 1000)
-        return () => {
-          clearInterval(timer);
-        }
-      }
-    }, [lastSentMetadata?.invite])
+    const [lastSentMetadata, setLastSentMetadata] = useState<Metadata>({address: '', typing: false, invite: ''});
+    const timeRemaining = useInterval(
+        () => setLastSentMetadata(oldMetadata => ({...oldMetadata, invite: ''})), 
+        10000, 
+        lastSentMetadata?.invite?.length !== 0,
+        { loops: 1 }
+    );
 
     //Send metadata to partner
     useEffect(() => {
@@ -47,7 +36,6 @@ export default function usePublishMetadata(_conversation: Conversations){
                 }
               )
             }
-            console.log(sendMetadata)
             await streamrDelegate?.client.publish(
               { streamId: _conversation.streamId, partition: 1 },
               {
@@ -58,6 +46,7 @@ export default function usePublishMetadata(_conversation: Conversations){
                 invite: sendMetadata.invite,
               },
             )
+            console.log(sendMetadata);
           }
           catch(e){
             alert('Please fund the connected wallet with Matic tokens to use Hypha');

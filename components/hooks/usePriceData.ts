@@ -11,7 +11,7 @@ import useInterval from './useInterval';
  */
 export function usePriceData(update: boolean, updateFrequency: number, tokenSymbol: string) {
     const [priceData, setPriceData] = useState<PriceData>();
-    useInterval(update, () => getPriceData(), updateFrequency);
+    useInterval(() => getPriceData(), updateFrequency, update, { immediate: true });
 
     const getPriceData = async () => {
         const feed = await redstone.getPrice(tokenSymbol);
@@ -29,7 +29,7 @@ export function usePriceData(update: boolean, updateFrequency: number, tokenSymb
  */
 export function useAllPriceData( update: boolean, updateFrequency: number, provider = 'redstone') {
     const [priceData, setPriceData] = useState<PriceData[]>();
-    useInterval(update, () => getPriceData(), updateFrequency);
+    useInterval(() => getPriceData(), updateFrequency, update, { immediate: true });
 
     const getPriceData = async () => {
         const feed = await redstone.getAllPrices({ provider: provider });

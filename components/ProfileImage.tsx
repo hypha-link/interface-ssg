@@ -16,9 +16,16 @@ export default function ProfileImage({profile, metadata, sizePx = 50, onClick}: 
     return (
         <a 
         className={styles.container} 
-        style={{maxHeight:sizePx, maxWidth:sizePx, height:sizePx, width: sizePx, cursor: onClick ? 'pointer' : 'unset'}} 
+        style={{
+            maxHeight:sizePx, 
+            maxWidth:sizePx, 
+            height:sizePx, 
+            width: sizePx, 
+            cursor: onClick ? 'pointer' : 'unset'
+        }} 
         onClick={(e) => {
-            onClick();
+            //Confirm that onClick is valid
+            onClick && onClick();
             e.stopPropagation();
         }}
         >
